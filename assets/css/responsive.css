@@ -1,0 +1,100 @@
+@media (max-width: 1200px) {
+  .screen-shell {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .left-panel {
+    padding: 20px 16px 24px;
+  }
+
+  .right-panel {
+    padding: 18px 16px;
+    gap: 18px;
+  }
+
+  .content-header {
+    align-items: flex-start;
+    gap: 14px;
+    min-height: auto;
+  }
+
+  .content-brand-frame {
+    width: 148px;
+    height: 62px;
+    border-radius: 14px;
+  }
+
+  .content-brand-mark {
+    font-size: 1.15rem;
+  }
+
+  .content-kicker {
+    font-size: 0.75rem;
+  }
+
+  .content-mosque-name {
+    font-size: 1.6rem;
+  }
+
+  .content-address {
+    font-size: 0.92rem;
+  }
+
+  .content-stage-frame {
+    padding: 10px;
+    border-radius: 22px;
+  }
+
+  .content-stage-media {
+    border-radius: 16px;
+  }
+
+  .content-stage-badge {
+    font-size: 0.78rem;
+    padding: 8px 14px;
+  }
+
+  .content-stage-text {
+    font-size: 1rem;
+    margin-top: 12px;
+  }
+
+  .content-ticker {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .content-ticker-label {
+    min-width: 0;
+    justify-self: start;
+  }
+
+  .content-ticker-text {
+    font-size: 1.35rem;
+  }
+
+  .clock-main {
+    font-size: 5.4rem;
+  }
+
+  .clock-seconds {
+    font-size: 2.3rem;
+    padding-left: 14px;
+  }
+
+  .clock-seconds::before {
+    height: 1.8rem;
+  }
+
+  .date-display {
+    font-size: 1.7rem;
+  }
+
+  .prayer-name,
+  .prayer-time {
+    font-size: 1.7rem;
+  }
+}
