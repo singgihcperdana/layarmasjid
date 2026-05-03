@@ -6,7 +6,7 @@
 
 .left-panel {
   position: relative;
-  padding: 26px 24px 24px;
+  padding: clamp(18px, 2.3vh, 26px) clamp(16px, 1.3vw, 24px) clamp(18px, 2vh, 24px);
   background: linear-gradient(180deg, rgba(15, 90, 68, 0.96) 0%, rgba(10, 61, 46, 0.98) 100%);
   border-right: 4px solid rgba(255, 255, 255, 0.12);
   overflow: hidden;
@@ -36,16 +36,15 @@
 .clock-card {
   position: relative;
   z-index: 1;
-  margin-bottom: 18px;
-  padding: 0 0 20px;
-  /* border-bottom: 1px solid rgba(255, 255, 255, 0.18); */
+  margin-bottom: clamp(10px, 1.6vh, 18px);
+  padding: 0 0 clamp(10px, 1.8vh, 20px);
 }
 
 .clock-display {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: 8px;
+  gap: clamp(4px, 0.5vw, 8px);
   line-height: 0.88;
 }
 
@@ -57,7 +56,7 @@
 
 .clock-main {
   font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
-  font-size: 6.9rem;
+  font-size: clamp(5rem, 7vw, 6.9rem);
   font-weight: 200;
   letter-spacing: -0.07em;
   font-variant-numeric: tabular-nums;
@@ -66,10 +65,10 @@
 
 .clock-seconds {
   position: relative;
-  top: 0.45rem;
+  top: clamp(0.2rem, 0.55vh, 0.45rem);
   padding-left: 0;
   font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
-  font-size: 2.15rem;
+  font-size: clamp(1.7rem, 2.2vw, 2.15rem);
   font-weight: 600;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -78,9 +77,9 @@
 }
 
 .date-display {
-  margin-top: 8px;
+  margin-top: clamp(4px, 0.8vh, 8px);
   text-align: center;
-  font-size: 2.25rem;
+  font-size: clamp(1.75rem, 2.5vw, 2.25rem);
   font-weight: 500;
   line-height: 1.1;
   color: var(--mint-soft);
@@ -88,8 +87,8 @@
 
 .date-ornament {
   width: 100%;
-  height: 72px;
-  margin-top: 12px;
+  height: clamp(52px, 6.5vh, 72px);
+  margin-top: clamp(8px, 1vh, 12px);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 120'%3E%3Cg fill='none' stroke='%23E7C46C' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M84 62h166'/%3E%3Cpath d='M390 62h166'/%3E%3Cpath d='M236 62l16-16 16 16'/%3E%3Cpath d='M404 62l-16-16-16 16'/%3E%3Cpath d='M292 78c8-16 17-28 28-38 11 10 20 22 28 38'/%3E%3Cpath d='M304 60l16-16 16 16-16 16Z'/%3E%3Cpath d='M320 78l10 18-10 18-10-18Z'/%3E%3C/g%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center top;
@@ -101,6 +100,8 @@
   position: relative;
   z-index: 1;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .schedule-card::before,
@@ -112,7 +113,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 10px;
+  padding: clamp(11px, 1.55vh, 15px) clamp(8px, 0.8vw, 10px);
   border-bottom: 2px solid rgba(185, 231, 209, 0.16);
   color: var(--white);
   border-radius: 18px;
@@ -134,7 +135,7 @@
 }
 
 .prayer-name {
-  font-size: 2.18rem;
+  font-size: clamp(1.85rem, 2.3vw, 2.18rem);
   font-weight: 700;
   line-height: 1;
   color: var(--ivory-soft);
@@ -142,7 +143,7 @@
 
 .prayer-time {
   font-family: Impact, "Arial Narrow Bold", sans-serif;
-  font-size: 2.22rem;
+  font-size: clamp(1.9rem, 2.35vw, 2.22rem);
   font-weight: 800;
   letter-spacing: 0.06em;
   line-height: 1;
@@ -154,8 +155,8 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-top: 12px;
-  padding: 0;
+  margin-top: auto;
+  padding: 14px 0 4px;
 }
 
 .schedule-endcap-line {
