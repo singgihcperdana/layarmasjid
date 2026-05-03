@@ -117,8 +117,10 @@
 .content-stage {
   flex: 1 1 auto;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  gap: clamp(10px, 1.2vh, 14px);
   min-height: 0;
 }
 
@@ -161,13 +163,9 @@
   margin: 0;
 }
 
-.content-stage-slides,
-.content-stage-dots {
+.content-stage-slides {
   position: absolute;
   inset: 0;
-}
-
-.content-stage-slides {
   z-index: 0;
   overflow: hidden;
   border-radius: 10px;
@@ -195,26 +193,24 @@
 }
 
 .content-stage-dots {
-  z-index: 2;
-  inset: auto auto -22px 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: clamp(8px, 0.7vw, 10px);
+  flex-shrink: 0;
   pointer-events: none;
-  transform: translateX(-50%);
 }
 
 .content-stage-dot {
-  width: 10px;
-  height: 10px;
+  width: clamp(9px, 0.7vw, 10px);
+  height: clamp(9px, 0.7vw, 10px);
   border-radius: 50%;
   background: rgba(248, 243, 232, 0.32);
   border: 1px solid rgba(248, 243, 232, 0.4);
 }
 
 .content-stage-dot.active {
-  width: 28px;
+  width: clamp(24px, 2vw, 28px);
   border-radius: 999px;
   background: rgba(79, 214, 194, 0.95);
   border-color: rgba(79, 214, 194, 0.95);
