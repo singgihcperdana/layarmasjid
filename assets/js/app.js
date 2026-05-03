@@ -7,6 +7,17 @@ const prayers = [
   { name: "Isya", time: "18:59" }
 ];
 
+const slides = [
+  { src: "/layarmasjid/assets/img/contoh_slide/info-1.png", alt: "Slide informasi 1" },
+  { src: "/layarmasjid/assets/img/contoh_slide/info-2.png", alt: "Slide informasi 2" },
+  { src: "/layarmasjid/assets/img/contoh_slide/info-3.png", alt: "Slide informasi 3" },
+  { src: "/layarmasjid/assets/img/contoh_slide/info-4.png", alt: "Slide informasi 4" },
+  { src: "/layarmasjid/assets/img/contoh_slide/info-5.png", alt: "Slide informasi 5" },
+  { src: "/layarmasjid/assets/img/contoh_slide/info-6.png", alt: "Slide informasi 6" },
+  { src: "/layarmasjid/assets/img/contoh_slide/ig_0bdab9806755ebf80169f450625bd081918be5a5e42634f9c9.png", alt: "Slide informasi Instagram" },
+  { src: "/layarmasjid/assets/img/contoh_slide/wakaf-ac-fullhd-1920x1080.png", alt: "Slide informasi wakaf AC" }
+];
+
 const dayFormatter = new Intl.DateTimeFormat("id-ID", { weekday: "long" });
 const monthFormatter = new Intl.DateTimeFormat("id-ID", { month: "long" });
 
@@ -63,6 +74,80 @@ function updateNextPrayer(now) {
   });
 }
 
+function setupSlides() {
+  const stageFrame = document.getElementById("content-stage-frame");
+  const slidesRoot = document.getElementById("content-stage-slides");
+  const dotsRoot = document.getElementById("content-stage-dots");
+
+  if (!stageFrame || !slidesRoot || !dotsRoot || slides.length === 0) {
+    return;
+  }
+
+  const slideElements = slides.map((slide, index) => {
+    const slideItem = document.createElement("figure");
+    slideItem.className = "content-stage-slide";
+    if (index === 0) {
+      slideItem.classList.add("active");
+    }
+
+    const image = document.createElement("img");
+    image.src = slide.src;
+    image.alt = slide.alt;
+    image.loading = index === 0 ? "eager" : "lazy";
+
+    slideItem.appendChild(image);
+    slidesRoot.appendChild(slideItem);
+    return slideItem;
+  });
+
+  const dotElements = slides.map((_, index) => {
+    const dot = document.createElement("span");
+    dot.className = "content-stage-dot";
+    if (index === 0) {
+      dot.classList.add("active");
+    }
+    dotsRoot.appendChild(dot);
+    return dot;
+  });
+
+  let activeIndex = 0;
+
+  function syncStageRatio(index) {
+    const image = slideElements[index]?.querySelector("img");
+    if (!image || !image.naturalWidth || !image.naturalHeight) {
+      return;
+    }
+
+    stageFrame.style.setProperty("--stage-ratio", `${image.naturalWidth} / ${image.naturalHeight}`);
+  }
+
+  slideElements.forEach((slideItem, index) => {
+    const image = slideItem.querySelector("img");
+    if (!image) {
+      return;
+    }
+
+    image.addEventListener("load", () => {
+      if (index === activeIndex) {
+        syncStageRatio(index);
+      }
+    });
+  });
+
+  syncStageRatio(activeIndex);
+
+  setInterval(() => {
+    slideElements[activeIndex].classList.remove("active");
+    dotElements[activeIndex].classList.remove("active");
+
+    activeIndex = (activeIndex + 1) % slideElements.length;
+
+    slideElements[activeIndex].classList.add("active");
+    dotElements[activeIndex].classList.add("active");
+    syncStageRatio(activeIndex);
+  }, 3000);
+}
+
 function tick() {
   const now = new Date();
   updateClock(now);
@@ -70,6 +155,7 @@ function tick() {
 }
 
 function startClock() {
+  setupSlides();
   tick();
 
   const delayToNextSecond = 1000 - new Date().getMilliseconds();
