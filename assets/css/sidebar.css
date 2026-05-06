@@ -47,10 +47,11 @@
   flex-shrink: 0;
   align-self: stretch;
   height: clamp(144px, 18vh, 190px);
-  margin: calc(var(--panel-pad-y) * -1) calc(var(--panel-pad-x) * -1) -56px;
+  margin: calc(var(--panel-pad-y) * -1) calc(var(--panel-pad-x) * -1) -42px;
   opacity: 1;
-  width: auto;
-  object-fit: fill;
+  width: 100%;
+  object-fit: contain;
+  object-position: center top;
   display: block;
   z-index: 1;
   pointer-events: none;
