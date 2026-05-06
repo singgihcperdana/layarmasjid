@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="260" viewBox="0 0 1200 260" fill="none">
+  <defs>
+    <pattern id="mesh" width="72" height="72" patternUnits="userSpaceOnUse">
+      <g stroke="rgba(231,196,108,0.38)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M36 0C22 18 18 34 18 36s4 18 18 36c14-18 18-34 18-36S50 18 36 0Z"/>
+        <path d="M0 36c18-14 34-18 36-18s18 4 36 18c-18 14-34 18-36 18S18 50 0 36Z"/>
+        <path d="M12 12c12 12 18 24 24 48 6-24 12-36 24-48"/>
+        <path d="M12 60c12-12 18-24 24-48 6 24 12 36 24 48"/>
+      </g>
+    </pattern>
+    <linearGradient id="gold" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E7C46C"/>
+      <stop offset="0.5" stop-color="#F3D883"/>
+      <stop offset="1" stop-color="#D7AA3C"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="260" fill="transparent"/>
+  <rect x="0" y="16" width="1200" height="196" fill="url(#mesh)" opacity="0.9"/>
+
+  <path
+    d="M0 212H266C282 150 335 124 387 124C401 62 445 32 510 8C575 32 619 62 633 124C685 124 738 150 754 212H1200"
+    stroke="url(#gold)"
+    stroke-width="16"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <path
+    d="M0 212H1200"
+    stroke="url(#gold)"
+    stroke-width="10"
+    stroke-linecap="round"
+    opacity="0.92"
+  />
+
+  <path
+    d="M180 196C222 150 286 118 352 118"
+    stroke="rgba(231,196,108,0.42)"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+  <path
+    d="M378 196C418 144 465 108 510 92C555 108 602 144 642 196"
+    stroke="rgba(231,196,108,0.42)"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+  <path
+    d="M848 196C890 150 954 118 1020 118"
+    stroke="rgba(231,196,108,0.42)"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+</svg>
