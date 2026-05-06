@@ -9,71 +9,76 @@
 <body>
   <div class="screen-shell">
     <aside class="left-panel">
-      <section class="clock-card" aria-label="Waktu saat ini">
-        <div class="clock-display">
-          <span class="clock-main" id="clock-main">08.34</span>
-          <span class="clock-seconds" id="clock-seconds">17</span>
-        </div>
-        <p class="date-display" id="date-display">Sabtu, 02 Mei 2026</p>
-        <div class="date-ornament" aria-hidden="true"></div>
-      </section>
+      <span class="panel-corner panel-corner--top-left" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--top-right" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--bottom-left" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--bottom-right" aria-hidden="true"></span>
 
-      <section class="schedule-card">
-        <div class="schedule-list" id="schedule-list">
-          <div class="schedule-row active">
-            <span class="prayer-name">Subuh</span>
-            <span class="prayer-time">04:36</span>
-          </div>
-          <div class="schedule-row">
-            <span class="prayer-name">Syuruq</span>
-            <span class="prayer-time">05:52</span>
-          </div>
-          <div class="schedule-row">
-            <span class="prayer-name">Dzuhur</span>
-            <span class="prayer-time">11:54</span>
-          </div>
-          <div class="schedule-row">
-            <span class="prayer-name">Ashar</span>
-            <span class="prayer-time">15:14</span>
-          </div>
-          <div class="schedule-row">
-            <span class="prayer-name">Maghrib</span>
-            <span class="prayer-time">17:48</span>
-          </div>
-          <div class="schedule-row">
-            <span class="prayer-name">Isya</span>
-            <span class="prayer-time">18:59</span>
-          </div>
-        </div>
+      <div class="sidebar-main">
+        <img class="sidebar-top-ornament" src="/layarmasjid/assets/img/sidebar-top-ornament.svg" alt="" aria-hidden="true">
+        <span class="sidebar-lantern sidebar-lantern--left" aria-hidden="true"></span>
+        <span class="sidebar-lantern sidebar-lantern--right" aria-hidden="true"></span>
 
+        <div class="sidebar-content">
+          <section class="clock-card" aria-label="Waktu saat ini">
+            <div class="clock-display">
+              <span class="clock-main" id="clock-main">08.34</span>
+              <span class="clock-seconds" id="clock-seconds">17</span>
+            </div>
+            <p class="date-display" id="date-display">Sabtu, 02 Mei 2026</p>
+            <div class="date-ornament" aria-hidden="true"></div>
+          </section>
+
+          <section class="schedule-card">
+            <div class="schedule-list" id="schedule-list">
+              <div class="schedule-row active">
+                <span class="prayer-name">Subuh</span>
+                <span class="prayer-time">04:36</span>
+              </div>
+              <div class="schedule-row">
+                <span class="prayer-name">Syuruq</span>
+                <span class="prayer-time">05:52</span>
+              </div>
+              <div class="schedule-row">
+                <span class="prayer-name">Dzuhur</span>
+                <span class="prayer-time">11:54</span>
+              </div>
+              <div class="schedule-row">
+                <span class="prayer-name">Ashar</span>
+                <span class="prayer-time">15:14</span>
+              </div>
+              <div class="schedule-row">
+                <span class="prayer-name">Maghrib</span>
+                <span class="prayer-time">17:48</span>
+              </div>
+              <div class="schedule-row">
+                <span class="prayer-name">Isya</span>
+                <span class="prayer-time">18:59</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="sidebar-endcap-wrap">
         <div class="schedule-endcap" aria-hidden="true">
           <span class="schedule-endcap-line"></span>
           <span class="schedule-endcap-mark"></span>
           <span class="schedule-endcap-line"></span>
         </div>
-      </section>
+      </div>
     </aside>
 
     <main class="right-panel">
       <header class="content-header">
         <div class="content-brand" aria-label="Logo masjid">
-          <div class="content-brand-frame">
-            <div class="content-brand-mark default-logo" aria-hidden="true">
-              <svg viewBox="0 0 120 120" class="default-logo-icon" role="img" aria-label="Logo default masjid">
-                <defs>
-                  <linearGradient id="logo-gold" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#f8d54e" />
-                    <stop offset="55%" stop-color="#d6ad38" />
-                    <stop offset="100%" stop-color="#f4d76b" />
-                  </linearGradient>
-                </defs>
-                <path class="logo-star" d="M60 8 76 24H99V47l16 13-16 13v23H76L60 112 44 96H21V73L5 60l16-13V24h23Z" />
-                <path class="logo-mihrab" d="M60 30 82 45v44H71V51L60 43 49 51v38H38V45Z" />
-                <path class="logo-pillars" d="M60 47 68 53v36H60ZM52 53l8-6v42h-8Z" />
-                <path class="logo-moon" d="M60 20c3 0 6 1 8 3-2 0-4 2-4 5 0 4 3 7 7 7 1 0 2 0 3-1-2 4-6 6-10 6-7 0-12-5-12-10s4-10 8-10Z" />
-                <path class="logo-star-small" d="m74 23 1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.8-3.2 1.8.6-3.6-2.6-2.5 3.6-.5Z" />
-              </svg>
-            </div>
+          <div class="content-brand-frame" id="content-brand-frame">
+            <img
+              id="content-brand-logo"
+              class="content-brand-logo"
+              src="/layarmasjid/assets/img/contoh_logo/masjid_astra.png"
+              alt="Logo Masjid Astra"
+            >
           </div>
         </div>
 

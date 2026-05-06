@@ -74,6 +74,39 @@ function updateNextPrayer(now) {
   });
 }
 
+function setupBrandLogo() {
+  const logo = document.getElementById("content-brand-logo");
+  const frame = document.getElementById("content-brand-frame");
+
+  if (!logo || !frame) {
+    return;
+  }
+
+  const applyLogoShape = () => {
+    if (!logo.naturalWidth || !logo.naturalHeight) {
+      return;
+    }
+
+    const ratio = logo.naturalWidth / logo.naturalHeight;
+    let shape = "wide";
+
+    if (ratio < 0.85) {
+      shape = "tall";
+    } else if (ratio <= 1.15) {
+      shape = "square";
+    }
+
+    frame.dataset.logoShape = shape;
+  };
+
+  if (logo.complete) {
+    applyLogoShape();
+    return;
+  }
+
+  logo.addEventListener("load", applyLogoShape, { once: true });
+}
+
 function setupSlides() {
   const slidesRoot = document.getElementById("content-stage-slides");
   const dotsRoot = document.getElementById("content-stage-dots");
@@ -129,6 +162,7 @@ function tick() {
 }
 
 function startClock() {
+  setupBrandLogo();
   setupSlides();
   tick();
 
