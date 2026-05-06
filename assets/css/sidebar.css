@@ -45,12 +45,13 @@
 
 .sidebar-top-ornament {
   flex-shrink: 0;
-  align-self: stretch;
+  align-self: center;
+  max-width: none;
+  width: calc(100% + (var(--panel-pad-x) * 2));
   height: clamp(144px, 18vh, 190px);
-  margin: calc(var(--panel-pad-y) * -1) calc(var(--panel-pad-x) * -1) -42px;
+  margin: calc(var(--panel-pad-y) * -1) 0 -42px;
   opacity: 1;
-  width: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center top;
   display: block;
   z-index: 1;
