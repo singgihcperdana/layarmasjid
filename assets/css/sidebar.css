@@ -137,7 +137,7 @@
   position: relative;
   z-index: 1;
   margin-bottom: clamp(10px, 1.6vh, 18px);
-  padding: 0 0 clamp(10px, 1.8vh, 20px);
+  /*padding: 0 0 clamp(10px, 1.8vh, 20px);*/
 }
 
 .clock-display {
@@ -212,7 +212,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: clamp(12px, 1.8vh, 20px) clamp(10px, 1vw, 14px);
+  /*padding: clamp(11px, 1.55vh, 15px) clamp(8px, 0.8vw, 10px);*/
+    padding: clamp(12px, 1.6vh, 20px) clamp(10px, 1vw, 14px);
   border-bottom: 2px solid rgba(185, 231, 209, 0.16);
   color: var(--white);
   border-radius: 18px;
@@ -234,7 +235,8 @@
 }
 
 .prayer-name {
-  font-size: clamp(2rem, 1.1vw + 1.45vh, 2.9rem);
+  /*font-size: clamp(1.85rem, 2.3vw, 2.18rem);*/
+    font-size: clamp(1.9rem, 1.1vw + 1.45vh, 2.9rem);
   font-weight: 700;
   line-height: 1;
   color: var(--ivory-soft);
@@ -242,7 +244,8 @@
 
 .prayer-time {
   font-family: Impact, "Arial Narrow Bold", sans-serif;
-  font-size: clamp(2.05rem, 1.15vw + 1.5vh, 3rem);
+  /*font-size: clamp(1.9rem, 2.35vw, 2.22rem);*/
+    font-size: clamp(2.05rem, 1.15vw + 1.5vh, 3rem);
   font-weight: 800;
   letter-spacing: 0.06em;
   line-height: 1;
