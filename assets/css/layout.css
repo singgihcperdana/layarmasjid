@@ -20,33 +20,44 @@
   padding: clamp(12px, 1.5vh, 18px) clamp(18px, 1.8vw, 28px) 0;
 }
 
+/*.right-panel::before {*/
+/*  content: "";*/
+/*  position: absolute;*/
+/*  top: 0;*/
+/*  left: clamp(18px, 1.8vw, 28px);*/
+/*  right: clamp(18px, 1.8vw, 28px);*/
+/*  height: 1px;*/
+/*  background: linear-gradient(90deg, rgba(240, 201, 106, 0.12) 0%, rgba(240, 201, 106, 0.45) 20%, rgba(240, 201, 106, 0.82) 50%, rgba(240, 201, 106, 0.45) 80%, rgba(240, 201, 106, 0.12) 100%);*/
+/*  pointer-events: none;*/
+/*}*/
+
+/*.right-panel > * {*/
+/*  position: relative;*/
+/*  z-index: 1;*/
+/*}*/
+
 .content-brand-frame {
   width: clamp(148px, 9.8vw, 188px);
   height: clamp(64px, 7vh, 78px);
-  padding: 6px 10px;
-  border-radius: 18px;
-  border: 3px solid rgba(185, 231, 209, 0.72);
+  padding: 0;
+  border-radius: 0;
+  border: 0;
   background: linear-gradient(180deg, rgba(79, 214, 194, 0.08), rgba(255, 255, 255, 0.04));
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
-  backdrop-filter: blur(4px);
 }
 
 .content-brand-frame[data-logo-shape="square"] {
   width: clamp(84px, 6vw, 104px);
   height: clamp(84px, 6vw, 104px);
-  border-radius: 22px;
-  padding: 8px;
 }
 
 .content-brand-frame[data-logo-shape="tall"] {
   width: clamp(78px, 5.5vw, 96px);
   height: clamp(98px, 7vw, 116px);
-  border-radius: 22px;
-  padding: 8px;
 }
 
 .content-brand-mark {
@@ -62,6 +73,7 @@
   height: 100%;
   object-fit: contain;
   object-position: center;
+  border-radius: 0;
 }
 
 .content-header {
@@ -69,19 +81,21 @@
   display: flex;
   align-items: center;
   gap: clamp(14px, 1.2vw, 22px);
-  min-height: clamp(82px, 10.5vh, 108px);
-  padding: clamp(12px, 1.35vh, 16px) clamp(16px, 1.3vw, 20px);
+  min-height: clamp(74px, 9.2vh, 96px);
+  padding: clamp(6px, 0.85vh, 10px) clamp(12px, 1vw, 16px);
   border: 1px solid rgba(240, 201, 106, 0.16);
   border-bottom-color: rgba(240, 201, 106, 0.32);
   border-radius: 22px;
   background:
+    radial-gradient(circle at 82% 48%, rgba(79, 214, 194, 0.14), transparent 18%),
+    radial-gradient(circle at 92% 50%, rgba(240, 201, 106, 0.1), transparent 24%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
     radial-gradient(circle at left center, rgba(240, 201, 106, 0.12), transparent 22%),
     linear-gradient(135deg, rgba(12, 72, 54, 0.92) 0%, rgba(8, 50, 38, 0.94) 52%, rgba(5, 29, 22, 0.96) 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 16px 32px rgba(0, 0, 0, 0.18);
-  overflow: hidden;
+  overflow: visible;
   flex-shrink: 0;
 }
 
@@ -95,12 +109,28 @@
   pointer-events: none;
 }
 
+.content-header::before {
+  content: "";
+  position: absolute;
+  top: calc(clamp(6px, 0.85vh, 10px) * -1.65);
+  left: 50%;
+  width: clamp(120px, 12vw, 168px);
+  height: clamp(18px, 2vh, 22px);
+  transform: translateX(-50%);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 168 22'%3E%3Cg fill='none' stroke='%23E7C46C' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 11h52' opacity='.52'/%3E%3Cpath d='M114 11h52' opacity='.52'/%3E%3Cpath d='M54 11h20' opacity='.8'/%3E%3Cpath d='M94 11h20' opacity='.8'/%3E%3Cpath d='M74 11l10-10 10 10'/%3E%3Cpath d='M64 11c6-5 12-8 20-8s14 3 20 8'/%3E%3Cpath d='M78 11l6-6 6 6-6 6Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 100% 100%;
+  opacity: 0.92;
+  pointer-events: none;
+}
+
 .content-identity {
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: clamp(4px, 0.8vh, 8px);
+  gap: clamp(1px, 0.25vh, 4px);
 }
 
 .content-address {
@@ -110,15 +140,16 @@
 .content-mosque-name {
   margin: 0;
   color: var(--ivory-soft);
-  font-size: clamp(2.05rem, 2.65vw, 2.5rem);
-  line-height: 1;
+  font-size: clamp(2.42rem, 3.15vw, 3.02rem);
+  line-height: 0.94;
   font-weight: 800;
 }
 
 .content-address {
   color: var(--mint-soft);
-  font-size: clamp(0.92rem, 1.1vw, 1rem);
+  font-size: clamp(1.22rem, 1.46vw, 1.54rem);
   font-weight: 500;
+  line-height: 1;
 }
 
 .content-stage {
