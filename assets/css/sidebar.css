@@ -303,3 +303,70 @@
   text-transform: lowercase;
   color: rgba(232, 242, 236, 0.34);
 }
+
+@media (max-height: 720px) {
+  .left-panel {
+    --panel-pad-y: 12px;
+    --panel-pad-x: 12px;
+    padding-bottom: 20px;
+  }
+
+  .sidebar-top-ornament {
+    height: 112px;
+    margin: calc(var(--panel-pad-y) * -1) 0 -30px;
+  }
+
+  .sidebar-lantern {
+    width: 24px;
+    height: 78px;
+    top: 6px;
+  }
+
+  .clock-card {
+    margin-bottom: 8px;
+  }
+
+  .clock-main {
+    font-size: 4.1rem;
+  }
+
+  .clock-seconds {
+    top: 0.15rem;
+    font-size: 1.45rem;
+  }
+
+  .date-display {
+    margin-top: 2px;
+    font-size: 1.28rem;
+  }
+
+  .date-ornament {
+    height: 38px;
+    margin-top: 4px;
+  }
+
+  .schedule-row {
+    padding: 9px 8px;
+  }
+
+  .prayer-name {
+    font-size: 1.65rem;
+  }
+
+  .prayer-time {
+    font-size: 1.78rem;
+  }
+
+  .schedule-endcap {
+    padding-top: 8px;
+  }
+
+  .sidebar-endcap-wrap {
+    margin-bottom: 0;
+    padding-bottom: 10px;
+  }
+
+  .sidebar-signature {
+    margin-top: 2px;
+  }
+}
