@@ -316,11 +316,11 @@
     margin: calc(var(--panel-pad-y) * -1) 0 -30px;
   }
 
-  .sidebar-lantern {
-    width: 24px;
-    height: 78px;
-    top: 6px;
-  }
+  /*.sidebar-lantern {*/
+  /*  width: 24px;*/
+  /*  height: 78px;*/
+  /*  top: 6px;*/
+  /*}*/
 
   .clock-card {
     margin-bottom: 8px;
