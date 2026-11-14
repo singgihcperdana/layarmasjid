@@ -8,18 +8,26 @@ const prayers = [
 ];
 
 const slides = [
-  { src: "/layarmasjid/assets/img/contoh_slide/info-a.png", alt: "Slide informasi 1" },
-  { src: "/layarmasjid/assets/img/contoh_slide/info-2.png", alt: "Slide informasi 2" },
-  { src: "/layarmasjid/assets/img/contoh_slide/info-3.png", alt: "Slide informasi 3" },
-  { src: "/layarmasjid/assets/img/contoh_slide/info-4.png", alt: "Slide informasi 4" },
-  { src: "/layarmasjid/assets/img/contoh_slide/info-5.png", alt: "Slide informasi 5" },
-  { src: "/layarmasjid/assets/img/contoh_slide/info-6.png", alt: "Slide informasi 6" },
-  { src: "/layarmasjid/assets/img/contoh_slide/ig_0bdab9806755ebf80169f450625bd081918be5a5e42634f9c9.png", alt: "Slide informasi Instagram" },
-  { src: "/layarmasjid/assets/img/contoh_slide/info-1777620184.png", alt: "Slide informasi wakaf AC" }
+  { src: "assets/img/contoh_slide/info-a.png", alt: "Slide informasi 1" },
+  { src: "assets/img/contoh_slide/info-2.png", alt: "Slide informasi 2" },
+  { src: "assets/img/contoh_slide/info-3.png", alt: "Slide informasi 3" },
+  { src: "assets/img/contoh_slide/info-4.png", alt: "Slide informasi 4" },
+  { src: "assets/img/contoh_slide/info-5.png", alt: "Slide informasi 5" },
+  { src: "assets/img/contoh_slide/info-6.png", alt: "Slide informasi 6" },
+  { src: "assets/img/contoh_slide/ig_0bdab9806755ebf80169f450625bd081918be5a5e42634f9c9.png", alt: "Slide informasi Instagram" },
+  { src: "assets/img/contoh_slide/info-1777620184.png", alt: "Slide informasi wakaf AC" }
 ];
+
+// Koreksi manual tanggal Hijriyah jika rukyat lokal Kemenag berbeda (+1, 0, -1 hari)
+const HIJRI_OFFSET_DAYS = 0;
 
 const dayFormatter = new Intl.DateTimeFormat("id-ID", { weekday: "long" });
 const monthFormatter = new Intl.DateTimeFormat("id-ID", { month: "long" });
+const hijriFormatter = new Intl.DateTimeFormat("id-ID-u-ca-islamic-umalqura", {
+  day: "numeric",
+  month: "long",
+  year: "numeric"
+});
 
 function pad(value) {
   return String(value).padStart(2, "0");
@@ -29,10 +37,45 @@ function toTitleCase(value) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+function getPrayerDate(baseDate, timeText) {
+  const [hours, minutes] = timeText.split(":").map(Number);
+  const next = new Date(baseDate);
+  next.setHours(hours, minutes, 0, 0);
+  return next;
+}
+
+function getHijriDateText(now) {
+  const d = new Date(now);
+
+  // Pergantian hari kalender Hijriyah dimulai saat masuk waktu Maghrib
+  const maghrib = prayers.find((p) => p.name === "Maghrib");
+  let extraDay = HIJRI_OFFSET_DAYS;
+  if (maghrib) {
+    const maghribTime = getPrayerDate(now, maghrib.time);
+    if (now >= maghribTime) {
+      extraDay += 1;
+    }
+  }
+
+  if (extraDay !== 0) {
+    d.setDate(d.getDate() + extraDay);
+  }
+
+  try {
+    const raw = hijriFormatter.format(d);
+    // Standarisasi akhiran menjadi 'H' (misal: "4 Jumadilawal 1448 H")
+    const cleaned = raw.replace(/\s*(AH|H)\b/gi, "").trim();
+    return `${cleaned} H`;
+  } catch (err) {
+    return "";
+  }
+}
+
 function updateClock(now) {
   const clockMain = document.getElementById("clock-main");
   const clockSeconds = document.getElementById("clock-seconds");
   const dateDisplay = document.getElementById("date-display");
+  const dateHijri = document.getElementById("date-hijri");
 
   if (!clockMain || !clockSeconds || !dateDisplay) {
     return;
@@ -47,13 +90,10 @@ function updateClock(now) {
   clockMain.textContent = `${hours}.${minutes}`;
   clockSeconds.textContent = seconds;
   dateDisplay.textContent = `${dayName}, ${pad(now.getDate())} ${monthName} ${now.getFullYear()}`;
-}
 
-function getPrayerDate(baseDate, timeText) {
-  const [hours, minutes] = timeText.split(":").map(Number);
-  const next = new Date(baseDate);
-  next.setHours(hours, minutes, 0, 0);
-  return next;
+  if (dateHijri) {
+    dateHijri.textContent = getHijriDateText(now);
+  }
 }
 
 function updateNextPrayer(now) {

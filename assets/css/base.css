@@ -2,6 +2,10 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: clamp(14px, 0.85vw + 0.4vh, 24px);
+}
+
 html,
 body {
   margin: 0;

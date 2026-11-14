@@ -34,15 +34,21 @@ layarmasjid/
 
 ## Menjalankan Project
 
-Karena file asset menggunakan path `/layarmasjid/...`, project ini paling aman dijalankan dari document root XAMPP:
+Project ini menggunakan path aset relatif, sehingga bisa dijalankan dengan berbagai cara:
 
-1. Simpan project di `htdocs/layarmasjid`
-2. Jalankan Apache dari XAMPP
-3. Buka:
-
-```text
-http://localhost/layarmasjid/
+### 1. Menggunakan Python Server (Direkomendasikan)
+Jalankan di terminal dalam folder project:
+```bash
+python -m http.server 8080 --bind 0.0.0.0
 ```
+Lalu buka di browser:
+```text
+http://localhost:8080/
+```
+
+### 2. Menggunakan Web Server Lain (XAMPP / Live Server / VS Code / IntelliJ)
+- Jika menggunakan XAMPP: letakkan di `htdocs` dan buka `http://localhost/layarmasjid/`
+- Jika menggunakan Live Server di VS Code atau built-in preview IntelliJ: cukup klik kanan `index.html` dan buka di browser.
 
 ## Bagian Yang Paling Sering Diubah
 
@@ -89,7 +95,7 @@ Edit isi `.content-ticker-text` di [index.html](/Applications/XAMPP/xamppfiles/h
 
 - Saat ini data jadwal dan slide masih statis.
 - Jika nanti ingin dibuat dinamis, project ini bisa dikembangkan ke sumber data JSON, API, atau panel admin.
-- Path asset saat ini memakai prefix `/layarmasjid/`, jadi jika nama folder project berubah, referensi path di HTML/CSS/JS juga perlu disesuaikan.
+- Path aset memakai path relatif, sehingga aman dijalankan di server apapun atau langsung di root folder.
 
 ## Rencana Pengembangan
 
