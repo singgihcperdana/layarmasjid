@@ -1,3 +1,32 @@
+// =============================================================================
+// KONFIGURASI URUTAN ADZAN, IQOMAH, & SHOLAT (Bisa disesuaikan pengurus masjid)
+// =============================================================================
+// 1. Menjelang Adzan: durasi countdown (01:00) & bunyi beep di 10 detik terakhir
+const waitAdzan = 1;            // Durasi countdown menuju adzan (menit, diset 1 menit = 01:00)
+const countDownAdzanBeep = 10;  // Bunyi beep di detik-detik terakhir menjelang adzan (detik)
+
+// 2. Saat Adzan: durasi tampilan layar adzan
+const lamaAdzan = 5;            // Durasi tampilan halaman adzan (menit, contoh: 5 menit)
+
+// 3. Menuju Iqomah: durasi jeda countdown iqomah (05:00) & bunyi beep di 10 detik terakhir
+const lamaIqomah = 5;           // Durasi countdown iqomah (menit, contoh: 5 menit = 05:00)
+const countDownIqomahBeep = 10; // Bunyi beep di detik-detik terakhir iqomah (detik)
+
+// Opsi durasi iqomah khusus per waktu sholat (jika ingin berbeda tiap sholat, default mengacu ke lamaIqomah)
+const durasiIqomahPerSholat = {
+  "Subuh": 5,
+  "Dzuhur": 5,
+  "Ashar": 5,
+  "Maghrib": 5,
+  "Isya": 5
+};
+
+// 4. Saat Sholat: durasi layar khusyuk & senyap saat sholat berjamaah berlangsung
+const lamaSholat = 10;          // Durasi layar sholat khusyuk (menit, contoh: 10 menit)
+
+// Sholat fardhu yang memiliki adzan & iqomah (Syuruq tidak memiliki adzan)
+const ADZAN_PRAYERS = ["Subuh", "Dzuhur", "Ashar", "Maghrib", "Isya"];
+
 const prayers = [
   { name: "Subuh", time: "04:36" },
   { name: "Syuruq", time: "05:52" },
@@ -47,7 +76,6 @@ function getPrayerDate(baseDate, timeText) {
 function getHijriDateText(now) {
   const d = new Date(now);
 
-  // Pergantian hari kalender Hijriyah dimulai saat masuk waktu Maghrib
   const maghrib = prayers.find((p) => p.name === "Maghrib");
   let extraDay = HIJRI_OFFSET_DAYS;
   if (maghrib) {
@@ -63,7 +91,6 @@ function getHijriDateText(now) {
 
   try {
     const raw = hijriFormatter.format(d);
-    // Standarisasi akhiran menjadi 'H' (misal: "4 Jumadilawal 1448 H")
     const cleaned = raw.replace(/\s*(AH|H)\b/gi, "").trim();
     return `${cleaned} H`;
   } catch (err) {
@@ -147,6 +174,9 @@ function setupBrandLogo() {
   logo.addEventListener("load", applyLogoShape, { once: true });
 }
 
+let slideIntervalId = null;
+let isSlidePaused = false;
+
 function setupSlides() {
   const slidesRoot = document.getElementById("content-stage-slides");
   const dotsRoot = document.getElementById("content-stage-dots");
@@ -184,7 +214,9 @@ function setupSlides() {
 
   let activeIndex = 0;
 
-  setInterval(() => {
+  slideIntervalId = setInterval(() => {
+    if (isSlidePaused) return;
+
     slideElements[activeIndex].classList.remove("active");
     dotElements[activeIndex].classList.remove("active");
 
@@ -195,15 +227,540 @@ function setupSlides() {
   }, 3000);
 }
 
+// =============================================================================
+// WEB AUDIO API SOUND GENERATOR (Synthesized Beep & Chime, Tanpa File Eksternal)
+// =============================================================================
+let audioCtx = null;
+
+function playTone(freq = 880, duration = 0.12, type = "sine", gainVolume = 0.15) {
+  try {
+    if (!audioCtx) {
+      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtxClass) return;
+      audioCtx = new AudioCtxClass();
+    }
+    if (audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(gainVolume, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {
+    // Diabaikan jika browser memerlukan user gesture pertama
+  }
+}
+
+// Beep di detik-detik terakhir menjelang adzan (setiap detik berbunyi)
+function playBeepAdzan() {
+  playTone(850, 0.12, "sine", 0.18);
+}
+
+// Chime saat detik ke-0 (waktu adzan tepat tiba)
+function playChimeAzan() {
+  playTone(659.25, 0.45, "triangle", 0.2);
+  setTimeout(() => playTone(880, 0.65, "sine", 0.22), 260);
+}
+
+// Beep di detik-detik terakhir countdown iqomah (setiap detik berbunyi)
+function playBeepIqomah() {
+  playTone(784, 0.15, "sine", 0.2);
+}
+
+// Chime penanda waktu iqomah berkumandang (masuk sholat)
+function playChimeIqomah() {
+  playTone(523.25, 0.5, "triangle", 0.22);
+  setTimeout(() => playTone(659.25, 0.8, "sine", 0.22), 280);
+}
+
+// =============================================================================
+// STATE MACHINE 5 TAHAPAN (LIVE & PREVIEW)
+// =============================================================================
+// 1. menjelang_azan (countdown MM:SS dari waitAdzan s.d. 0, beep di 10 detik terakhir)
+// 2. saat_azan (halaman adzan selama lamaAdzan)
+// 3. countdown_iqomah (countdown MM:SS dari lamaIqomah s.d. 0, beep di 10 detik terakhir)
+// 4. saat_sholat (mode sholat khusyuk & hening selama lamaSholat)
+// 5. null (kembali ke tampilan awal)
+
+let simulationState = null;
+
+function getPrayerIqomahMinutes(prayerName) {
+  return durasiIqomahPerSholat[prayerName] || lamaIqomah;
+}
+
+function getPrayerLifecycleState(now) {
+  // Mode Simulasi / Preview
+  if (simulationState) {
+    const s = simulationState;
+    s.remainingSec -= 1;
+
+    // Tahap 1: Menjelang Adzan (Countdown MM:SS)
+    if (s.phase === "menjelang_azan") {
+      if (s.remainingSec <= 0) {
+        if (s.autoNext) {
+          simulationState = {
+            phase: "saat_azan",
+            prayerName: s.prayerName,
+            remainingSec: s.demoMode ? 5 : lamaAdzan * 60,
+            autoNext: s.autoNext,
+            demoMode: s.demoMode
+          };
+        } else {
+          simulationState = null;
+          return null;
+        }
+      }
+      return {
+        phase: "menjelang_azan",
+        prayerName: s.prayerName,
+        diffSeconds: Math.max(0, s.remainingSec)
+      };
+    }
+
+    // Tahap 2: Saat Azan
+    if (s.phase === "saat_azan") {
+      if (s.remainingSec <= 0) {
+        if (s.autoNext) {
+          simulationState = {
+            phase: "countdown_iqomah",
+            prayerName: s.prayerName,
+            remainingSec: s.demoMode ? 15 : getPrayerIqomahMinutes(s.prayerName) * 60,
+            autoNext: s.autoNext,
+            demoMode: s.demoMode
+          };
+        } else {
+          simulationState = null;
+          return null;
+        }
+      }
+      return {
+        phase: "saat_azan",
+        prayerName: s.prayerName,
+        diffSeconds: s.remainingSec
+      };
+    }
+
+    // Tahap 3: Countdown Iqomah
+    if (s.phase === "countdown_iqomah") {
+      if (s.remainingSec <= 0) {
+        if (s.autoNext) {
+          simulationState = {
+            phase: "saat_sholat",
+            prayerName: s.prayerName,
+            remainingSec: s.demoMode ? 6 : lamaSholat * 60,
+            autoNext: false,
+            demoMode: s.demoMode
+          };
+        } else {
+          simulationState = null;
+          return null;
+        }
+      }
+      return {
+        phase: "countdown_iqomah",
+        prayerName: s.prayerName,
+        diffSeconds: Math.max(0, s.remainingSec)
+      };
+    }
+
+    // Tahap 4: Saat Sholat
+    if (s.phase === "saat_sholat") {
+      if (s.remainingSec <= 0) {
+        simulationState = null;
+        return null; // Tahap 5: Kembali ke tampilan awal
+      }
+      return {
+        phase: "saat_sholat",
+        prayerName: s.prayerName,
+        diffSeconds: s.remainingSec
+      };
+    }
+  }
+
+  // Waktu Live Aktual
+  const fardhPrayers = prayers.filter((p) => ADZAN_PRAYERS.includes(p.name));
+
+  for (const prayer of fardhPrayers) {
+    const baseToday = getPrayerDate(now, prayer.time);
+    const candidateTimes = [
+      baseToday,
+      new Date(baseToday.getTime() + 86400000), // esok
+      new Date(baseToday.getTime() - 86400000)  // kemarin
+    ];
+
+    const waitSec = waitAdzan * 60;
+    const adzanSec = lamaAdzan * 60;
+    const iqomahSec = getPrayerIqomahMinutes(prayer.name) * 60;
+    const sholatSec = lamaSholat * 60;
+
+    for (const pTime of candidateTimes) {
+      const deltaSec = Math.floor((now.getTime() - pTime.getTime()) / 1000);
+
+      // 1. Menjelang Adzan: -waitSec s.d. 0 detik (countdown MM:SS mundur ke 00:00)
+      if (deltaSec >= -waitSec && deltaSec < 0) {
+        return {
+          phase: "menjelang_azan",
+          prayerName: prayer.name,
+          diffSeconds: Math.abs(deltaSec)
+        };
+      }
+
+      // 2. Saat Azan: 0 s.d. adzanSec
+      if (deltaSec >= 0 && deltaSec < adzanSec) {
+        return {
+          phase: "saat_azan",
+          prayerName: prayer.name,
+          diffSeconds: deltaSec
+        };
+      }
+
+      // 3. Countdown Iqomah: adzanSec s.d. (adzanSec + iqomahSec)
+      const endIqomah = adzanSec + iqomahSec;
+      if (deltaSec >= adzanSec && deltaSec < endIqomah) {
+        const remainingIqomah = endIqomah - deltaSec;
+        return {
+          phase: "countdown_iqomah",
+          prayerName: prayer.name,
+          diffSeconds: remainingIqomah
+        };
+      }
+
+      // 4. Saat Sholat: endIqomah s.d. (endIqomah + sholatSec)
+      const endSholat = endIqomah + sholatSec;
+      if (deltaSec >= endIqomah && deltaSec < endSholat) {
+        return {
+          phase: "saat_sholat",
+          prayerName: prayer.name,
+          diffSeconds: endSholat - deltaSec
+        };
+      }
+
+      // 5. Kembali ke awal (di luar rentang di atas -> return null)
+    }
+  }
+
+  return null;
+}
+
+// =============================================================================
+// RENDER OVERLAY (MENAMPILKAN TAHAP AKTIF)
+// =============================================================================
+let lastSoundKey = null;
+
+function renderLifecycleScreen(state, now) {
+  const screen = document.getElementById("adzan-screen");
+  if (!screen) return;
+
+  // TAHAP 5: KEMBALI KE TAMPILAN AWAL
+  if (!state) {
+    if (screen.classList.contains("active")) {
+      screen.classList.remove("active");
+      screen.classList.remove("phase--sholat");
+      screen.setAttribute("aria-hidden", "true");
+      isSlidePaused = false;
+    }
+    lastSoundKey = null;
+    return;
+  }
+
+  // Aktifkan overlay & jeda slide background
+  if (!screen.classList.contains("active")) {
+    screen.classList.add("active");
+    screen.setAttribute("aria-hidden", "false");
+    isSlidePaused = true;
+  }
+
+  // Update Jam & Tanggal pada Header Overlay
+  const adzanClockTime = document.getElementById("adzan-clock-time");
+  const adzanClockDate = document.getElementById("adzan-clock-date");
+  if (adzanClockTime) {
+    adzanClockTime.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  }
+  if (adzanClockDate) {
+    const dayName = toTitleCase(dayFormatter.format(now));
+    const monthName = toTitleCase(monthFormatter.format(now));
+    const hijriText = getHijriDateText(now);
+    adzanClockDate.textContent = `${dayName}, ${pad(now.getDate())} ${monthName} ${now.getFullYear()} ${hijriText ? "• " + hijriText : ""}`;
+  }
+
+  const phase1 = document.getElementById("phase-countdown-adzan");
+  const phase2 = document.getElementById("phase-saat-adzan");
+  const phase3 = document.getElementById("phase-countdown-iqomah");
+  const phase4 = document.getElementById("phase-saat-sholat");
+
+  // Mode gelap khusus saat sholat
+  screen.classList.toggle("phase--sholat", state.phase === "saat_sholat");
+
+  // 1. FASE MENJELANG AZAN (Countdown 05:00 MM:SS, beep di 10 detik terakhir)
+  if (state.phase === "menjelang_azan") {
+    if (phase1) phase1.classList.add("active");
+    if (phase2) phase2.classList.remove("active");
+    if (phase3) phase3.classList.remove("active");
+    if (phase4) phase4.classList.remove("active");
+
+    const targetName = document.getElementById("adzan-target-prayer-name");
+    const timerDigits = document.getElementById("adzan-timer-digits");
+    const timerBox = document.getElementById("adzan-timer-box");
+
+    if (targetName) targetName.textContent = state.prayerName.toUpperCase();
+
+    const m = Math.floor(state.diffSeconds / 60);
+    const s = state.diffSeconds % 60;
+    if (timerDigits) {
+      timerDigits.textContent = `${pad(m)}:${pad(s)}`;
+    }
+
+    // 10 detik terakhir: beri tanda urgent & bunyikan beep tiap detik
+    const isUrgent = state.diffSeconds <= countDownAdzanBeep && state.diffSeconds > 0;
+    if (timerBox) {
+      timerBox.classList.toggle("urgent", isUrgent);
+    }
+
+    if (isUrgent) {
+      const soundKey = `adzan-beep-${state.diffSeconds}`;
+      if (lastSoundKey !== soundKey) {
+        lastSoundKey = soundKey;
+        playBeepAdzan();
+      }
+    }
+  }
+
+  // 2. FASE SAAT AZAN (Halaman Azan)
+  else if (state.phase === "saat_azan") {
+    if (phase1) phase1.classList.remove("active");
+    if (phase2) phase2.classList.add("active");
+    if (phase3) phase3.classList.remove("active");
+    if (phase4) phase4.classList.remove("active");
+
+    const curName = document.getElementById("adzan-current-prayer-name");
+    if (curName) curName.textContent = state.prayerName.toUpperCase();
+
+    // Bunyikan nada pembuka chime saat awal azan
+    const soundKey = `azan-entry-${state.prayerName}`;
+    if (lastSoundKey !== soundKey) {
+      lastSoundKey = soundKey;
+      playChimeAzan();
+    }
+  }
+
+  // 3. FASE COUNTDOWN IQOMAH (Beep di 10 detik terakhir)
+  else if (state.phase === "countdown_iqomah") {
+    if (phase1) phase1.classList.remove("active");
+    if (phase2) phase2.classList.remove("active");
+    if (phase3) phase3.classList.add("active");
+    if (phase4) phase4.classList.remove("active");
+
+    const iqName = document.getElementById("iqomah-prayer-name");
+    const iqDigits = document.getElementById("iqomah-timer-digits");
+    const iqBox = document.getElementById("iqomah-timer-box");
+
+    if (iqName) iqName.textContent = state.prayerName.toUpperCase();
+
+    const m = Math.floor(state.diffSeconds / 60);
+    const s = state.diffSeconds % 60;
+    if (iqDigits) {
+      iqDigits.textContent = `${pad(m)}:${pad(s)}`;
+    }
+
+    // 10 detik terakhir: beri tanda urgent & bunyikan beep tiap detik
+    const isUrgent = state.diffSeconds <= countDownIqomahBeep && state.diffSeconds > 0;
+    if (iqBox) {
+      iqBox.classList.toggle("urgent", isUrgent);
+    }
+
+    if (isUrgent) {
+      const soundKey = `iqomah-beep-${state.diffSeconds}`;
+      if (lastSoundKey !== soundKey) {
+        lastSoundKey = soundKey;
+        playBeepIqomah();
+      }
+    }
+
+    // Tepat detik ke-0: bunyikan chime masuk sholat
+    if (state.diffSeconds === 0) {
+      const soundKey = "iqomah-entry-sholat";
+      if (lastSoundKey !== soundKey) {
+        lastSoundKey = soundKey;
+        playChimeIqomah();
+      }
+    }
+  }
+
+  // 4. FASE SAAT SHOLAT (Layar Khusyuk & Hening)
+  else if (state.phase === "saat_sholat") {
+    if (phase1) phase1.classList.remove("active");
+    if (phase2) phase2.classList.remove("active");
+    if (phase3) phase3.classList.remove("active");
+    if (phase4) phase4.classList.add("active");
+  }
+}
+
+// =============================================================================
+// PREVIEW CONTROLLER & UJI TAHAPAN (Uji Tombol & Shortcut Keyboard 'A')
+// =============================================================================
+window.testMenjelangAzan = function(prayerName = "Dzuhur", durationSec = waitAdzan * 60) {
+  // Menampilkan countdown level menit & detik (default: waitAdzan * 60 = 60 detik / 01:00)
+  // Bunyi beep otomatis berbunyi di 10 detik terakhir
+  simulationState = {
+    phase: "menjelang_azan",
+    prayerName: prayerName,
+    remainingSec: durationSec,
+    autoNext: true,
+    demoMode: false
+  };
+  tick();
+};
+
+window.testSaatAzan = function(prayerName = "Dzuhur") {
+  simulationState = {
+    phase: "saat_azan",
+    prayerName: prayerName,
+    remainingSec: lamaAdzan * 60,
+    autoNext: false,
+    demoMode: false
+  };
+  tick();
+};
+
+window.testCountdownIqomah = function(prayerName = "Dzuhur", durationSec = 15) {
+  // Default preview 15 detik (00:15) agar langsung mendengar beep di 10 detik terakhir
+  // Bisa dipanggil window.testCountdownIqomah("Dzuhur", getPrayerIqomahMinutes(prayerName) * 60) jika ingin durasi penuh 5 menit
+  simulationState = {
+    phase: "countdown_iqomah",
+    prayerName: prayerName,
+    remainingSec: durationSec,
+    autoNext: true,
+    demoMode: false
+  };
+  tick();
+};
+
+window.testSaatSholat = function(prayerName = "Dzuhur") {
+  simulationState = {
+    phase: "saat_sholat",
+    prayerName: prayerName,
+    remainingSec: lamaSholat * 60,
+    autoNext: false,
+    demoMode: false
+  };
+  tick();
+};
+
+window.testDemoLengkap = function(prayerName = "Dzuhur") {
+  // Demo otomatis lengkap ~41 detik (seluruh 5 tahapan berurutan):
+  // 15 detik Menjelang Adzan (beep di 10 detik terakhir) ->
+  // 5 detik Saat Azan ->
+  // 15 detik Countdown Iqomah (beep di 10 detik terakhir) ->
+  // 6 detik Saat Sholat ->
+  // Kembali ke tampilan normal awal!
+  simulationState = {
+    phase: "menjelang_azan",
+    prayerName: prayerName,
+    remainingSec: 15,
+    autoNext: true,
+    demoMode: true
+  };
+  tick();
+};
+
+window.testStop = function() {
+  simulationState = null;
+  const screen = document.getElementById("adzan-screen");
+  if (screen) {
+    screen.classList.remove("active");
+    screen.classList.remove("phase--sholat");
+    screen.setAttribute("aria-hidden", "true");
+  }
+  isSlidePaused = false;
+  tick();
+};
+
+function setupAdzanTestControls() {
+  const toolbar = document.getElementById("adzan-test-toolbar");
+  const signature = document.querySelector(".sidebar-signature");
+  const btnCountdown = document.getElementById("btn-test-countdown");
+  const btnAdzan = document.getElementById("btn-test-adzan");
+  const btnIqomah = document.getElementById("btn-test-iqomah");
+  const btnSholat = document.getElementById("btn-test-sholat");
+  const btnDemo = document.getElementById("btn-test-demo");
+  const btnClose = document.getElementById("btn-test-close");
+
+  const toggleToolbar = () => {
+    if (toolbar) toolbar.classList.toggle("visible");
+  };
+
+  // Shortcut keyboard: Tekan huruf 'a' atau 'A' untuk membuka/menutup toolbar
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "a" || e.key === "A") {
+      toggleToolbar();
+    }
+  });
+
+  if (signature) {
+    signature.style.cursor = "pointer";
+    signature.title = "Klik atau tekan tombol 'A' untuk membuka kontrol uji coba";
+    signature.addEventListener("click", toggleToolbar);
+  }
+
+  if (btnCountdown) {
+    btnCountdown.addEventListener("click", () => {
+      window.testMenjelangAzan("Dzuhur", waitAdzan * 60);
+    });
+  }
+
+  if (btnAdzan) {
+    btnAdzan.addEventListener("click", () => {
+      window.testSaatAzan("Dzuhur");
+    });
+  }
+
+  if (btnIqomah) {
+    btnIqomah.addEventListener("click", () => {
+      window.testCountdownIqomah("Dzuhur", 15);
+    });
+  }
+
+  if (btnSholat) {
+    btnSholat.addEventListener("click", () => {
+      window.testSaatSholat("Dzuhur");
+    });
+  }
+
+  if (btnDemo) {
+    btnDemo.addEventListener("click", () => {
+      window.testDemoLengkap("Dzuhur");
+    });
+  }
+
+  if (btnClose) {
+    btnClose.addEventListener("click", () => {
+      window.testStop();
+    });
+  }
+}
+
+// =============================================================================
+// MAIN TICK & INITIALIZATION
+// =============================================================================
 function tick() {
   const now = new Date();
   updateClock(now);
   updateNextPrayer(now);
+
+  const state = getPrayerLifecycleState(now);
+  renderLifecycleScreen(state, now);
 }
 
 function startClock() {
   setupBrandLogo();
   setupSlides();
+  setupAdzanTestControls();
   tick();
 
   const delayToNextSecond = 1000 - new Date().getMilliseconds();
