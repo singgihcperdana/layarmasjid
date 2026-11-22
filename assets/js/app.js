@@ -206,10 +206,16 @@ function applyMasjidConfig() {
 
   // 3. Slides dari Config
   if (Array.isArray(cfg.slides) && cfg.slides.length > 0) {
+    const globalInterval = cfg.timer?.slide_interval || 10;
     slides = cfg.slides.map((item, idx) => ({
-      src: item.content || item.src,
-      alt: `Slide informasi ${idx + 1}`,
-      duration: (item.duration || cfg.timer?.slide_interval || 10) * 1000
+      id: item.id || idx + 1,
+      type: item.type || (item.ayat ? "text" : "image"),
+      src: item.content || item.src || "",
+      alt: item.alt || `Slide informasi ${idx + 1}`,
+      duration: typeof item.duration === "number" && item.duration > 0 ? item.duration : globalInterval,
+      ayat: item.ayat || item.arabic || "",
+      arti: item.arti || item.terjemahan || item.translation || "",
+      surah: item.surah || item.surat || item.source || ""
     }));
   }
 }
@@ -384,12 +390,45 @@ function setupSlides() {
       slideItem.classList.add("active");
     }
 
-    const image = document.createElement("img");
-    image.src = slide.src;
-    image.alt = slide.alt;
-    image.loading = index === 0 ? "eager" : "lazy";
+    if (slide.type === "text" || slide.ayat) {
+      slideItem.classList.add("content-stage-slide--text");
+      slideItem.innerHTML = `
+        <div class="slide-quran-card">
+          <div class="slide-quran-frame">
+            <span class="slide-quran-corner slide-quran-corner--tl" aria-hidden="true"></span>
+            <span class="slide-quran-corner slide-quran-corner--tr" aria-hidden="true"></span>
+            <span class="slide-quran-corner slide-quran-corner--bl" aria-hidden="true"></span>
+            <span class="slide-quran-corner slide-quran-corner--br" aria-hidden="true"></span>
 
-    slideItem.appendChild(image);
+            <div class="slide-quran-header">
+              <span class="slide-quran-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
+            </div>
+
+            <div class="slide-quran-body">
+              <p class="slide-quran-arabic" dir="rtl">${slide.ayat || slide.src}</p>
+              <div class="slide-quran-divider" aria-hidden="true">
+                <span class="slide-quran-divider-line"></span>
+                <span class="slide-quran-divider-star">◈</span>
+                <span class="slide-quran-divider-line"></span>
+              </div>
+              ${slide.arti ? `<p class="slide-quran-translation">"${slide.arti}"</p>` : ""}
+            </div>
+
+            ${slide.surah ? `
+            <div class="slide-quran-footer">
+              <span class="slide-quran-surah-pill">✦ ${slide.surah} ✦</span>
+            </div>` : ""}
+          </div>
+        </div>
+      `;
+    } else {
+      const image = document.createElement("img");
+      image.src = slide.src;
+      image.alt = slide.alt;
+      image.loading = index === 0 ? "eager" : "lazy";
+      slideItem.appendChild(image);
+    }
+
     slidesRoot.appendChild(slideItem);
     return slideItem;
   });
@@ -406,17 +445,33 @@ function setupSlides() {
 
   let activeIndex = 0;
 
-  slideIntervalId = setInterval(() => {
-    if (isSlidePaused) return;
+  function scheduleNextSlide() {
+    if (slideIntervalId) {
+      clearTimeout(slideIntervalId);
+    }
+    if (slideElements.length <= 1) return;
 
-    slideElements[activeIndex].classList.remove("active");
-    dotElements[activeIndex].classList.remove("active");
+    const currentSlide = slides[activeIndex];
+    const globalInterval = window.masjidConfig?.timer?.slide_interval || 10;
+    const durationSec = (currentSlide && typeof currentSlide.duration === "number" && currentSlide.duration > 0)
+      ? currentSlide.duration
+      : globalInterval;
 
-    activeIndex = (activeIndex + 1) % slideElements.length;
+    slideIntervalId = setTimeout(() => {
+      if (!isSlidePaused) {
+        slideElements[activeIndex].classList.remove("active");
+        dotElements[activeIndex].classList.remove("active");
 
-    slideElements[activeIndex].classList.add("active");
-    dotElements[activeIndex].classList.add("active");
-  }, 3000);
+        activeIndex = (activeIndex + 1) % slideElements.length;
+
+        slideElements[activeIndex].classList.add("active");
+        dotElements[activeIndex].classList.add("active");
+      }
+      scheduleNextSlide();
+    }, durationSec * 1000);
+  }
+
+  scheduleNextSlide();
 }
 
 // =============================================================================
@@ -1017,13 +1072,17 @@ function tick() {
 async function startClock() {
   initTimeOffset();
 
-  try {
-    const res = await fetch("config.json?v=" + Date.now());
-    if (res.ok) {
-      window.masjidConfig = await res.json();
+  // Prioritaskan window.masjidConfig dari assets/js/config.js agar komentar/perubahan user aktif.
+  // Hanya fetch config.json jika config.js belum ada/kosong.
+  if (!window.masjidConfig) {
+    try {
+      const res = await fetch("config.json?v=" + Date.now());
+      if (res.ok) {
+        window.masjidConfig = await res.json();
+      }
+    } catch (err) {
+      // Mode offline / file:/// protocol
     }
-  } catch (err) {
-    // Mode offline / file:/// protocol: fallback ke window.masjidConfig dari assets/js/config.js
   }
 
   applyMasjidConfig();

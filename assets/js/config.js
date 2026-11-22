@@ -76,9 +76,10 @@ window.masjidConfig = {
   "slides": [
     {
       "id": 1,
-      "type": "image",
-      "content": "assets/img/contoh_slide/info-1777620184.png",
-      "duration": 15
+      "type": "text",
+      "ayat": "وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ ۚ وَإِنَّهَا لَكَبِيرَةٌ إِلَّا عَلَى الْخَاشِعِينَ",
+      "arti": "Dan mohonlah pertolongan (kepada Allah) dengan sabar dan sholat. Dan (sholat) itu sungguh berat, kecuali bagi orang-orang yang khusyuk.",
+      "surah": "QS. Al-Baqarah: 45"
     },
     {
       "id": 2,
