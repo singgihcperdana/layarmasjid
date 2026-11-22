@@ -1,50 +1,159 @@
 // =============================================================================
 // KONFIGURASI URUTAN ADZAN, IQOMAH, & SHOLAT (Bisa disesuaikan pengurus masjid)
 // =============================================================================
-// 1. Menjelang Adzan: durasi countdown (01:00) & bunyi beep di 10 detik terakhir
-const waitAdzan = 1;            // Durasi countdown menuju adzan (menit, diset 1 menit = 01:00)
-const countDownAdzanBeep = 10;  // Bunyi beep di detik-detik terakhir menjelang adzan (detik)
+// Default fallback jika config.js / database belum dimuat
+let waitAdzan = 1;            // Durasi countdown menuju adzan (menit, diset 1 menit = 01:00)
+let countDownAdzanBeep = 10;  // Bunyi beep di detik-detik terakhir menjelang adzan (detik)
+let lamaAdzan = 5;            // Durasi tampilan halaman adzan (menit, contoh: 5 menit)
+let lamaIqomah = 5;           // Durasi countdown iqomah (menit, contoh: 5 menit = 05:00)
+let countDownIqomahBeep = 10; // Bunyi beep di detik-detik terakhir iqomah (detik)
+let lamaSholat = 10;          // Durasi layar sholat khusyuk (menit, contoh: 10 menit)
 
-// 2. Saat Adzan: durasi tampilan layar adzan
-const lamaAdzan = 5;            // Durasi tampilan halaman adzan (menit, contoh: 5 menit)
-
-// 3. Menuju Iqomah: durasi jeda countdown iqomah (05:00) & bunyi beep di 10 detik terakhir
-const lamaIqomah = 5;           // Durasi countdown iqomah (menit, contoh: 5 menit = 05:00)
-const countDownIqomahBeep = 10; // Bunyi beep di detik-detik terakhir iqomah (detik)
+function getTimerConfig() {
+  const cfg = window.masjidConfig || {};
+  const t = cfg.timer || {};
+  return {
+    waitAdzan: typeof t.wait_adzan !== "undefined" ? Number(t.wait_adzan) : waitAdzan,
+    countDownAdzanBeep: typeof t.countdown_beep !== "undefined" ? Number(t.countdown_beep) : countDownAdzanBeep,
+    lamaAdzan: typeof t.adzan !== "undefined" ? Number(t.adzan) : lamaAdzan,
+    lamaSholat: typeof t.sholat !== "undefined" ? Number(t.sholat) : lamaSholat
+  };
+}
 
 // Opsi durasi iqomah khusus per waktu sholat (jika ingin berbeda tiap sholat, default mengacu ke lamaIqomah)
-const durasiIqomahPerSholat = {
-  "Subuh": 5,
-  "Dzuhur": 5,
-  "Ashar": 5,
+let durasiIqomahPerSholat = {
+  "Subuh": 10,
+  "Dzuhur": 10,
+  "Ashar": 10,
   "Maghrib": 5,
-  "Isya": 5
+  "Isya": 10
 };
-
-// 4. Saat Sholat: durasi layar khusyuk & senyap saat sholat berjamaah berlangsung
-const lamaSholat = 10;          // Durasi layar sholat khusyuk (menit, contoh: 10 menit)
 
 // Sholat fardhu yang memiliki adzan & iqomah (Syuruq tidak memiliki adzan)
 const ADZAN_PRAYERS = ["Subuh", "Dzuhur", "Ashar", "Maghrib", "Isya"];
 
-const prayers = [
-  { name: "Subuh", time: "04:36" },
-  { name: "Syuruq", time: "05:52" },
-  { name: "Dzuhur", time: "11:54" },
-  { name: "Ashar", time: "15:14" },
-  { name: "Maghrib", time: "17:48" },
-  { name: "Isya", time: "18:59" }
+// Jadwal sholat (Dihitung dinamis via PrayTimes.js)
+let prayers = [
+  { name: "Subuh", key: "fajr", time: "04:06" },
+  { name: "Syuruq", key: "sunrise", time: "05:27" },
+  { name: "Dzuhur", key: "dhuhr", time: "11:43" },
+  { name: "Ashar", key: "asr", time: "15:04" },
+  { name: "Maghrib", key: "maghrib", time: "17:52" },
+  { name: "Isya", key: "isha", time: "19:09" }
 ];
 
-const slides = [
+let lastCalculatedDay = null;
+
+function calculateDailyPrayers(now) {
+  const dayKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+  if (lastCalculatedDay === dayKey && prayers.length > 0) {
+    return;
+  }
+
+  const cfg = window.masjidConfig || {};
+  const setting = cfg.setting || {};
+  const lat = setting.latitude || -6.14;
+  const lng = setting.longitude || 106.59;
+  const tz = setting.timeZone || 7;
+  const dst = setting.dst || 0;
+
+  if (window.prayTimes) {
+    if (cfg.prayTimesAdjust) {
+      window.prayTimes.adjust(cfg.prayTimesAdjust);
+    }
+    if (cfg.prayTimesTune) {
+      window.prayTimes.tune(cfg.prayTimesTune);
+    }
+
+    const times = window.prayTimes.getTimes(now, [lat, lng], tz, dst, "24h");
+    const labels = cfg.prayName || {
+      fajr: "Subuh",
+      sunrise: "Syuruq",
+      dhuhr: "Dzuhur",
+      asr: "Ashar",
+      maghrib: "Maghrib",
+      isha: "Isya"
+    };
+
+    prayers = [
+      { name: labels.fajr || "Subuh", key: "fajr", time: times.fajr },
+      { name: labels.sunrise || "Syuruq", key: "sunrise", time: times.sunrise },
+      { name: labels.dhuhr || "Dzuhur", key: "dhuhr", time: times.dhuhr },
+      { name: labels.asr || "Ashar", key: "asr", time: times.asr },
+      { name: labels.maghrib || "Maghrib", key: "maghrib", time: times.maghrib },
+      { name: labels.isha || "Isya", key: "isha", time: times.isha }
+    ];
+
+    renderScheduleTable();
+    lastCalculatedDay = dayKey;
+  }
+}
+
+function renderScheduleTable() {
+  const list = document.getElementById("schedule-list");
+  if (!list) return;
+
+  list.innerHTML = prayers
+    .map(
+      (p, idx) => `
+    <div class="schedule-row ${idx === 0 ? "active" : ""}">
+      <span class="prayer-name">${p.name}</span>
+      <span class="prayer-time">${p.time}</span>
+    </div>`
+    )
+    .join("");
+}
+
+function applyMasjidConfig() {
+  const cfg = window.masjidConfig || {};
+  const s = cfg.setting || {};
+
+  // 1. Identitas Masjid di Header
+  if (s.nama) {
+    const nameEl = document.querySelector(".content-mosque-name");
+    if (nameEl) nameEl.textContent = s.nama;
+  }
+  if (s.lokasi) {
+    const locEl = document.querySelector(".content-address span");
+    if (locEl) locEl.textContent = s.lokasi;
+  }
+  if (s.kontak_info) {
+    const infoEl = document.getElementById("content-extra-text");
+    if (infoEl) infoEl.textContent = s.kontak_info;
+  }
+  if (s.logo) {
+    const logoEl = document.getElementById("content-brand-logo");
+    if (logoEl) logoEl.src = s.logo;
+  }
+
+  // 2. Running Text (Ticker Marquee)
+  if (Array.isArray(cfg.running_text) && cfg.running_text.length > 0) {
+    const tickerTrack = document.querySelector(".content-ticker-text");
+    if (tickerTrack) {
+      tickerTrack.innerHTML = cfg.running_text
+        .map((t) => `<span class="content-ticker-item">${t}</span>`)
+        .join("");
+    }
+  }
+
+  // 3. Slides dari Config
+  if (Array.isArray(cfg.slides) && cfg.slides.length > 0) {
+    slides = cfg.slides.map((item, idx) => ({
+      src: item.content || item.src,
+      alt: `Slide informasi ${idx + 1}`,
+      duration: (item.duration || cfg.timer?.slide_interval || 10) * 1000
+    }));
+  }
+}
+
+let slides = [
+  { src: "assets/img/contoh_slide/info-1777620184.png", alt: "Slide informasi wakaf AC" },
   { src: "assets/img/contoh_slide/info-a.png", alt: "Slide informasi 1" },
   { src: "assets/img/contoh_slide/info-2.png", alt: "Slide informasi 2" },
   { src: "assets/img/contoh_slide/info-3.png", alt: "Slide informasi 3" },
   { src: "assets/img/contoh_slide/info-4.png", alt: "Slide informasi 4" },
   { src: "assets/img/contoh_slide/info-5.png", alt: "Slide informasi 5" },
-  { src: "assets/img/contoh_slide/info-6.png", alt: "Slide informasi 6" },
-  { src: "assets/img/contoh_slide/ig_0bdab9806755ebf80169f450625bd081918be5a5e42634f9c9.png", alt: "Slide informasi Instagram" },
-  { src: "assets/img/contoh_slide/info-1777620184.png", alt: "Slide informasi wakaf AC" }
+  { src: "assets/img/contoh_slide/info-6.png", alt: "Slide informasi 6" }
 ];
 
 // Koreksi manual tanggal Hijriyah jika rukyat lokal Kemenag berbeda (+1, 0, -1 hari)
@@ -77,7 +186,10 @@ function getHijriDateText(now) {
   const d = new Date(now);
 
   const maghrib = prayers.find((p) => p.name === "Maghrib");
-  let extraDay = HIJRI_OFFSET_DAYS;
+  const cfg = window.masjidConfig || {};
+  const setting = cfg.setting || {};
+  let extraDay = typeof setting.hijri_offset !== "undefined" ? Number(setting.hijri_offset) : HIJRI_OFFSET_DAYS;
+
   if (maghrib) {
     const maghribTime = getPrayerDate(now, maghrib.time);
     if (now >= maghribTime) {
@@ -111,8 +223,20 @@ function updateClock(now) {
   const hours = pad(now.getHours());
   const minutes = pad(now.getMinutes());
   const seconds = pad(now.getSeconds());
-  const dayName = toTitleCase(dayFormatter.format(now));
-  const monthName = toTitleCase(monthFormatter.format(now));
+
+  // Dukungan kustom nama hari (Ahad, dsb.) dan nama bulan dari config.js
+  const cfg = window.masjidConfig || {};
+  const dayKeys = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const currentDayKey = dayKeys[now.getDay()];
+  const dayName = (cfg.dayName && cfg.dayName[currentDayKey])
+    ? cfg.dayName[currentDayKey]
+    : toTitleCase(dayFormatter.format(now));
+
+  const monthKeys = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const currentMonthKey = monthKeys[now.getMonth()];
+  const monthName = (cfg.monthName && cfg.monthName[currentMonthKey])
+    ? cfg.monthName[currentMonthKey]
+    : toTitleCase(monthFormatter.format(now));
 
   clockMain.textContent = `${hours}.${minutes}`;
   clockSeconds.textContent = seconds;
@@ -291,10 +415,25 @@ function playChimeIqomah() {
 let simulationState = null;
 
 function getPrayerIqomahMinutes(prayerName) {
+  const cfg = window.masjidConfig || {};
+  if (cfg.iqomahTimer) {
+    const map = {
+      "Subuh": cfg.iqomahTimer.fajr,
+      "Dzuhur": cfg.iqomahTimer.dhuhr,
+      "Ashar": cfg.iqomahTimer.asr,
+      "Maghrib": cfg.iqomahTimer.maghrib,
+      "Isya": cfg.iqomahTimer.isha
+    };
+    if (typeof map[prayerName] !== "undefined") {
+      return Number(map[prayerName]);
+    }
+  }
   return durasiIqomahPerSholat[prayerName] || lamaIqomah;
 }
 
 function getPrayerLifecycleState(now) {
+  const timers = getTimerConfig();
+
   // Mode Simulasi / Preview
   if (simulationState) {
     const s = simulationState;
@@ -307,7 +446,7 @@ function getPrayerLifecycleState(now) {
           simulationState = {
             phase: "saat_azan",
             prayerName: s.prayerName,
-            remainingSec: s.demoMode ? 5 : lamaAdzan * 60,
+            remainingSec: s.demoMode ? 5 : timers.lamaAdzan * 60,
             autoNext: s.autoNext,
             demoMode: s.demoMode
           };
@@ -353,7 +492,7 @@ function getPrayerLifecycleState(now) {
           simulationState = {
             phase: "saat_sholat",
             prayerName: s.prayerName,
-            remainingSec: s.demoMode ? 6 : lamaSholat * 60,
+            remainingSec: s.demoMode ? 6 : timers.lamaSholat * 60,
             autoNext: false,
             demoMode: s.demoMode
           };
@@ -394,10 +533,10 @@ function getPrayerLifecycleState(now) {
       new Date(baseToday.getTime() - 86400000)  // kemarin
     ];
 
-    const waitSec = waitAdzan * 60;
-    const adzanSec = lamaAdzan * 60;
+    const waitSec = timers.waitAdzan * 60;
+    const adzanSec = timers.lamaAdzan * 60;
     const iqomahSec = getPrayerIqomahMinutes(prayer.name) * 60;
-    const sholatSec = lamaSholat * 60;
+    const sholatSec = timers.lamaSholat * 60;
 
     for (const pTime of candidateTimes) {
       const deltaSec = Math.floor((now.getTime() - pTime.getTime()) / 1000);
@@ -750,6 +889,7 @@ function setupAdzanTestControls() {
 // =============================================================================
 function tick() {
   const now = new Date();
+  calculateDailyPrayers(now); // Otomatis recalculate jika berganti hari (00:00)
   updateClock(now);
   updateNextPrayer(now);
 
@@ -757,7 +897,18 @@ function tick() {
   renderLifecycleScreen(state, now);
 }
 
-function startClock() {
+async function startClock() {
+  try {
+    const res = await fetch("config.json?v=" + Date.now());
+    if (res.ok) {
+      window.masjidConfig = await res.json();
+    }
+  } catch (err) {
+    // Mode offline / file:/// protocol: fallback ke window.masjidConfig dari assets/js/config.js
+  }
+
+  applyMasjidConfig();
+  calculateDailyPrayers(new Date());
   setupBrandLogo();
   setupSlides();
   setupAdzanTestControls();
