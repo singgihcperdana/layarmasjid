@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="assets/css/base.css?v=35">
   <link rel="stylesheet" href="assets/css/layout.css?v=35">
   <link rel="stylesheet" href="assets/css/sidebar.css?v=35">
-  <link rel="stylesheet" href="assets/css/adzan.css?v=35">
+  <link rel="stylesheet" href="assets/css/adzan.css?v=37">
 </head>
 <body>
   <div class="screen-shell">
@@ -139,15 +139,18 @@
 
     <!-- Halaman Adzan & Sholat (Fullscreen Overlay) -->
     <div id="adzan-screen" class="adzan-screen" aria-hidden="true">
+      <!-- Ornamen Sudut Arsitektur Islami -->
       <span class="adzan-corner adzan-corner--top-left" aria-hidden="true"></span>
       <span class="adzan-corner adzan-corner--top-right" aria-hidden="true"></span>
       <span class="adzan-corner adzan-corner--bottom-left" aria-hidden="true"></span>
       <span class="adzan-corner adzan-corner--bottom-right" aria-hidden="true"></span>
 
+      <!-- Bingkai Dalam Beraksen Emas -->
+      <div class="adzan-inner-frame" aria-hidden="true"></div>
       <div class="adzan-bg-pattern" aria-hidden="true"></div>
       <div class="adzan-bg-glow" aria-hidden="true"></div>
 
-      <!-- Header Bar (Hanya Jam & Tanggal di Pojok Kanan Atas) -->
+      <!-- Header Bar (Jam & Tanggal di Pojok Kanan Atas) -->
       <header class="adzan-header" id="adzan-header">
         <div class="adzan-clock-display">
           <span class="adzan-clock-time" id="adzan-clock-time">00:00:00</span>
@@ -156,76 +159,82 @@
       </header>
 
       <main class="adzan-stage">
-        <!-- 1. FASE MENJELANG AZAN (Countdown 05:00 & Beep di 10 detik terakhir) -->
+        <!-- 1. FASE MENJELANG AZAN -->
         <section class="adzan-phase adzan-phase--countdown-adzan" id="phase-countdown-adzan">
           <div class="adzan-countdown-header">
-            <h1 class="adzan-countdown-title">MENJELANG WAKTU ADZAN</h1>
-            <p class="adzan-countdown-prayer-name">SHOLAT <span id="adzan-target-prayer-name">DZUHUR</span></p>
+            <h1 class="adzan-countdown-title">MENJELANG ADZAN</h1>
+            <div class="adzan-prayer-pill">
+              <span class="adzan-pill-label">WAKTU</span>
+              <span class="adzan-pill-val" id="adzan-target-prayer-name">DZUHUR</span>
+            </div>
           </div>
 
           <div class="adzan-timer-box" id="adzan-timer-box">
+            <span class="adzan-timer-sub">Sisa Waktu Menuju Adzan</span>
             <span class="adzan-timer-digits" id="adzan-timer-digits">01:00</span>
+            <div class="adzan-timer-accent" aria-hidden="true"></div>
           </div>
 
-          <p class="adzan-countdown-hint">Segera bersiap, waktu adzan segera berkumandang</p>
+          <p class="adzan-countdown-hint">Segera mengambil air wudhu dan merapatkan diri ke shaf sholat</p>
         </section>
 
-        <!-- 2. FASE SAAT AZAN (Tampil selama lamaAdzan) -->
+        <!-- 2. FASE SAAT AZAN (Desain Plakat Maklumat Islami, Bukan Kotak SaaS) -->
         <section class="adzan-phase adzan-phase--saat-adzan" id="phase-saat-adzan">
+          <div class="adzan-takbir-calligraphy" dir="rtl" lang="ar">اللهُ أَكْبَرُ اللهُ أَكْبَرُ</div>
+
           <div class="adzan-title-wrap">
-            <h1 class="adzan-heading-main">SAATNYA ADZAN</h1>
-            <h2 class="adzan-prayer-now" id="adzan-current-prayer-name">DZUHUR</h2>
-            <p class="adzan-now-announcement">Telah Masuk Waktu Sholat untuk Wilayah Jakarta dan Sekitarnya</p>
+            <h1 class="adzan-heading-main">WAKTU ADZAN TELAH MASUK</h1>
+            <div class="adzan-prayer-hero" id="adzan-current-prayer-name">DZUHUR</div>
+            <p class="adzan-now-announcement">Untuk Wilayah Jakarta dan Sekitarnya</p>
           </div>
 
-          <div class="adzan-cards-grid">
-            <div class="adzan-card">
-              <div class="adzan-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M11 5L6 9H2v6h4l5 4V5z"/>
-                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                </svg>
+          <!-- Plakat Maklumat Terpadu Bernuansa Mihrab -->
+          <div class="adzan-adab-plaque">
+            <div class="adzan-adab-col">
+              <div class="adzan-adab-header">
+                <span class="adzan-adab-icon-wrap" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                  </svg>
+                </span>
+                <h2 class="adzan-adab-title">Adab Menjawab Adzan</h2>
               </div>
-              <h3 class="adzan-card-title">Adab Menjawab Adzan</h3>
-              <p class="adzan-card-desc">Dianjurkan menyimak, menjawab lafadz adzan dengan khusyuk, dan berdoa setelahnya.</p>
+              <p class="adzan-adab-desc">Dianjurkan menyimak, menjawab setiap lafadz adzan dengan khusyuk, dan memanjatkan doa setelahnya.</p>
             </div>
 
-            <div class="adzan-card">
-              <div class="adzan-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-                  <line x1="12" y1="18" x2="12.01" y2="18"/>
-                  <line x1="1" y1="1" x2="23" y2="23" stroke="#e05353"/>
-                </svg>
-              </div>
-              <h3 class="adzan-card-title">Ketenangan Ibadah</h3>
-              <p class="adzan-card-desc">Mohon menonaktifkan atau mengaktifkan mode silent / hening pada handphone Anda.</p>
-            </div>
+            <div class="adzan-adab-divider" aria-hidden="true"></div>
 
-            <div class="adzan-card">
-              <div class="adzan-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
+            <div class="adzan-adab-col">
+              <div class="adzan-adab-header">
+                <span class="adzan-adab-icon-wrap adzan-adab-icon-wrap--silent" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                    <line x1="12" y1="18" x2="12.01" y2="18"/>
+                    <line x1="2" y1="2" x2="22" y2="22" stroke="#e05353" stroke-width="2.4"/>
+                  </svg>
+                </span>
+                <h2 class="adzan-adab-title">Ketenangan Ibadah</h2>
               </div>
-              <h3 class="adzan-card-title">Persiapan Sholat</h3>
-              <p class="adzan-card-desc">Segera berwudhu dan menunaikan shalat sunnah rawatib sebelum iqomah.</p>
+              <p class="adzan-adab-desc">Mohon menonaktifkan atau mengaktifkan mode hening (silent) pada handphone demi kekhusyukan jamaah.</p>
             </div>
           </div>
         </section>
 
-        <!-- 3. FASE COUNTDOWN IQOMAH (Countdown 05:00 & Beep di 10 detik terakhir) -->
+        <!-- 3. FASE COUNTDOWN IQOMAH -->
         <section class="adzan-phase adzan-phase--countdown-iqomah" id="phase-countdown-iqomah">
           <div class="iqomah-heading-wrap">
             <h1 class="iqomah-main-title">MENUJU IQOMAH</h1>
-            <p class="iqomah-prayer-sub">SHOLAT <span id="iqomah-prayer-name">DZUHUR</span></p>
+            <div class="adzan-prayer-pill">
+              <span class="adzan-pill-label">SHOLAT</span>
+              <span class="adzan-pill-val" id="iqomah-prayer-name">DZUHUR</span>
+            </div>
           </div>
 
           <div class="iqomah-timer-box" id="iqomah-timer-box">
             <span class="iqomah-timer-label">Sisa Waktu Menuju Iqomah</span>
             <span class="iqomah-timer-digits" id="iqomah-timer-digits">05:00</span>
-            <span class="iqomah-timer-subtext" id="iqomah-timer-subtext">Menit : Detik</span>
+            <span class="iqomah-timer-subtext">Menit : Detik</span>
           </div>
 
           <div class="iqomah-notice-card">
@@ -234,18 +243,20 @@
           </div>
         </section>
 
-        <!-- 4. FASE SAAT SHOLAT (Mode Khusyuk & Hening - Pilihan 1) -->
+        <!-- 4. FASE SAAT SHOLAT (Mode Khusyuk, Hening, & Redup) -->
         <section class="adzan-phase adzan-phase--saat-sholat" id="phase-saat-sholat">
-          <div class="sholat-silent-icon-wrap" aria-hidden="true" title="Mode Hening">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="sholat-silent-phone">
+          <div class="sholat-silent-banner" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sholat-silent-icon">
               <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
               <line x1="12" y1="18" x2="12.01" y2="18"/>
               <line x1="2" y1="2" x2="22" y2="22" stroke="#e05353" stroke-width="2.4"/>
             </svg>
+            <span>MODE HENING &bull; HP DINONAKTIFKAN</span>
           </div>
 
           <div class="sholat-hadith-box">
             <p class="sholat-hadith-arabic" dir="rtl" lang="ar">سَوُّوا صُفُوفَكُمْ ؛ فَإنَّ تَسْوِيَةَ الصَّفِّ مِنْ تَمَامِ الصَّلاَةِ</p>
+            <div class="sholat-hadith-divider" aria-hidden="true"></div>
             <p class="sholat-hadith">&ldquo;Luruskan shaf-shaf kalian, karena meluruskan shaf termasuk kesempurnaan sholat.&rdquo;<br><span class="sholat-hadith-source">(HR. Bukhari &amp; Muslim)</span></p>
           </div>
         </section>

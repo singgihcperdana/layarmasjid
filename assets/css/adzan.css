@@ -1,7 +1,7 @@
 /* =============================================================================
-   HALAMAN ADZAN, IQOMAH, & SHOLAT (OVERLAY SYSTEM)
+   HALAMAN ADZAN, IQOMAH, & SHOLAT (OVERLAY SYSTEM - ISLAMIC ARCHITECTURAL THEME)
    Layar Masjid Digital Signage
-   Judul-judul utama berukuran besar, detail/teks sekunder tetap rapi & proporsional
+   Desain berwibawa, otentik bernuansa arsitektur masjid, mudah dibaca dari jarak jauh
    ============================================================================= */
 
 .adzan-screen {
@@ -11,11 +11,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: clamp(14px, 1.8vh, 24px) clamp(24px, 2.8vw, 44px);
+  padding: clamp(14px, 2vh, 26px) clamp(20px, 2.5vw, 40px);
   background:
-    radial-gradient(circle at 50% 20%, rgba(27, 199, 207, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 50% 70%, rgba(224, 183, 53, 0.06) 0%, transparent 55%),
-    linear-gradient(145deg, #062b20 0%, #0a3d2e 40%, #051d16 100%);
+    radial-gradient(circle at 50% 30%, rgba(27, 199, 207, 0.09) 0%, transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(224, 183, 53, 0.08) 0%, transparent 60%),
+    linear-gradient(145deg, #031e16 0%, #08382a 45%, #021610 100%);
   color: var(--white);
   opacity: 0;
   visibility: hidden;
@@ -32,29 +32,41 @@
 
 /* Khusus Fase Sholat: Layar sangat redup dan hening agar khusyuk */
 .adzan-screen.phase--sholat {
-  background: radial-gradient(circle at 50% 40%, #03140e 0%, #010705 100%);
+  background: radial-gradient(circle at 50% 45%, #03140e 0%, #010805 100%);
+}
+
+.adzan-screen.phase--sholat .adzan-inner-frame {
+  opacity: 0.15;
+  border-color: rgba(224, 183, 53, 0.15);
+}
+
+.adzan-screen.phase--sholat .adzan-corner {
+  opacity: 0.15;
 }
 
 .adzan-screen.phase--sholat .adzan-bg-pattern,
 .adzan-screen.phase--sholat .adzan-bg-glow {
-  opacity: 0.15;
+  opacity: 0.08;
 }
 
 .adzan-screen.phase--sholat .adzan-header {
-  opacity: 0.2;
+  opacity: 0.22;
   transition: opacity 0.6s ease;
 }
 
-/* Islamic Geometric Watermark Background */
+/* =============================================================================
+   ORNAMEN ARSITEKTUR ISLAMI & FRAME
+   ============================================================================= */
+
+/* Pola Geometri Bintang 8 Girih Tradisional (Bukan Titik-titik Dot-Matrix AI) */
 .adzan-bg-pattern {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image:
-    radial-gradient(circle at 50% 50%, rgba(240, 201, 106, 0.04) 1px, transparent 1px),
-    radial-gradient(circle at 0 0, rgba(79, 214, 194, 0.03) 1px, transparent 1px);
-  background-size: 32px 32px, 48px 48px;
-  opacity: 0.85;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='rgba(224,183,53,0.18)' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M40 0v20l-14 14 14 14v20M120 0v20l14 14-14 14v20M0 40h20l14-14 14 14h20M160 40h-20l-14-14-14 14h-20M40 80v20l-14 14 14 14v20M120 80v20l14 14-14 14v20M0 120h20l14-14 14 14h20M160 120h-20l-14-14-14 14h-20'/%3E%3Cpath d='M80 0v20l-16 16 16 16v24l-16 16 16 16v20M0 80h20l16-16 16 16h24l16-16 16 16h20'/%3E%3Cpath d='M80 24l8 8-8 8-8-8zM80 104l8 8-8 8-8-8zM24 80c0-8.837 7.163-16 16-16s16 7.163 16 16-7.163 16-16 16-16-7.163-16-16zM104 80c0-8.837 7.163-16 16-16s16 7.163 16 16-7.163 16-16 16-16-7.163-16-16z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  background-position: center;
+  opacity: 0.38;
   transition: opacity 0.6s ease;
 }
 
@@ -63,56 +75,74 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 70vw;
-  height: 70vh;
-  background: radial-gradient(circle, rgba(15, 90, 68, 0.45) 0%, transparent 65%);
-  filter: blur(40px);
+  width: 80vw;
+  height: 75vh;
+  background: radial-gradient(circle, rgba(15, 90, 68, 0.4) 0%, transparent 68%);
+  filter: blur(50px);
   pointer-events: none;
-  transition: opacity 0.6s ease;
 }
 
-/* Screen Corners (Sesuai Gaya Masjid) */
+/* Bingkai Emas Ganda Dalam Layar */
+.adzan-inner-frame {
+  position: absolute;
+  inset: clamp(10px, 1.4vh, 18px);
+  border: 1px solid rgba(240, 201, 106, 0.28);
+  border-radius: 14px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.adzan-inner-frame::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(240, 201, 106, 0.12);
+  border-radius: 10px;
+}
+
+/* Ornamen Sudut Kaligrafi / Arabesque Islami Emas (Bukan L-Bracket Cyberpunk) */
 .adzan-corner {
   position: absolute;
-  width: 22px;
-  height: 22px;
-  border-color: var(--gold-highlight);
-  border-style: solid;
-  opacity: 0.6;
+  width: clamp(72px, 6.5vw, 110px);
+  height: clamp(72px, 6.5vw, 110px);
   pointer-events: none;
+  z-index: 2;
+  opacity: 0.85;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='%23E0B735' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 44V4h40'/%3E%3Cpath d='M14 4v26h26'/%3E%3Cpath d='M4 14h26v26'/%3E%3Cpath d='M40 14H26v26'/%3E%3Cpath d='M4 4l20 20' stroke-width='1.5' opacity='0.7'/%3E%3Ccircle cx='24' cy='24' r='3' fill='%23E0B735'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .adzan-corner--top-left {
-  top: 14px;
-  left: 14px;
-  border-width: 2px 0 0 2px;
+  top: clamp(8px, 1.2vh, 16px);
+  left: clamp(8px, 1.2vh, 16px);
 }
 
 .adzan-corner--top-right {
-  top: 14px;
-  right: 14px;
-  border-width: 2px 2px 0 0;
+  top: clamp(8px, 1.2vh, 16px);
+  right: clamp(8px, 1.2vh, 16px);
+  transform: scaleX(-1);
 }
 
 .adzan-corner--bottom-left {
-  bottom: 14px;
-  left: 14px;
-  border-width: 0 0 2px 2px;
+  bottom: clamp(8px, 1.2vh, 16px);
+  left: clamp(8px, 1.2vh, 16px);
+  transform: scaleY(-1);
 }
 
 .adzan-corner--bottom-right {
-  bottom: 14px;
-  right: 14px;
-  border-width: 0 2px 2px 0;
+  bottom: clamp(8px, 1.2vh, 16px);
+  right: clamp(8px, 1.2vh, 16px);
+  transform: scale(-1);
 }
 
 /* =============================================================================
-   HEADER (Jam & Tanggal Discreet di Pojok Kanan Atas - Opsi B)
+   HEADER (Jam & Tanggal Plakat Pojok Kanan Atas)
    ============================================================================= */
 .adzan-header {
   position: absolute;
-  top: clamp(14px, 1.8vh, 24px);
-  right: clamp(16px, 1.8vw, 28px);
+  top: clamp(16px, 2.2vh, 28px);
+  right: clamp(20px, 2.2vw, 36px);
   z-index: 10;
   display: flex;
   align-items: flex-start;
@@ -124,28 +154,30 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
-  padding: clamp(6px, 0.8vh, 10px) clamp(12px, 1.2vw, 18px);
+  gap: 1px;
+  padding: clamp(6px, 0.8vh, 10px) clamp(14px, 1.3vw, 20px);
   border-radius: 12px;
-  background: rgba(10, 61, 46, 0.45);
-  border: 1px solid rgba(240, 201, 106, 0.22);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  background: rgba(6, 36, 27, 0.75);
+  border: 1px solid rgba(240, 201, 106, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
 }
 
 .adzan-clock-time {
-  font-size: clamp(1.4rem, 2vw, 2.2rem);
-  font-weight: 700;
+  font-family: "Avenir Next", "Helvetica Neue", "Segoe UI", sans-serif;
+  font-size: clamp(1.4rem, 1.9vw, 2.3rem);
+  font-weight: 800;
   color: var(--amber-soft);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   font-variant-numeric: tabular-nums;
   text-shadow: 0 2px 10px rgba(240, 201, 106, 0.35);
   line-height: 1.1;
 }
 
 .adzan-clock-date {
-  font-size: clamp(0.72rem, 0.82vw, 0.92rem);
-  color: var(--sage-soft);
+  font-size: clamp(0.72rem, 0.82vw, 0.94rem);
+  font-weight: 600;
+  color: var(--mint-soft);
+  opacity: 0.9;
 }
 
 /* =============================================================================
@@ -153,12 +185,12 @@
    ============================================================================= */
 .adzan-stage {
   position: relative;
-  z-index: 2;
+  z-index: 5;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(10px, 1.5vh, 20px) 0;
+  padding: clamp(12px, 1.8vh, 24px) 0;
   min-height: 0;
 }
 
@@ -169,7 +201,7 @@
   justify-content: center;
   text-align: center;
   width: 100%;
-  max-width: 960px;
+  max-width: 1080px;
   animation: phaseFadeIn 0.45s ease-out forwards;
 }
 
@@ -180,7 +212,7 @@
 @keyframes phaseFadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.98);
+    transform: translateY(10px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -188,252 +220,283 @@
   }
 }
 
-/* Badge (Pill) */
-.adzan-badge {
+/* Lencana Tahapan Islami (Badge Header) */
+.adzan-phase-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 18px;
-  border-radius: 999px;
-  background: rgba(240, 201, 106, 0.12);
-  border: 1px solid rgba(240, 201, 106, 0.35);
-  margin-bottom: clamp(8px, 1.2vh, 16px);
-}
-
-.adzan-badge--urgent {
-  background: rgba(224, 83, 83, 0.16);
-  border-color: rgba(224, 83, 83, 0.5);
-}
-
-.adzan-badge--iqomah {
-  background: rgba(27, 199, 207, 0.14);
-  border-color: rgba(79, 214, 194, 0.4);
-}
-
-.adzan-badge-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--amber-soft);
-  box-shadow: 0 0 8px var(--amber-soft);
-  animation: badgeBlink 1.2s ease-in-out infinite;
-}
-
-.adzan-badge--urgent .adzan-badge-dot {
-  background: #ff5252;
-  box-shadow: 0 0 10px #ff5252;
-  animation: badgeBlink 0.6s ease-in-out infinite;
-}
-
-.adzan-badge--iqomah .adzan-badge-dot {
-  background: var(--teal-soft);
-  box-shadow: 0 0 8px var(--teal-soft);
-  animation: badgeBlink 1.4s ease-in-out infinite;
-}
-
-@keyframes badgeBlink {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.3; transform: scale(0.75); }
-}
-
-.adzan-badge-text {
-  font-size: clamp(0.75rem, 0.9vw, 0.95rem);
+  justify-content: center;
+  font-size: clamp(0.75rem, 0.9vw, 1.05rem);
   font-weight: 700;
-  letter-spacing: 0.14em;
-  color: var(--amber-soft);
+  letter-spacing: 0.22em;
+  color: var(--gold-highlight);
+  text-transform: uppercase;
+  margin-bottom: clamp(6px, 1vh, 12px);
+  text-shadow: 0 0 16px rgba(224, 183, 53, 0.4);
 }
 
-.adzan-badge--urgent .adzan-badge-text {
-  color: #ff9191;
-}
-
-.adzan-badge--iqomah .adzan-badge-text {
+.adzan-phase-badge--iqomah {
   color: var(--teal-soft);
+  text-shadow: 0 0 16px rgba(79, 214, 194, 0.4);
+}
+
+/* Kapsul Nama Sholat Beraksen Emas */
+.adzan-prayer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: clamp(4px, 0.6vh, 8px) clamp(16px, 1.8vw, 28px);
+  border-radius: 999px;
+  background: rgba(240, 201, 106, 0.1);
+  border: 1.5px solid rgba(240, 201, 106, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  margin-top: clamp(4px, 0.6vh, 8px);
+}
+
+.adzan-pill-label {
+  font-size: clamp(0.75rem, 0.95vw, 1.1rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--mint-soft);
+  text-transform: uppercase;
+}
+
+.adzan-pill-val {
+  font-size: clamp(1.2rem, 1.8vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--gold-highlight);
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(240, 201, 106, 0.35);
 }
 
 /* =============================================================================
-   1. FASE MENJELANG AZAN (Countdown 10 Detik + Beep tiap detik)
-   Judul MENJELANG WAKTU ADZAN dibuat besar2 sesuai permintaan
+   1. FASE MENJELANG AZAN
    ============================================================================= */
 .adzan-countdown-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: clamp(10px, 1.6vh, 20px);
+  margin-bottom: clamp(12px, 1.8vh, 22px);
 }
 
 .adzan-countdown-title {
   margin: 0;
-  font-size: clamp(3rem, 5.4vw, 5.8rem);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: clamp(2.6rem, 4.8vw, 5.2rem);
   font-weight: 900;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ivory-soft);
   line-height: 1.05;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 35px rgba(240, 201, 106, 0.3);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 32px rgba(240, 201, 106, 0.25);
 }
 
-.adzan-countdown-prayer-name {
-  margin: clamp(4px, 0.6vh, 8px) 0 0;
-  font-size: clamp(1.2rem, 1.8vw, 2.2rem);
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  color: var(--gold-highlight);
-  text-transform: uppercase;
-}
-
-.adzan-countdown-prayer-name span {
-  color: var(--amber-soft);
-}
-
+/* Bingkai Timer Bergaya Mihrab / Lengkungan Islami */
 .adzan-timer-box {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(18px, 2.5vh, 32px) clamp(48px, 6vw, 92px);
-  min-width: clamp(280px, 30vw, 460px);
+  padding: clamp(16px, 2.4vh, 30px) clamp(44px, 5.5vw, 88px);
+  min-width: clamp(280px, 32vw, 480px);
   border-radius: 24px;
-  background: rgba(10, 61, 46, 0.65);
-  border: 2px solid rgba(79, 214, 194, 0.4);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(240, 201, 106, 0.12), transparent 70%),
+    linear-gradient(180deg, rgba(8, 48, 36, 0.82) 0%, rgba(5, 30, 22, 0.88) 100%);
+  border: 2px solid rgba(224, 183, 53, 0.45);
   box-shadow:
-    0 14px 36px rgba(0, 0, 0, 0.45),
-    0 0 28px rgba(79, 214, 194, 0.18);
-  backdrop-filter: blur(8px);
-  margin-bottom: clamp(16px, 2.4vh, 28px);
+    0 16px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 24px rgba(224, 183, 53, 0.15);
+  margin-bottom: clamp(14px, 2vh, 24px);
   transition: all 0.3s ease;
+}
+
+.adzan-timer-sub {
+  font-size: clamp(0.75rem, 0.9vw, 1.05rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mint-soft);
+  margin-bottom: 2px;
+}
+
+.adzan-timer-digits {
+  font-family: "Avenir Next", "Helvetica Neue", "Segoe UI", sans-serif;
+  font-size: clamp(4.6rem, 7.8vw, 8.4rem);
+  font-weight: 900;
+  color: var(--gold-highlight);
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-shadow: 0 0 32px rgba(240, 201, 106, 0.4);
+}
+
+.adzan-timer-accent {
+  width: 70%;
+  height: 2px;
+  margin-top: clamp(6px, 0.8vh, 12px);
+  background: linear-gradient(90deg, transparent, rgba(224, 183, 53, 0.8), transparent);
 }
 
 /* Mode Urgent (10 detik terakhir sebelum adzan) */
 .adzan-timer-box.urgent {
   border-color: #ff5252;
   box-shadow:
-    0 14px 40px rgba(0, 0, 0, 0.5),
+    0 16px 44px rgba(0, 0, 0, 0.55),
     0 0 35px rgba(255, 82, 82, 0.45);
   animation: timerUrgentPulse 0.5s ease-in-out infinite alternate;
 }
 
 @keyframes timerUrgentPulse {
   from { transform: scale(1); }
-  to { transform: scale(1.03); }
-}
-
-.adzan-timer-digits {
-  font-size: clamp(4.4rem, 7.5vw, 8.2rem);
-  font-weight: 900;
-  color: var(--gold-highlight);
-  letter-spacing: 0.06em;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  text-shadow: 0 0 32px rgba(240, 201, 106, 0.45);
+  to { transform: scale(1.025); }
 }
 
 .adzan-timer-box.urgent .adzan-timer-digits {
   color: #ff7676;
-  text-shadow: 0 0 40px rgba(255, 82, 82, 0.7);
+  text-shadow: 0 0 38px rgba(255, 82, 82, 0.7);
 }
 
 .adzan-countdown-hint {
   margin: 0;
-  font-size: clamp(0.95rem, 1.2vw, 1.35rem);
+  font-size: clamp(1rem, 1.25vw, 1.45rem);
+  font-weight: 500;
   color: var(--mint-soft);
   letter-spacing: 0.03em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* =============================================================================
-   2. FASE SAAT AZAN (Halaman Azan, Tampil selama lamaAdzan)
-   Logo kubah & kaligrafi dibuang, judul SAATNYA ADZAN & teks kartu dibuat besar
+   2. FASE SAAT AZAN (Desain Plakat Maklumat Islami Terpadu)
+   Menggantikan 3 kartu kotak SaaS menjadi 1 kesatuan plakat yang megah & syahdu
    ============================================================================= */
+.adzan-takbir-calligraphy {
+  font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif;
+  font-size: clamp(2.4rem, 4vw, 4.6rem);
+  font-weight: 700;
+  color: var(--gold-highlight);
+  line-height: 1.3;
+  margin-bottom: clamp(2px, 0.5vh, 6px);
+  text-shadow: 0 4px 20px rgba(224, 183, 53, 0.45);
+}
+
 .adzan-title-wrap {
-  margin-bottom: clamp(20px, 2.8vh, 36px);
+  margin-bottom: clamp(14px, 2vh, 26px);
 }
 
 .adzan-heading-main {
   margin: 0;
-  font-size: clamp(3.2rem, 5.6vw, 6rem);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: clamp(2.2rem, 3.8vw, 4.4rem);
   font-weight: 900;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ivory-soft);
   line-height: 1.05;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 35px rgba(224, 183, 53, 0.35);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-.adzan-prayer-now {
-  margin: clamp(4px, 0.6vh, 8px) 0 0;
-  font-size: clamp(1.8rem, 3vw, 3.2rem);
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: var(--gold-highlight);
+.adzan-prayer-hero {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: clamp(3.2rem, 5.6vw, 6.2rem);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--amber-soft);
   text-transform: uppercase;
-  line-height: 1.15;
-  text-shadow: 0 0 20px rgba(224, 183, 53, 0.4);
+  line-height: 1.05;
+  margin: clamp(4px, 0.5vh, 8px) 0 0;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 35px rgba(240, 201, 106, 0.4);
 }
 
 .adzan-now-announcement {
-  margin: clamp(6px, 0.8vh, 10px) 0 0;
-  font-size: clamp(1.05rem, 1.35vw, 1.5rem);
+  margin: clamp(4px, 0.6vh, 8px) 0 0;
+  font-size: clamp(1rem, 1.2vw, 1.4rem);
   color: var(--mint-soft);
-  font-weight: 400;
+  font-weight: 500;
+  letter-spacing: 0.04em;
 }
 
-/* 3 Cards Grid (Teks Diperbesar untuk TV Masjid) */
-.adzan-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(16px, 1.8vw, 28px);
+/* Plakat Maklumat Adab & Ketenangan (Bukan Kotak SaaS) */
+.adzan-adab-plaque {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
   width: 100%;
-  max-width: min(96%, 1140px);
+  max-width: min(94%, 980px);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top center, rgba(240, 201, 106, 0.08), transparent 60%),
+    linear-gradient(180deg, rgba(7, 44, 33, 0.85) 0%, rgba(4, 28, 20, 0.9) 100%);
+  border: 1.5px solid rgba(224, 183, 53, 0.38);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 24px rgba(224, 183, 53, 0.1);
+  padding: clamp(16px, 2.2vh, 26px) clamp(20px, 2.5vw, 36px);
+  gap: clamp(18px, 2.5vw, 36px);
 }
 
-.adzan-card {
+.adzan-adab-col {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: clamp(20px, 2.6vh, 34px) clamp(18px, 1.8vw, 28px);
-  border-radius: 18px;
-  background: rgba(10, 61, 46, 0.55);
-  border: 1.5px solid rgba(240, 201, 106, 0.32);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(8px);
 }
 
-.adzan-card-icon {
-  width: clamp(38px, 3.2vw, 54px);
-  height: clamp(38px, 3.2vw, 54px);
-  color: var(--gold-highlight);
-  margin-bottom: clamp(10px, 1.4vh, 16px);
+.adzan-adab-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: clamp(6px, 0.9vh, 12px);
+}
+
+.adzan-adab-icon-wrap {
+  width: clamp(28px, 2.4vw, 36px);
+  height: clamp(28px, 2.4vw, 36px);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--gold-highlight);
+  flex-shrink: 0;
 }
 
-.adzan-card-icon svg {
+.adzan-adab-icon-wrap--silent {
+  color: #ff9999;
+}
+
+.adzan-adab-icon-wrap svg {
   width: 100%;
   height: 100%;
 }
 
-.adzan-card-title {
-  margin: 0 0 clamp(8px, 1vh, 12px);
-  font-size: clamp(1.3rem, 1.7vw, 1.95rem);
+.adzan-adab-title {
+  margin: 0;
+  font-size: clamp(1.15rem, 1.45vw, 1.65rem);
   font-weight: 800;
   color: var(--gold-highlight);
   letter-spacing: 0.02em;
 }
 
-.adzan-card-desc {
+.adzan-adab-desc {
   margin: 0;
-  font-size: clamp(1.02rem, 1.3vw, 1.45rem);
+  font-size: clamp(0.96rem, 1.15vw, 1.3rem);
   color: var(--ivory-soft);
-  opacity: 0.96;
+  opacity: 0.92;
   line-height: 1.45;
   font-weight: 400;
 }
 
+.adzan-adab-divider {
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(224, 183, 53, 0.45), transparent);
+  flex-shrink: 0;
+}
+
 /* =============================================================================
-   3. FASE COUNTDOWN IQOMAH (Beep di 5 detik terakhir)
-   Judul MENUJU IQOMAH dibuat besar2 sesuai permintaan
+   3. FASE COUNTDOWN IQOMAH
    ============================================================================= */
 .iqomah-heading-wrap {
   display: flex;
@@ -444,83 +507,74 @@
 
 .iqomah-main-title {
   margin: 0;
-  font-size: clamp(3.2rem, 5.6vw, 6rem);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: clamp(2.8rem, 5vw, 5.4rem);
   font-weight: 900;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--ivory-soft);
   line-height: 1.05;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 35px rgba(79, 214, 194, 0.25);
-}
-
-.iqomah-prayer-sub {
-  margin: clamp(4px, 0.6vh, 8px) 0 0;
-  font-size: clamp(1.2rem, 1.8vw, 2.2rem);
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  color: var(--gold-highlight);
-  text-transform: uppercase;
-}
-
-.iqomah-prayer-sub span {
-  color: var(--amber-soft);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 32px rgba(79, 214, 194, 0.25);
 }
 
 .iqomah-timer-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: clamp(14px, 2vh, 26px) clamp(36px, 4.5vw, 68px);
-  border-radius: 20px;
-  background: rgba(10, 61, 46, 0.6);
-  border: 2px solid rgba(79, 214, 194, 0.35);
+  padding: clamp(14px, 2vh, 26px) clamp(38px, 5vw, 76px);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(79, 214, 194, 0.12), transparent 70%),
+    linear-gradient(180deg, rgba(8, 48, 36, 0.82) 0%, rgba(5, 30, 22, 0.88) 100%);
+  border: 2px solid rgba(79, 214, 194, 0.4);
   box-shadow:
-    0 14px 36px rgba(0, 0, 0, 0.4),
-    0 0 28px rgba(79, 214, 194, 0.15);
-  backdrop-filter: blur(8px);
+    0 16px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 24px rgba(79, 214, 194, 0.15);
   margin-bottom: clamp(14px, 2vh, 24px);
   transition: all 0.3s ease;
 }
 
-/* Mode Urgent (5 detik terakhir sebelum iqomah) */
 .iqomah-timer-box.urgent {
   border-color: #ff5252;
   box-shadow:
-    0 14px 40px rgba(0, 0, 0, 0.5),
-    0 0 35px rgba(255, 82, 82, 0.4);
+    0 16px 44px rgba(0, 0, 0, 0.55),
+    0 0 35px rgba(255, 82, 82, 0.45);
   animation: iqomahUrgentPulse 0.5s ease-in-out infinite alternate;
 }
 
 @keyframes iqomahUrgentPulse {
   from { transform: scale(1); }
-  to { transform: scale(1.03); }
+  to { transform: scale(1.025); }
 }
 
 .iqomah-timer-label {
-  font-size: clamp(0.8rem, 0.95vw, 1.05rem);
-  letter-spacing: 0.16em;
+  font-size: clamp(0.75rem, 0.9vw, 1.05rem);
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--mint-soft);
   margin-bottom: 2px;
+  font-weight: 600;
 }
 
 .iqomah-timer-digits {
-  font-size: clamp(3.8rem, 6.5vw, 6.8rem);
+  font-family: "Avenir Next", "Helvetica Neue", "Segoe UI", sans-serif;
+  font-size: clamp(4.2rem, 7vw, 7.6rem);
   font-weight: 900;
-  color: var(--gold-highlight);
-  letter-spacing: 0.06em;
+  color: var(--teal-soft);
+  letter-spacing: 0.05em;
   font-variant-numeric: tabular-nums;
   line-height: 1.05;
-  text-shadow: 0 0 28px rgba(240, 201, 106, 0.4);
+  text-shadow: 0 0 30px rgba(79, 214, 194, 0.4);
 }
 
 .iqomah-timer-box.urgent .iqomah-timer-digits {
   color: #ff7676;
-  text-shadow: 0 0 35px rgba(255, 82, 82, 0.6);
+  text-shadow: 0 0 38px rgba(255, 82, 82, 0.65);
 }
 
 .iqomah-timer-subtext {
-  font-size: clamp(0.72rem, 0.85vw, 0.92rem);
+  font-size: clamp(0.72rem, 0.85vw, 0.94rem);
   letter-spacing: 0.14em;
   color: var(--sage-soft);
   margin-top: 4px;
@@ -531,97 +585,108 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  max-width: 680px;
-  padding: clamp(8px, 1.1vh, 14px) clamp(18px, 2vw, 30px);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(240, 201, 106, 0.2);
+  max-width: 720px;
+  padding: clamp(8px, 1.2vh, 16px) clamp(20px, 2.5vw, 36px);
+  border-radius: 14px;
+  background: rgba(240, 201, 106, 0.06);
+  border: 1px solid rgba(240, 201, 106, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .iqomah-quote {
   margin: 0;
-  font-size: clamp(0.88rem, 1.1vw, 1.25rem);
+  font-size: clamp(0.92rem, 1.15vw, 1.35rem);
   font-style: italic;
   color: var(--ivory-soft);
+  line-height: 1.4;
 }
 
 .iqomah-quote-source {
-  font-size: clamp(0.74rem, 0.85vw, 0.95rem);
+  font-size: clamp(0.76rem, 0.88vw, 1rem);
   color: var(--amber-soft);
-  opacity: 0.9;
+  font-weight: 600;
 }
 
 /* =============================================================================
-   4. FASE SAAT SHOLAT (Mode Khusyuk & Hening - Pilihan 1: Fokus Hadits Shaf)
+   4. FASE SAAT SHOLAT (Mode Khusyuk & Hening - Font Besar Terbaca dari Jauh)
    ============================================================================= */
-.sholat-silent-icon-wrap {
-  width: clamp(52px, 6vw, 76px);
-  height: clamp(52px, 6vw, 76px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(224, 83, 83, 0.12);
-  border: 1.5px solid rgba(224, 83, 83, 0.4);
-  margin-bottom: clamp(16px, 2.5vh, 28px);
-  box-shadow: 0 0 24px rgba(224, 83, 83, 0.18);
+.adzan-phase--saat-sholat {
+  max-width: min(96%, 1320px);
 }
 
-.sholat-silent-phone {
-  width: 52%;
-  height: 52%;
-  color: var(--ivory-soft);
+.sholat-silent-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: clamp(8px, 1.1vh, 14px) clamp(22px, 2.4vw, 36px);
+  border-radius: 999px;
+  background: rgba(224, 83, 83, 0.14);
+  border: 1.5px solid rgba(224, 83, 83, 0.45);
+  color: #ff9e9e;
+  font-size: clamp(0.98rem, 1.3vw, 1.55rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  margin-bottom: clamp(16px, 2.5vh, 30px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.sholat-silent-icon {
+  width: clamp(22px, 2vw, 30px);
+  height: clamp(22px, 2vw, 30px);
+  flex-shrink: 0;
 }
 
 .sholat-hadith-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(14px, 2vh, 24px);
-  max-width: min(94%, 960px);
-  padding: clamp(24px, 3.2vh, 42px) clamp(24px, 3.5vw, 52px);
-  border-radius: 24px;
+  gap: clamp(16px, 2.4vh, 26px);
+  width: 100%;
+  max-width: 100%;
+  padding: clamp(28px, 3.8vh, 52px) clamp(28px, 3.6vw, 64px);
+  border-radius: 26px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1.5px solid rgba(240, 201, 106, 0.28);
-  box-shadow:
-    0 14px 40px rgba(0, 0, 0, 0.5),
-    0 0 35px rgba(240, 201, 106, 0.08);
-  backdrop-filter: blur(10px);
+  border: 1.8px solid rgba(240, 201, 106, 0.3);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
 }
 
 .sholat-hadith-arabic {
   margin: 0;
-  font-family: "Amiri", "Scheherazade New", "Traditional Arabic", "Arabic Typesetting", "Segoe UI", serif;
-  font-size: clamp(2rem, 3.4vw, 4.4rem);
+  font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif;
+  font-size: clamp(3.2rem, 5.2vw, 6.4rem);
   font-weight: 700;
   color: var(--gold-highlight);
   letter-spacing: 0.02em;
-  line-height: 1.6;
+  line-height: 1.55;
   text-align: center;
-  text-shadow: 0 4px 24px rgba(224, 183, 53, 0.45);
+  text-shadow: 0 4px 26px rgba(224, 183, 53, 0.45);
+}
+
+.sholat-hadith-divider {
+  width: 70%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(224, 183, 53, 0.55), transparent);
 }
 
 .sholat-hadith {
   margin: 0;
-  font-size: clamp(1.15rem, 1.55vw, 1.8rem);
+  font-size: clamp(1.45rem, 2.1vw, 2.6rem);
   font-style: italic;
   color: var(--ivory-soft);
   opacity: 0.96;
-  max-width: 860px;
-  line-height: 1.5;
+  max-width: 1140px;
+  line-height: 1.55;
   text-align: center;
 }
 
 .sholat-hadith-source {
-  font-size: 0.85em;
+  font-size: clamp(1.1rem, 1.5vw, 1.8rem);
   color: var(--amber-soft);
   font-style: normal;
   display: inline-block;
-  margin-top: 8px;
-  font-weight: 600;
+  margin-top: clamp(8px, 1.2vh, 16px);
+  font-weight: 700;
 }
-
-
 
 /* =============================================================================
    TEST TOOLBAR (Discreet Preview Controller)
@@ -633,12 +698,12 @@
   z-index: 2000;
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
+  gap: 6px;
+  padding: 6px 14px;
   border-radius: 999px;
-  background: rgba(5, 31, 24, 0.95);
-  border: 1px solid rgba(240, 201, 106, 0.45);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+  background: rgba(4, 24, 18, 0.96);
+  border: 1px solid rgba(240, 201, 106, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
   transform: translateY(140%);
   opacity: 0;
@@ -653,12 +718,12 @@
 }
 
 .adzan-test-btn {
-  padding: 5px 11px;
+  padding: 5px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.08);
   color: var(--ivory-soft);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -667,7 +732,7 @@
 
 .adzan-test-btn:hover {
   background: var(--amber-soft);
-  color: #051f18;
+  color: #041812;
   border-color: var(--amber-soft);
 }
 
@@ -679,7 +744,7 @@
 
 .adzan-test-btn--demo:hover {
   background: var(--teal-soft);
-  color: #051f18;
+  color: #041812;
 }
 
 .adzan-test-btn--close {
