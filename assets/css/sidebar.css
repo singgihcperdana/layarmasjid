@@ -202,9 +202,9 @@
   font-size: clamp(1.25rem, 1.2vw + 0.75vh, 2.5rem);
   font-weight: 700;
   line-height: 1.15;
-  color: var(--amber-soft);
+  color: var(--white);
   letter-spacing: 0.02em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .date-ornament {
