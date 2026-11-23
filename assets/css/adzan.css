@@ -85,9 +85,9 @@
 /* Bingkai Emas Ganda Dalam Layar */
 .adzan-inner-frame {
   position: absolute;
-  inset: clamp(10px, 1.4vh, 18px);
+  inset: 0;
   border: 1px solid rgba(240, 201, 106, 0.28);
-  border-radius: 14px;
+  border-radius: 0;
   pointer-events: none;
   z-index: 1;
 }
@@ -97,7 +97,7 @@
   position: absolute;
   inset: 4px;
   border: 1px solid rgba(240, 201, 106, 0.12);
-  border-radius: 10px;
+  border-radius: 0;
 }
 
 /* Ornamen Sudut Kaligrafi / Arabesque Islami Emas (Bukan L-Bracket Cyberpunk) */
@@ -114,25 +114,25 @@
 }
 
 .adzan-corner--top-left {
-  top: clamp(8px, 1.2vh, 16px);
-  left: clamp(8px, 1.2vh, 16px);
+  top: 0;
+  left: 0;
 }
 
 .adzan-corner--top-right {
-  top: clamp(8px, 1.2vh, 16px);
-  right: clamp(8px, 1.2vh, 16px);
+  top: 0;
+  right: 0;
   transform: scaleX(-1);
 }
 
 .adzan-corner--bottom-left {
-  bottom: clamp(8px, 1.2vh, 16px);
-  left: clamp(8px, 1.2vh, 16px);
+  bottom: 0;
+  left: 0;
   transform: scaleY(-1);
 }
 
 .adzan-corner--bottom-right {
-  bottom: clamp(8px, 1.2vh, 16px);
-  right: clamp(8px, 1.2vh, 16px);
+  bottom: 0;
+  right: 0;
   transform: scale(-1);
 }
 
