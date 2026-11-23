@@ -223,25 +223,6 @@
   }
 }
 
-/* Lencana Tahapan Islami (Badge Header) */
-.adzan-phase-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(0.75rem, 0.9vw, 1.05rem);
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  color: var(--gold-highlight);
-  text-transform: uppercase;
-  margin-bottom: clamp(6px, 1vh, 12px);
-  text-shadow: 0 0 16px rgba(224, 183, 53, 0.4);
-}
-
-.adzan-phase-badge--iqomah {
-  color: var(--teal-soft);
-  text-shadow: 0 0 16px rgba(79, 214, 194, 0.4);
-}
-
 /* Kapsul Nama Sholat Beraksen Emas */
 .adzan-prayer-pill {
   display: inline-flex;
@@ -314,15 +295,6 @@
     0 0 28px rgba(224, 183, 53, 0.2);
   margin-bottom: clamp(14px, 2vh, 26px);
   transition: all 0.3s ease;
-}
-
-.adzan-timer-sub {
-  font-size: clamp(0.85rem, 1.1vw, 1.3rem);
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--mint-soft);
-  margin-bottom: 2px;
 }
 
 .adzan-timer-digits {
@@ -410,10 +382,6 @@
   line-height: 1.05;
   margin: clamp(4px, 0.6vh, 8px) 0 0;
   text-shadow: 0 4px 26px rgba(0, 0, 0, 0.6), 0 0 38px rgba(240, 201, 106, 0.45);
-}
-
-.adzan-now-announcement {
-  display: none;
 }
 
 /* Plakat Maklumat Adab & Ketenangan Ringkas */
@@ -530,15 +498,6 @@
 @keyframes iqomahUrgentPulse {
   from { transform: scale(1); }
   to { transform: scale(1.025); }
-}
-
-.iqomah-timer-label {
-  font-size: clamp(0.85rem, 1.1vw, 1.3rem);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--mint-soft);
-  margin-bottom: 2px;
-  font-weight: 600;
 }
 
 .iqomah-timer-digits {

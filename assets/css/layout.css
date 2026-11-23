@@ -45,13 +45,6 @@
   height: clamp(82px, 10vh, 104px);
 }
 
-.content-brand-mark {
-  color: var(--ivory-soft);
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-}
-
 .content-brand-logo {
   display: block;
   width: 100%;
@@ -191,8 +184,7 @@
   max-width: 100%;
   max-height: 100%;
   border-radius: 10px;
-  border: 2px solid rgba(143, 197, 174, 0.18);
-  background: linear-gradient(180deg, rgba(79, 214, 194, 0.05), rgba(255, 255, 255, 0.02));
+  border: 2px dashed rgba(185, 231, 209, 0.18);
   box-shadow: 0 18px 36px rgba(0, 0, 0, 0.12);
   overflow: visible;
   background:
@@ -200,7 +192,6 @@
     radial-gradient(circle at top left, rgba(240, 201, 106, 0.18), transparent 28%),
     radial-gradient(circle at bottom right, rgba(79, 214, 194, 0.12), transparent 22%),
     linear-gradient(135deg, rgba(7, 45, 31, 0.88) 0%, rgba(9, 63, 44, 0.9) 50%, rgba(6, 34, 25, 0.92) 100%);
-  border: 2px dashed rgba(185, 231, 209, 0.18);
   display: grid;
   place-items: center;
   text-align: center;
@@ -215,10 +206,6 @@
   background-size: 32px 32px;
   pointer-events: none;
   z-index: 1;
-}
-
-.content-ticker-text {
-  margin: 0;
 }
 
 .content-stage-slides {
@@ -317,20 +304,6 @@
 .slide-quran-corner--tr { top: -2px; right: -2px; border-left: none; border-bottom: none; border-top-right-radius: 8px; }
 .slide-quran-corner--bl { bottom: -2px; left: -2px; border-right: none; border-top: none; border-bottom-left-radius: 8px; }
 .slide-quran-corner--br { bottom: -2px; right: -2px; border-left: none; border-top: none; border-bottom-right-radius: 8px; }
-
-.slide-quran-header {
-  flex-shrink: 0;
-}
-
-.slide-quran-bismillah {
-  font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif;
-  font-size: clamp(1.2rem, 1.7vw, 2.1rem);
-  font-weight: 700;
-  color: var(--gold-highlight);
-  letter-spacing: 0.04em;
-  opacity: 0.95;
-  text-shadow: 0 0 16px rgba(224, 183, 53, 0.35);
-}
 
 .slide-quran-body {
   display: flex;
@@ -584,6 +557,7 @@
 }
 
 .content-ticker-text {
+  margin: 0;
   display: inline-block;
   color: var(--ivory-soft);
   font-size: clamp(1.3rem, 1.9vw, 1.8rem);
