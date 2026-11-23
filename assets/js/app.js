@@ -400,10 +400,6 @@ function setupSlides() {
             <span class="slide-quran-corner slide-quran-corner--bl" aria-hidden="true"></span>
             <span class="slide-quran-corner slide-quran-corner--br" aria-hidden="true"></span>
 
-            <div class="slide-quran-header">
-              <span class="slide-quran-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
-            </div>
-
             <div class="slide-quran-body">
               <p class="slide-quran-arabic" dir="rtl">${slide.ayat || slide.src}</p>
               <div class="slide-quran-divider" aria-hidden="true">
@@ -412,12 +408,11 @@ function setupSlides() {
                 <span class="slide-quran-divider-line"></span>
               </div>
               ${slide.arti ? `<p class="slide-quran-translation">"${slide.arti}"</p>` : ""}
+              ${slide.surah ? `
+              <div class="slide-quran-footer">
+                <span class="slide-quran-surah-pill">✦ ${slide.surah} ✦</span>
+              </div>` : ""}
             </div>
-
-            ${slide.surah ? `
-            <div class="slide-quran-footer">
-              <span class="slide-quran-surah-pill">✦ ${slide.surah} ✦</span>
-            </div>` : ""}
           </div>
         </div>
       `;

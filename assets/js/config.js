@@ -81,12 +81,12 @@ window.masjidConfig = {
       "arti": "Dan mohonlah pertolongan (kepada Allah) dengan sabar dan sholat. Dan (sholat) itu sungguh berat, kecuali bagi orang-orang yang khusyuk.",
       "surah": "QS. Al-Baqarah: 45"
     },
-    {
-      "id": 2,
-      "type": "image",
-      "content": "assets/img/contoh_slide/info-a.png",
-      "duration": 15
-    }
+    // {
+    //   "id": 2,
+    //   "type": "image",
+    //   "content": "assets/img/contoh_slide/info-a.png",
+    //   "duration": 15
+    // }
     // {
     //   "id": 3,
     //   "type": "image",
