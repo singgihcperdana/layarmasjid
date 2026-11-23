@@ -246,17 +246,17 @@
 .adzan-prayer-pill {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: clamp(4px, 0.6vh, 8px) clamp(16px, 1.8vw, 28px);
+  gap: 12px;
+  padding: clamp(6px, 0.8vh, 12px) clamp(20px, 2.2vw, 36px);
   border-radius: 999px;
   background: rgba(240, 201, 106, 0.1);
-  border: 1.5px solid rgba(240, 201, 106, 0.4);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  margin-top: clamp(4px, 0.6vh, 8px);
+  border: 1.5px solid rgba(240, 201, 106, 0.45);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+  margin-top: clamp(6px, 0.8vh, 12px);
 }
 
 .adzan-pill-label {
-  font-size: clamp(0.75rem, 0.95vw, 1.1rem);
+  font-size: clamp(0.85rem, 1.1vw, 1.3rem);
   font-weight: 600;
   letter-spacing: 0.18em;
   color: var(--mint-soft);
@@ -264,12 +264,12 @@
 }
 
 .adzan-pill-val {
-  font-size: clamp(1.2rem, 1.8vw, 2.2rem);
+  font-size: clamp(1.4rem, 2.2vw, 2.8rem);
   font-weight: 800;
   letter-spacing: 0.12em;
   color: var(--gold-highlight);
   text-transform: uppercase;
-  text-shadow: 0 0 12px rgba(240, 201, 106, 0.35);
+  text-shadow: 0 0 14px rgba(240, 201, 106, 0.4);
 }
 
 /* =============================================================================
@@ -285,9 +285,9 @@
 .adzan-countdown-title {
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-  font-size: clamp(2.6rem, 4.8vw, 5.2rem);
+  font-size: clamp(2.8rem, 5.2vw, 5.8rem);
   font-weight: 900;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--ivory-soft);
   line-height: 1.05;
@@ -301,23 +301,23 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(16px, 2.4vh, 30px) clamp(44px, 5.5vw, 88px);
-  min-width: clamp(280px, 32vw, 480px);
-  border-radius: 24px;
+  padding: clamp(20px, 3vh, 38px) clamp(50px, 7vw, 110px);
+  min-width: clamp(340px, 42vw, 640px);
+  border-radius: 28px;
   background:
-    radial-gradient(circle at 50% 0%, rgba(240, 201, 106, 0.12), transparent 70%),
-    linear-gradient(180deg, rgba(8, 48, 36, 0.82) 0%, rgba(5, 30, 22, 0.88) 100%);
-  border: 2px solid rgba(224, 183, 53, 0.45);
+    radial-gradient(circle at 50% 0%, rgba(240, 201, 106, 0.14), transparent 70%),
+    linear-gradient(180deg, rgba(8, 48, 36, 0.85) 0%, rgba(5, 30, 22, 0.92) 100%);
+  border: 2px solid rgba(224, 183, 53, 0.48);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    0 0 24px rgba(224, 183, 53, 0.15);
-  margin-bottom: clamp(14px, 2vh, 24px);
+    0 20px 48px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 0 28px rgba(224, 183, 53, 0.2);
+  margin-bottom: clamp(14px, 2vh, 26px);
   transition: all 0.3s ease;
 }
 
 .adzan-timer-sub {
-  font-size: clamp(0.75rem, 0.9vw, 1.05rem);
+  font-size: clamp(0.85rem, 1.1vw, 1.3rem);
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -327,28 +327,28 @@
 
 .adzan-timer-digits {
   font-family: "Avenir Next", "Helvetica Neue", "Segoe UI", sans-serif;
-  font-size: clamp(4.6rem, 7.8vw, 8.4rem);
+  font-size: clamp(6.2rem, 11vw, 12rem);
   font-weight: 900;
   color: var(--gold-highlight);
   letter-spacing: 0.05em;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  text-shadow: 0 0 32px rgba(240, 201, 106, 0.4);
+  text-shadow: 0 0 36px rgba(240, 201, 106, 0.45);
 }
 
 .adzan-timer-accent {
   width: 70%;
   height: 2px;
-  margin-top: clamp(6px, 0.8vh, 12px);
-  background: linear-gradient(90deg, transparent, rgba(224, 183, 53, 0.8), transparent);
+  margin-top: clamp(8px, 1vh, 16px);
+  background: linear-gradient(90deg, transparent, rgba(224, 183, 53, 0.85), transparent);
 }
 
 /* Mode Urgent (10 detik terakhir sebelum adzan) */
 .adzan-timer-box.urgent {
   border-color: #ff5252;
   box-shadow:
-    0 16px 44px rgba(0, 0, 0, 0.55),
-    0 0 35px rgba(255, 82, 82, 0.45);
+    0 20px 52px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(255, 82, 82, 0.5);
   animation: timerUrgentPulse 0.5s ease-in-out infinite alternate;
 }
 
@@ -359,106 +359,94 @@
 
 .adzan-timer-box.urgent .adzan-timer-digits {
   color: #ff7676;
-  text-shadow: 0 0 38px rgba(255, 82, 82, 0.7);
+  text-shadow: 0 0 44px rgba(255, 82, 82, 0.75);
 }
 
 .adzan-countdown-hint {
   margin: 0;
-  font-size: clamp(1rem, 1.25vw, 1.45rem);
-  font-weight: 500;
+  font-size: clamp(1.3rem, 1.8vw, 2.2rem);
+  font-weight: 600;
   color: var(--mint-soft);
-  letter-spacing: 0.03em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
 }
 
 /* =============================================================================
    2. FASE SAAT AZAN (Desain Plakat Maklumat Islami Terpadu)
-   Menggantikan 3 kartu kotak SaaS menjadi 1 kesatuan plakat yang megah & syahdu
    ============================================================================= */
 .adzan-takbir-calligraphy {
   font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif;
-  font-size: clamp(2.4rem, 4vw, 4.6rem);
+  font-size: clamp(4.8rem, 8vw, 9.6rem);
   font-weight: 700;
   color: var(--gold-highlight);
-  line-height: 1.3;
-  margin-bottom: clamp(2px, 0.5vh, 6px);
-  text-shadow: 0 4px 20px rgba(224, 183, 53, 0.45);
+  line-height: 1.2;
+  margin-bottom: clamp(4px, 0.8vh, 12px);
+  text-shadow: 0 4px 32px rgba(224, 183, 53, 0.55);
 }
 
 .adzan-title-wrap {
-  margin-bottom: clamp(14px, 2vh, 26px);
+  margin-bottom: clamp(14px, 2vh, 24px);
 }
 
 .adzan-heading-main {
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-  font-size: clamp(2.2rem, 3.8vw, 4.4rem);
-  font-weight: 900;
-  letter-spacing: 0.06em;
+  font-size: clamp(2rem, 3.2vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ivory-soft);
-  line-height: 1.05;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  color: var(--mint-soft);
+  line-height: 1.1;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
 }
 
 .adzan-prayer-hero {
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-  font-size: clamp(3.2rem, 5.6vw, 6.2rem);
+  font-size: clamp(3.6rem, 5.8vw, 6.8rem);
   font-weight: 900;
   letter-spacing: 0.1em;
   color: var(--amber-soft);
   text-transform: uppercase;
   line-height: 1.05;
-  margin: clamp(4px, 0.5vh, 8px) 0 0;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 35px rgba(240, 201, 106, 0.4);
+  margin: clamp(4px, 0.6vh, 8px) 0 0;
+  text-shadow: 0 4px 26px rgba(0, 0, 0, 0.6), 0 0 38px rgba(240, 201, 106, 0.45);
 }
 
 .adzan-now-announcement {
-  margin: clamp(4px, 0.6vh, 8px) 0 0;
-  font-size: clamp(1rem, 1.2vw, 1.4rem);
-  color: var(--mint-soft);
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  display: none;
 }
 
-/* Plakat Maklumat Adab & Ketenangan (Bukan Kotak SaaS) */
+/* Plakat Maklumat Adab & Ketenangan Ringkas */
 .adzan-adab-plaque {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
-  width: 100%;
-  max-width: min(94%, 980px);
-  border-radius: 20px;
+  flex-wrap: wrap;
+  width: auto;
+  max-width: min(96%, 1100px);
+  border-radius: 999px;
   background:
     radial-gradient(circle at top center, rgba(240, 201, 106, 0.08), transparent 60%),
-    linear-gradient(180deg, rgba(7, 44, 33, 0.85) 0%, rgba(4, 28, 20, 0.9) 100%);
+    linear-gradient(180deg, rgba(7, 44, 33, 0.9) 0%, rgba(4, 28, 20, 0.94) 100%);
   border: 1.5px solid rgba(224, 183, 53, 0.38);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 0 24px rgba(224, 183, 53, 0.1);
-  padding: clamp(16px, 2.2vh, 26px) clamp(20px, 2.5vw, 36px);
-  gap: clamp(18px, 2.5vw, 36px);
+    0 14px 36px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 24px rgba(224, 183, 53, 0.12);
+  padding: clamp(14px, 1.8vh, 22px) clamp(28px, 3vw, 50px);
+  gap: clamp(24px, 3vw, 44px);
+  margin-top: clamp(6px, 1vh, 14px);
 }
 
-.adzan-adab-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.adzan-adab-header {
+.adzan-adab-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: clamp(6px, 0.9vh, 12px);
+  gap: clamp(12px, 1.4vw, 18px);
 }
 
 .adzan-adab-icon-wrap {
-  width: clamp(28px, 2.4vw, 36px);
-  height: clamp(28px, 2.4vw, 36px);
+  width: clamp(32px, 2.8vw, 44px);
+  height: clamp(32px, 2.8vw, 44px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -475,26 +463,18 @@
   height: 100%;
 }
 
-.adzan-adab-title {
-  margin: 0;
-  font-size: clamp(1.15rem, 1.45vw, 1.65rem);
-  font-weight: 800;
-  color: var(--gold-highlight);
-  letter-spacing: 0.02em;
-}
-
-.adzan-adab-desc {
-  margin: 0;
-  font-size: clamp(0.96rem, 1.15vw, 1.3rem);
+.adzan-adab-text {
+  font-size: clamp(1.2rem, 1.65vw, 1.95rem);
+  font-weight: 600;
   color: var(--ivory-soft);
-  opacity: 0.92;
-  line-height: 1.45;
-  font-weight: 400;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .adzan-adab-divider {
-  width: 1px;
-  background: linear-gradient(180deg, transparent, rgba(224, 183, 53, 0.45), transparent);
+  width: 2px;
+  height: clamp(28px, 3.6vh, 42px);
+  background: linear-gradient(180deg, transparent, rgba(224, 183, 53, 0.55), transparent);
   flex-shrink: 0;
 }
 
@@ -505,13 +485,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: clamp(10px, 1.6vh, 20px);
+  margin-bottom: clamp(12px, 1.8vh, 22px);
 }
 
 .iqomah-main-title {
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-  font-size: clamp(2.8rem, 5vw, 5.4rem);
+  font-size: clamp(3.2rem, 5.8vw, 6.4rem);
   font-weight: 900;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -524,25 +504,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: clamp(14px, 2vh, 26px) clamp(38px, 5vw, 76px);
-  border-radius: 22px;
+  padding: clamp(20px, 3vh, 38px) clamp(50px, 7vw, 110px);
+  min-width: clamp(340px, 42vw, 640px);
+  border-radius: 28px;
   background:
-    radial-gradient(circle at 50% 0%, rgba(79, 214, 194, 0.12), transparent 70%),
-    linear-gradient(180deg, rgba(8, 48, 36, 0.82) 0%, rgba(5, 30, 22, 0.88) 100%);
-  border: 2px solid rgba(79, 214, 194, 0.4);
+    radial-gradient(circle at 50% 0%, rgba(79, 214, 194, 0.14), transparent 70%),
+    linear-gradient(180deg, rgba(8, 48, 36, 0.85) 0%, rgba(5, 30, 22, 0.92) 100%);
+  border: 2px solid rgba(79, 214, 194, 0.48);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    0 0 24px rgba(79, 214, 194, 0.15);
-  margin-bottom: clamp(14px, 2vh, 24px);
+    0 20px 48px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 0 28px rgba(79, 214, 194, 0.2);
+  margin-bottom: clamp(14px, 2vh, 26px);
   transition: all 0.3s ease;
 }
 
 .iqomah-timer-box.urgent {
   border-color: #ff5252;
   box-shadow:
-    0 16px 44px rgba(0, 0, 0, 0.55),
-    0 0 35px rgba(255, 82, 82, 0.45);
+    0 20px 52px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(255, 82, 82, 0.5);
   animation: iqomahUrgentPulse 0.5s ease-in-out infinite alternate;
 }
 
@@ -552,7 +533,7 @@
 }
 
 .iqomah-timer-label {
-  font-size: clamp(0.75rem, 0.9vw, 1.05rem);
+  font-size: clamp(0.85rem, 1.1vw, 1.3rem);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--mint-soft);
@@ -562,52 +543,54 @@
 
 .iqomah-timer-digits {
   font-family: "Avenir Next", "Helvetica Neue", "Segoe UI", sans-serif;
-  font-size: clamp(4.2rem, 7vw, 7.6rem);
+  font-size: clamp(6.2rem, 11vw, 12rem);
   font-weight: 900;
   color: var(--teal-soft);
   letter-spacing: 0.05em;
   font-variant-numeric: tabular-nums;
   line-height: 1.05;
-  text-shadow: 0 0 30px rgba(79, 214, 194, 0.4);
+  text-shadow: 0 0 36px rgba(79, 214, 194, 0.45);
 }
 
 .iqomah-timer-box.urgent .iqomah-timer-digits {
   color: #ff7676;
-  text-shadow: 0 0 38px rgba(255, 82, 82, 0.65);
+  text-shadow: 0 0 44px rgba(255, 82, 82, 0.75);
 }
 
-.iqomah-timer-subtext {
-  font-size: clamp(0.72rem, 0.85vw, 0.94rem);
-  letter-spacing: 0.14em;
-  color: var(--sage-soft);
-  margin-top: 4px;
+.iqomah-timer-accent {
+  width: 70%;
+  height: 2px;
+  margin-top: clamp(8px, 1vh, 16px);
+  background: linear-gradient(90deg, transparent, rgba(79, 214, 194, 0.85), transparent);
 }
 
 .iqomah-notice-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  max-width: 720px;
-  padding: clamp(8px, 1.2vh, 16px) clamp(20px, 2.5vw, 36px);
-  border-radius: 14px;
-  background: rgba(240, 201, 106, 0.06);
-  border: 1px solid rgba(240, 201, 106, 0.25);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  gap: 8px;
+  width: auto;
+  max-width: min(94%, 960px);
+  padding: clamp(14px, 1.8vh, 24px) clamp(28px, 3.2vw, 52px);
+  border-radius: 20px;
+  background: rgba(240, 201, 106, 0.08);
+  border: 1.5px solid rgba(240, 201, 106, 0.32);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 .iqomah-quote {
   margin: 0;
-  font-size: clamp(0.92rem, 1.15vw, 1.35rem);
+  font-size: clamp(1.25rem, 1.7vw, 2.1rem);
   font-style: italic;
   color: var(--ivory-soft);
-  line-height: 1.4;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .iqomah-quote-source {
-  font-size: clamp(0.76rem, 0.88vw, 1rem);
+  font-size: clamp(1rem, 1.3vw, 1.5rem);
   color: var(--amber-soft);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* =============================================================================
@@ -620,22 +603,23 @@
 .sholat-silent-banner {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: clamp(8px, 1.1vh, 14px) clamp(22px, 2.4vw, 36px);
+  gap: clamp(14px, 1.6vw, 22px);
+  padding: clamp(14px, 1.8vh, 22px) clamp(32px, 3.5vw, 56px);
   border-radius: 999px;
-  background: rgba(224, 83, 83, 0.14);
-  border: 1.5px solid rgba(224, 83, 83, 0.45);
-  color: #ff9e9e;
-  font-size: clamp(0.98rem, 1.3vw, 1.55rem);
-  font-weight: 700;
+  background: rgba(224, 83, 83, 0.18);
+  border: 2px solid rgba(224, 83, 83, 0.55);
+  color: #ffb3b3;
+  font-size: clamp(1.4rem, 2vw, 2.4rem);
+  font-weight: 800;
   letter-spacing: 0.16em;
-  margin-bottom: clamp(16px, 2.5vh, 30px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  margin-top: clamp(-28px, -4vh, -12px);
+  margin-bottom: clamp(20px, 3.2vh, 40px);
+  box-shadow: 0 8px 32px rgba(224, 83, 83, 0.25), 0 4px 24px rgba(0, 0, 0, 0.5);
 }
 
 .sholat-silent-icon {
-  width: clamp(22px, 2vw, 30px);
-  height: clamp(22px, 2vw, 30px);
+  width: clamp(32px, 2.8vw, 46px);
+  height: clamp(32px, 2.8vw, 46px);
   flex-shrink: 0;
 }
 

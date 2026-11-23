@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="assets/css/base.css?v=35">
   <link rel="stylesheet" href="assets/css/layout.css?v=43">
   <link rel="stylesheet" href="assets/css/sidebar.css?v=37">
-  <link rel="stylesheet" href="assets/css/adzan.css?v=40">
+  <link rel="stylesheet" href="assets/css/adzan.css?v=45">
 </head>
 <body>
   <div class="screen-shell">
@@ -177,45 +177,38 @@
           <p class="adzan-countdown-hint">Segera mengambil air wudhu dan merapatkan diri ke shaf sholat</p>
         </section>
 
-        <!-- 2. FASE SAAT AZAN (Desain Plakat Maklumat Islami, Bukan Kotak SaaS) -->
+        <!-- 2. FASE SAAT AZAN (Desain Plakat Maklumat Islami) -->
         <section class="adzan-phase adzan-phase--saat-adzan" id="phase-saat-adzan">
           <div class="adzan-takbir-calligraphy" dir="rtl" lang="ar">اللهُ أَكْبَرُ اللهُ أَكْبَرُ</div>
 
           <div class="adzan-title-wrap">
-            <h1 class="adzan-heading-main">WAKTU ADZAN TELAH MASUK</h1>
+            <h1 class="adzan-heading-main">WAKTU MASUK ADZAN</h1>
             <div class="adzan-prayer-hero" id="adzan-current-prayer-name">DZUHUR</div>
-            <p class="adzan-now-announcement">Untuk Wilayah Jakarta dan Sekitarnya</p>
           </div>
 
-          <!-- Plakat Maklumat Terpadu Bernuansa Mihrab -->
+          <!-- Plakat Maklumat Ringkas: Adab & Ketenangan -->
           <div class="adzan-adab-plaque">
-            <div class="adzan-adab-col">
-              <div class="adzan-adab-header">
-                <span class="adzan-adab-icon-wrap" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                  </svg>
-                </span>
-                <h2 class="adzan-adab-title">Adab Menjawab Adzan</h2>
-              </div>
-              <p class="adzan-adab-desc">Dianjurkan menyimak, menjawab setiap lafadz adzan dengan khusyuk, dan memanjatkan doa setelahnya.</p>
+            <div class="adzan-adab-item">
+              <span class="adzan-adab-icon-wrap" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+              </span>
+              <span class="adzan-adab-text">Mari Menyimak &amp; Menjawab Adzan</span>
             </div>
 
             <div class="adzan-adab-divider" aria-hidden="true"></div>
 
-            <div class="adzan-adab-col">
-              <div class="adzan-adab-header">
-                <span class="adzan-adab-icon-wrap adzan-adab-icon-wrap--silent" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-                    <line x1="12" y1="18" x2="12.01" y2="18"/>
-                    <line x1="2" y1="2" x2="22" y2="22" stroke="#e05353" stroke-width="2.4"/>
-                  </svg>
-                </span>
-                <h2 class="adzan-adab-title">Ketenangan Ibadah</h2>
-              </div>
-              <p class="adzan-adab-desc">Mohon menonaktifkan atau mengaktifkan mode hening (silent) pada handphone demi kekhusyukan jamaah.</p>
+            <div class="adzan-adab-item">
+              <span class="adzan-adab-icon-wrap adzan-adab-icon-wrap--silent" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12.01" y2="18"/>
+                  <line x1="2" y1="2" x2="22" y2="22" stroke="#e05353" stroke-width="2.4"/>
+                </svg>
+              </span>
+              <span class="adzan-adab-text">Mohon Aktifkan Mode Hening (Silent) HP</span>
             </div>
           </div>
         </section>
@@ -232,7 +225,7 @@
 
           <div class="iqomah-timer-box" id="iqomah-timer-box">
             <span class="iqomah-timer-digits" id="iqomah-timer-digits">05:00</span>
-            <span class="iqomah-timer-subtext">Menit : Detik</span>
+            <div class="iqomah-timer-accent" aria-hidden="true"></div>
           </div>
 
           <div class="iqomah-notice-card">
