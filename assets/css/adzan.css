@@ -317,12 +317,12 @@
 
 /* Mode Urgent (10 detik terakhir sebelum adzan) */
 .adzan-timer-box.urgent {
-  border-color: #ff5252;
+  border-color: #e53935;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
 }
 
 .adzan-timer-box.urgent .adzan-timer-digits {
-  color: #ff7676;
+  color: #e53935;
   text-shadow: none !important;
 }
 
@@ -480,7 +480,7 @@
 }
 
 .iqomah-timer-box.urgent {
-  border-color: #ff5252;
+  border-color: #e53935;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
 }
 
@@ -496,7 +496,7 @@
 }
 
 .iqomah-timer-box.urgent .iqomah-timer-digits {
-  color: #ff7676;
+  color: #e53935;
   text-shadow: none !important;
 }
 
