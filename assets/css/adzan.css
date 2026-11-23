@@ -305,7 +305,7 @@
   letter-spacing: 0.05em;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  text-shadow: 0 0 36px rgba(240, 201, 106, 0.45);
+  text-shadow: none;
 }
 
 .adzan-timer-accent {
@@ -318,20 +318,12 @@
 /* Mode Urgent (10 detik terakhir sebelum adzan) */
 .adzan-timer-box.urgent {
   border-color: #ff5252;
-  box-shadow:
-    0 20px 52px rgba(0, 0, 0, 0.6),
-    0 0 40px rgba(255, 82, 82, 0.5);
-  animation: timerUrgentPulse 0.5s ease-in-out infinite alternate;
-}
-
-@keyframes timerUrgentPulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.025); }
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
 }
 
 .adzan-timer-box.urgent .adzan-timer-digits {
   color: #ff7676;
-  text-shadow: 0 0 44px rgba(255, 82, 82, 0.75);
+  text-shadow: none !important;
 }
 
 .adzan-countdown-hint {
@@ -489,15 +481,7 @@
 
 .iqomah-timer-box.urgent {
   border-color: #ff5252;
-  box-shadow:
-    0 20px 52px rgba(0, 0, 0, 0.6),
-    0 0 40px rgba(255, 82, 82, 0.5);
-  animation: iqomahUrgentPulse 0.5s ease-in-out infinite alternate;
-}
-
-@keyframes iqomahUrgentPulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.025); }
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
 }
 
 .iqomah-timer-digits {
@@ -508,12 +492,12 @@
   letter-spacing: 0.05em;
   font-variant-numeric: tabular-nums;
   line-height: 1.05;
-  text-shadow: 0 0 36px rgba(79, 214, 194, 0.45);
+  text-shadow: none;
 }
 
 .iqomah-timer-box.urgent .iqomah-timer-digits {
   color: #ff7676;
-  text-shadow: 0 0 44px rgba(255, 82, 82, 0.75);
+  text-shadow: none !important;
 }
 
 .iqomah-timer-accent {
