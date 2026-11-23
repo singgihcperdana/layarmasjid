@@ -70,11 +70,6 @@ function setupSlides() {
       slideItem.innerHTML = `
         <div class="slide-quran-card">
           <div class="slide-quran-frame">
-            <span class="slide-quran-corner slide-quran-corner--tl" aria-hidden="true"></span>
-            <span class="slide-quran-corner slide-quran-corner--tr" aria-hidden="true"></span>
-            <span class="slide-quran-corner slide-quran-corner--bl" aria-hidden="true"></span>
-            <span class="slide-quran-corner slide-quran-corner--br" aria-hidden="true"></span>
-
             <div class="slide-quran-body">
               <p class="slide-quran-arabic" dir="rtl">${slide.ayat || slide.src}</p>
               <div class="slide-quran-divider" aria-hidden="true">
@@ -105,11 +100,6 @@ function setupSlides() {
       slideItem.innerHTML = `
         <div class="slide-custom-card">
           <div class="slide-custom-frame">
-            <span class="slide-quran-corner slide-quran-corner--tl" aria-hidden="true"></span>
-            <span class="slide-quran-corner slide-quran-corner--tr" aria-hidden="true"></span>
-            <span class="slide-quran-corner slide-quran-corner--bl" aria-hidden="true"></span>
-            <span class="slide-quran-corner slide-quran-corner--br" aria-hidden="true"></span>
-
             <div class="slide-custom-content">
               ${slide.title ? `<h2 class="slide-custom-title">${slide.title}</h2>` : ""}
               ${slide.content ? `<div class="slide-custom-body">${slide.content}</div>` : ""}
