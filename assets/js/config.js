@@ -86,37 +86,37 @@ window.masjidConfig = {
       "type": "image",
       "content": "assets/img/contoh_slide/info-a.png",
       "duration": 15
-    },
-    {
-      "id": 3,
-      "type": "image",
-      "content": "assets/img/contoh_slide/info-2.png",
-      "duration": 15
-    },
-    {
-      "id": 4,
-      "type": "image",
-      "content": "assets/img/contoh_slide/info-3.png",
-      "duration": 15
-    },
-    {
-      "id": 5,
-      "type": "image",
-      "content": "assets/img/contoh_slide/info-4.png",
-      "duration": 15
-    },
-    {
-      "id": 6,
-      "type": "image",
-      "content": "assets/img/contoh_slide/info-5.png",
-      "duration": 15
-    },
-    {
-      "id": 7,
-      "type": "image",
-      "content": "assets/img/contoh_slide/info-6.png",
-      "duration": 15
     }
+    // {
+    //   "id": 3,
+    //   "type": "image",
+    //   "content": "assets/img/contoh_slide/info-2.png",
+    //   "duration": 15
+    // },
+    // {
+    //   "id": 4,
+    //   "type": "image",
+    //   "content": "assets/img/contoh_slide/info-3.png",
+    //   "duration": 15
+    // },
+    // {
+    //   "id": 5,
+    //   "type": "image",
+    //   "content": "assets/img/contoh_slide/info-4.png",
+    //   "duration": 15
+    // },
+    // {
+    //   "id": 6,
+    //   "type": "image",
+    //   "content": "assets/img/contoh_slide/info-5.png",
+    //   "duration": 15
+    // },
+    // {
+    //   "id": 7,
+    //   "type": "image",
+    //   "content": "assets/img/contoh_slide/info-6.png",
+    //   "duration": 15
+    // }
   ],
   "running_text": [
     "Selamat datang di Masjid Al Ikhlas",

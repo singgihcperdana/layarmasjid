@@ -505,7 +505,7 @@ function unlockAudio() {
   window.addEventListener(evt, unlockAudio, { passive: true });
 });
 
-function playTone(freq = 880, duration = 0.16, type = "sine", gainVolume = 0.35) {
+function playTone(freq = 988, duration = 0.22, type = "triangle", gainVolume = 0.55) {
   try {
     if (!audioCtx) {
       const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
@@ -515,16 +515,25 @@ function playTone(freq = 880, duration = 0.16, type = "sine", gainVolume = 0.35)
 
     const emitSound = () => {
       try {
+        const now = audioCtx.currentTime;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(gainVolume, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.frequency.setValueAtTime(freq, now);
+
+        // Attack lembut (8ms) agar bebas bunyi klik/pop
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(gainVolume, now + 0.008);
+
+        // Sustain bunyi penuh sampai mendekati akhir durasi
+        const sustainEnd = now + Math.max(0.03, duration - 0.035);
+        gain.gain.setValueAtTime(gainVolume, sustainEnd);
+        gain.gain.linearRampToValueAtTime(0.0001, now + duration);
+
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
+        osc.start(now);
+        osc.stop(now + duration);
       } catch (err) {
         console.warn("[LayarMasjid Audio] Gagal output sound:", err);
       }
@@ -549,24 +558,24 @@ function playTone(freq = 880, duration = 0.16, type = "sine", gainVolume = 0.35)
 
 // Beep di detik-detik terakhir menjelang adzan (setiap detik berbunyi nyaring)
 function playBeepAdzan() {
-  playTone(880, 0.15, "sine", 0.4);
+  playTone(988, 0.22, "triangle", 0.55);
 }
 
 // Chime saat detik ke-0 (waktu adzan tepat tiba)
 function playChimeAzan() {
-  playTone(659.25, 0.45, "triangle", 0.4);
-  setTimeout(() => playTone(880, 0.65, "sine", 0.45), 260);
+  playTone(659.25, 0.45, "triangle", 0.5);
+  setTimeout(() => playTone(880, 0.75, "triangle", 0.55), 260);
 }
 
 // Beep di detik-detik terakhir countdown iqomah (setiap detik berbunyi)
 function playBeepIqomah() {
-  playTone(784, 0.18, "sine", 0.4);
+  playTone(880, 0.22, "triangle", 0.55);
 }
 
 // Chime penanda waktu iqomah berkumandang (masuk sholat)
 function playChimeIqomah() {
-  playTone(523.25, 0.5, "triangle", 0.4);
-  setTimeout(() => playTone(659.25, 0.8, "sine", 0.45), 280);
+  playTone(523.25, 0.5, "triangle", 0.5);
+  setTimeout(() => playTone(659.25, 0.85, "triangle", 0.55), 280);
 }
 
 // =============================================================================
@@ -1069,22 +1078,8 @@ function tick() {
   renderLifecycleScreen(state, now);
 }
 
-async function startClock() {
+function startClock() {
   initTimeOffset();
-
-  // Prioritaskan window.masjidConfig dari assets/js/config.js agar komentar/perubahan user aktif.
-  // Hanya fetch config.json jika config.js belum ada/kosong.
-  if (!window.masjidConfig) {
-    try {
-      const res = await fetch("config.json?v=" + Date.now());
-      if (res.ok) {
-        window.masjidConfig = await res.json();
-      }
-    } catch (err) {
-      // Mode offline / file:/// protocol
-    }
-  }
-
   applyMasjidConfig();
   const initialNow = getCurrentNow();
   calculateDailyPrayers(initialNow);
