@@ -76,17 +76,24 @@ window.masjidConfig = {
   "slides": [
     {
       "id": 1,
-      "type": "text",
+      "type": "quranHadist",
       "ayat": "وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ ۚ وَإِنَّهَا لَكَبِيرَةٌ إِلَّا عَلَى الْخَاشِعِينَ",
       "arti": "Dan mohonlah pertolongan (kepada Allah) dengan sabar dan sholat. Dan (sholat) itu sungguh berat, kecuali bagi orang-orang yang khusyuk.",
       "surah": "QS. Al-Baqarah: 45"
     },
-    // {
-    //   "id": 2,
-    //   "type": "image",
-    //   "content": "assets/img/contoh_slide/info-a.png",
-    //   "duration": 15
-    // }
+    {
+      "id": 2,
+      "type": "info",
+      "title": "KAJIAN RUTIN AHAD SUBUH",
+      "content": "<p>Bersama <b>Ustadz Dr. Fulan, Lc., M.A.</b></p><p style=\"opacity: 0.85;\">Pembahasan Kitab Riyadhus Shalihin</p>",
+      "duration": 15
+    },
+    {
+      "id": 3,
+      "type": "image",
+      "content": "assets/img/contoh_slide/info-a.png",
+      "duration": 15
+    }
     // {
     //   "id": 3,
     //   "type": "image",

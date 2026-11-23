@@ -208,14 +208,17 @@ function applyMasjidConfig() {
   if (Array.isArray(cfg.slides) && cfg.slides.length > 0) {
     const globalInterval = cfg.timer?.slide_interval || 10;
     slides = cfg.slides.map((item, idx) => ({
+      ...item,
       id: item.id || idx + 1,
-      type: item.type || (item.ayat ? "text" : "image"),
+      type: item.type || (item.ayat ? "quranHadist" : (typeof item.content === "string" && item.content.match(/\.(png|jpe?g|webp|gif|svg)$/i) ? "image" : "info")),
       src: item.content || item.src || "",
-      alt: item.alt || `Slide informasi ${idx + 1}`,
+      alt: item.alt || item.title || `Slide informasi ${idx + 1}`,
       duration: typeof item.duration === "number" && item.duration > 0 ? item.duration : globalInterval,
       ayat: item.ayat || item.arabic || "",
       arti: item.arti || item.terjemahan || item.translation || "",
-      surah: item.surah || item.surat || item.source || ""
+      surah: item.surah || item.surat || item.source || "",
+      title: item.title || item.judul || "",
+      content: item.content || item.text || item.src || ""
     }));
   }
 }
@@ -390,7 +393,7 @@ function setupSlides() {
       slideItem.classList.add("active");
     }
 
-    if (slide.type === "text" || slide.ayat) {
+    if (slide.type === "quranHadist" || slide.type === "quran" || slide.ayat) {
       slideItem.classList.add("content-stage-slide--text");
       slideItem.innerHTML = `
         <div class="slide-quran-card">
@@ -412,6 +415,30 @@ function setupSlides() {
               <div class="slide-quran-footer">
                 <span class="slide-quran-surah-pill">✦ ${slide.surah} ✦</span>
               </div>` : ""}
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (
+      slide.type === "info" ||
+      slide.type === "text" ||
+      slide.type === "custom" ||
+      slide.type === "html" ||
+      slide.type === "free" ||
+      (typeof slide.content === "string" && slide.content.length > 0 && !slide.content.match(/\.(png|jpe?g|webp|gif|svg)$/i))
+    ) {
+      slideItem.classList.add("content-stage-slide--custom");
+      slideItem.innerHTML = `
+        <div class="slide-custom-card">
+          <div class="slide-custom-frame">
+            <span class="slide-quran-corner slide-quran-corner--tl" aria-hidden="true"></span>
+            <span class="slide-quran-corner slide-quran-corner--tr" aria-hidden="true"></span>
+            <span class="slide-quran-corner slide-quran-corner--bl" aria-hidden="true"></span>
+            <span class="slide-quran-corner slide-quran-corner--br" aria-hidden="true"></span>
+
+            <div class="slide-custom-content">
+              ${slide.title ? `<h2 class="slide-custom-title">${slide.title}</h2>` : ""}
+              ${slide.content ? `<div class="slide-custom-body">${slide.content}</div>` : ""}
             </div>
           </div>
         </div>
