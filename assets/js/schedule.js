@@ -135,7 +135,38 @@ function applyMasjidConfig() {
         .join("");
     }
   }
+
+  updateTickerSpeed();
 }
+
+function updateTickerSpeed() {
+  const tickerTrack = document.querySelector(".content-ticker-text");
+  if (!tickerTrack) return;
+
+  const cfg = window.masjidConfig || {};
+  const t = cfg.timer || {};
+  const s = cfg.setting || {};
+  const userSpeed = Number(t.kecepatan_running_text || t.running_text_speed || s.kecepatan_running_text || 5);
+  const speedScale = Math.min(10, Math.max(1, isNaN(userSpeed) ? 5 : userSpeed));
+
+  // Kecepatan referensi pada resolusi Full HD 1920 (skala 1 = 45 px/s s.d. skala 10 = 180 px/s)
+  const basePxPerSec = 45 + ((speedScale - 1) * 15);
+
+  // Normalisasi skala layar terhadap lebar 1920px agar kecepatan optik konsisten di semua resolusi
+  const screenScale = Math.max(0.4, window.innerWidth / 1920);
+  const effectivePxPerSec = basePxPerSec * screenScale;
+
+  // Jarak tempuh = panjang teks + lebar container
+  const textWidth = tickerTrack.scrollWidth || 1200;
+  const containerWidth = tickerTrack.parentElement ? tickerTrack.parentElement.clientWidth : window.innerWidth;
+  const totalDistance = textWidth + containerWidth;
+
+  const durationSec = Math.max(8, Math.round(totalDistance / effectivePxPerSec));
+  tickerTrack.style.setProperty("--ticker-duration", `${durationSec}s`);
+  tickerTrack.style.animationDuration = `${durationSec}s`;
+}
+
+window.addEventListener("resize", updateTickerSpeed);
 
 function getHijriDateText(now) {
   const d = new Date(now);

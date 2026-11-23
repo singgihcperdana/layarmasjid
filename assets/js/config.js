@@ -64,7 +64,8 @@ window.masjidConfig = {
     "wait_adzan": 1,
     "countdown_beep": 10,
     "adzan": 5,
-    "sholat": 10
+    "sholat": 10,
+    "kecepatan_running_text": 5
   },
   "iqomahTimer": {
     "fajr": 10,
