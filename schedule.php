@@ -16,6 +16,15 @@ $setting = $stmt->fetch() ?: [
     'calc_fajr_angle' => 20.0, 'calc_isha_angle' => 18.0, 'calc_asr_method' => 'Standard'
 ];
 
+$tune_configs = [
+    'tune_fajr'    => ['label' => 'Subuh',   'val' => (int)$setting['tune_fajr']],
+    'tune_sunrise' => ['label' => 'Syuruq',  'val' => (int)$setting['tune_sunrise']],
+    'tune_dhuhr'   => ['label' => 'Dzuhur',  'val' => (int)$setting['tune_dhuhr']],
+    'tune_asr'     => ['label' => 'Ashar',   'val' => (int)$setting['tune_asr']],
+    'tune_maghrib' => ['label' => 'Maghrib', 'val' => (int)$setting['tune_maghrib']],
+    'tune_isha'    => ['label' => 'Isya\'',  'val' => (int)$setting['tune_isha']],
+];
+
 $latitude  = (float)($masjid['latitude'] ?? -6.14);
 $longitude = (float)($masjid['longitude'] ?? 106.59);
 ?>
@@ -30,7 +39,55 @@ $longitude = (float)($masjid['longitude'] ?? 106.59);
     border: 1px solid #ced4da;
     z-index: 1;
   }
+  .tune-toggle-btn {
+    min-width: 44px;
+    font-size: 1.15rem;
+    font-weight: 700 !important;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  .btn-tune-plus {
+    background-color: #eafaf1;
+    border-color: #0a4d3a;
+    color: #0a4d3a;
+  }
+  .btn-tune-plus:hover {
+    background-color: #0a4d3a;
+    color: #ffffff;
+  }
+  .btn-tune-minus {
+    background-color: #fde8e8;
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+  .btn-tune-minus:hover {
+    background-color: #dc3545;
+    color: #ffffff;
+  }
+  .tune-num {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+  }
+  .tune-unit {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    font-size: 0.85rem !important;
+    background-color: #f8fafc !important;
+    color: #475569;
+  }
+  .table-monthly {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
   .table-monthly-header th {
+    position: sticky;
+    top: 56px;
+    z-index: 1010;
     background-color: #0a4d3a !important;
     color: #ffffff !important;
     text-align: center;
@@ -40,6 +97,15 @@ $longitude = (float)($masjid['longitude'] ?? 106.59);
     letter-spacing: 0.5px;
     border: none;
     border-bottom: 2px solid #d4af37 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12);
+  }
+  .table-monthly-wrap {
+    overflow: visible;
+  }
+  @media (max-width: 767.98px) {
+    .table-monthly-wrap {
+      overflow-x: auto;
+    }
   }
   .table-monthly td {
     text-align: center;
@@ -102,6 +168,8 @@ $longitude = (float)($masjid['longitude'] ?? 106.59);
     font-size: 0.92rem;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    white-space: nowrap;
     border: 1px solid rgba(212, 175, 55, 0.4);
     box-shadow: 0 2px 4px rgba(0,0,0,0.08);
   }
@@ -198,49 +266,23 @@ $longitude = (float)($masjid['longitude'] ?? 106.59);
         </div>
         <div class="card-body">
           <p class="small text-muted mb-3" style="font-size: 0.82rem;">Sesuaikan jika ada perbedaan menit dengan kalender rujukan lokal setempat.</p>
-          <div class="row g-2">
-            <div class="col-4">
-              <label class="form-label small fw-semibold">Subuh</label>
+          <div class="row g-3">
+            <?php foreach ($tune_configs as $field => $cfg): 
+              $sign = ($cfg['val'] < 0) ? '-' : '+';
+              $abs_val = abs($cfg['val']);
+            ?>
+            <div class="col-6">
+              <label class="form-label small fw-semibold mb-1"><?= $cfg['label'] ?></label>
               <div class="input-group input-group-sm">
-                <input type="number" class="form-control text-center tune-input" name="tune_fajr" value="<?= (int)$setting['tune_fajr'] ?>">
-                <span class="input-group-text">m</span>
+                <button type="button" class="btn btn-sm tune-toggle-btn <?= $sign === '-' ? 'btn-tune-minus' : 'btn-tune-plus' ?>" data-target="<?= $field ?>" title="Klik untuk beralih antara + dan -">
+                  <?= $sign ?>
+                </button>
+                <input type="number" class="form-control text-center tune-num" min="0" max="60" value="<?= $abs_val ?>" data-target="<?= $field ?>">
+                <span class="input-group-text tune-unit">menit</span>
+                <input type="hidden" name="<?= $field ?>" id="<?= $field ?>" class="tune-input" value="<?= $cfg['val'] ?>">
               </div>
             </div>
-            <div class="col-4">
-              <label class="form-label small fw-semibold">Syuruq</label>
-              <div class="input-group input-group-sm">
-                <input type="number" class="form-control text-center tune-input" name="tune_sunrise" value="<?= (int)$setting['tune_sunrise'] ?>">
-                <span class="input-group-text">m</span>
-              </div>
-            </div>
-            <div class="col-4">
-              <label class="form-label small fw-semibold">Dzuhur</label>
-              <div class="input-group input-group-sm">
-                <input type="number" class="form-control text-center tune-input" name="tune_dhuhr" value="<?= (int)$setting['tune_dhuhr'] ?>">
-                <span class="input-group-text">m</span>
-              </div>
-            </div>
-            <div class="col-4">
-              <label class="form-label small fw-semibold">Ashar</label>
-              <div class="input-group input-group-sm">
-                <input type="number" class="form-control text-center tune-input" name="tune_asr" value="<?= (int)$setting['tune_asr'] ?>">
-                <span class="input-group-text">m</span>
-              </div>
-            </div>
-            <div class="col-4">
-              <label class="form-label small fw-semibold">Maghrib</label>
-              <div class="input-group input-group-sm">
-                <input type="number" class="form-control text-center tune-input" name="tune_maghrib" value="<?= (int)$setting['tune_maghrib'] ?>">
-                <span class="input-group-text">m</span>
-              </div>
-            </div>
-            <div class="col-4">
-              <label class="form-label small fw-semibold">Isya'</label>
-              <div class="input-group input-group-sm">
-                <input type="number" class="form-control text-center tune-input" name="tune_isha" value="<?= (int)$setting['tune_isha'] ?>">
-                <span class="input-group-text">m</span>
-              </div>
-            </div>
+            <?php endforeach; ?>
           </div>
         </div>
       </div>
@@ -258,8 +300,7 @@ $longitude = (float)($masjid['longitude'] ?? 106.59);
         <div class="card-header bg-white py-3">
           <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
             <div>
-              <h6 class="mb-0 fw-bold text-success"><i class="bi bi-calendar3 me-1"></i> Simulasi Jadwal Sholat Bulanan</h6>
-              <div class="text-muted small mt-1">Jadwal otomatis berubah realtime saat Anda menggeser peta atau mengubah menit koreksi.</div>
+              <h5 class="mb-0 fw-bold" style="color: #0a4d3a; font-size: 1.25rem;">Simulasi Jadwal Sholat Bulanan</h5>
             </div>
 
             <!-- Tombol Navigasi Bulan & Display -->
@@ -268,7 +309,7 @@ $longitude = (float)($masjid['longitude'] ?? 106.59);
                 <i class="bi bi-chevron-left me-1"></i> Prev
               </button>
               <span id="currentMonthLabel" class="month-display-card">
-                <i class="bi bi-calendar3 me-2" style="color: #e5c05b;"></i> November 2026
+                November 2026
               </span>
               <button type="button" id="btnNextMonth" class="month-nav-btn shadow-sm">
                 Next <i class="bi bi-chevron-right ms-1"></i>
@@ -278,7 +319,7 @@ $longitude = (float)($masjid['longitude'] ?? 106.59);
         </div>
 
         <div class="card-body p-0">
-          <div class="table-responsive">
+          <div class="table-monthly-wrap">
             <table class="table table-bordered table-hover table-striped table-monthly mb-0">
               <thead class="table-monthly-header">
                 <tr>
@@ -449,7 +490,7 @@ $longitude = (float)($masjid['longitude'] ?? 106.59);
     const month = currentViewDate.getMonth(); // 0 - 11
 
     // Update Label Bulan (e.g. "November 2026")
-    document.getElementById('currentMonthLabel').innerHTML = `<i class="bi bi-calendar3 me-2" style="color: #e5c05b;"></i> ${namaBulanIndo[month]} ${year}`;
+    document.getElementById('currentMonthLabel').textContent = `${namaBulanIndo[month]} ${year}`;
 
     // Cari jumlah hari dalam bulan ini
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -508,9 +549,46 @@ $longitude = (float)($masjid['longitude'] ?? 106.59);
     document.getElementById(id).addEventListener('input', renderMonthlySchedule);
   });
 
-  document.querySelectorAll('.tune-input').forEach(input => {
-    input.addEventListener('change', renderMonthlySchedule);
-    input.addEventListener('input', renderMonthlySchedule);
+  // Toggle Tanda (+ / -) 1-Klik
+  document.querySelectorAll('.tune-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const field = this.dataset.target;
+      const currentSign = this.textContent.trim();
+      const newSign = (currentSign === '+') ? '-' : '+';
+      
+      this.textContent = newSign;
+      if (newSign === '-') {
+        this.classList.remove('btn-tune-plus');
+        this.classList.add('btn-tune-minus');
+      } else {
+        this.classList.remove('btn-tune-minus');
+        this.classList.add('btn-tune-plus');
+      }
+
+      updateTuneHidden(field);
+    });
+  });
+
+  // Sinkronisasi tanda (+/-) dan angka menit ke input hidden & render simulasi
+  function updateTuneHidden(field) {
+    const btn = document.querySelector(`.tune-toggle-btn[data-target="${field}"]`);
+    const sign = btn ? btn.textContent.trim() : '+';
+    const inputNum = document.querySelector(`.tune-num[data-target="${field}"]`);
+    const num = Math.abs(parseInt(inputNum ? inputNum.value : 0) || 0);
+    const hidden = document.getElementById(field);
+    if (hidden) {
+      hidden.value = (sign === '-' ? -1 : 1) * num;
+    }
+    renderMonthlySchedule();
+  }
+
+  document.querySelectorAll('.tune-num').forEach(input => {
+    input.addEventListener('input', function() {
+      updateTuneHidden(this.dataset.target);
+    });
+    input.addEventListener('change', function() {
+      updateTuneHidden(this.dataset.target);
+    });
   });
 
   // 5. Simpan Pengaturan via AJAX
