@@ -111,7 +111,8 @@ function setupSlides() {
     // Template 3: Gambar Banner
     else {
       const image = document.createElement("img");
-      image.src = slide.src;
+      const srcUrl = slide.src && slide.src.startsWith("uploads/") ? `../${slide.src}` : slide.src;
+      image.src = srcUrl;
       image.alt = slide.alt;
       image.loading = index === 0 ? "eager" : "lazy";
       slideItem.appendChild(image);

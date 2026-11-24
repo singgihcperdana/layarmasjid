@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Layar Masjid</title>
+  <link rel="stylesheet" href="assets/css/tokens.css?v=35">
+  <link rel="stylesheet" href="assets/css/base.css?v=35">
+  <link rel="stylesheet" href="assets/css/layout.css?v=48">
+  <link rel="stylesheet" href="assets/css/sidebar.css?v=41">
+  <link rel="stylesheet" href="assets/css/adzan.css?v=50">
+</head>
+<body>
+  <div class="screen-shell">
+    <aside class="left-panel">
+      <span class="panel-corner panel-corner--bottom-left" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--bottom-right" aria-hidden="true"></span>
+
+      <div class="sidebar-main">
+        <img class="sidebar-top-ornament" src="assets/img/kubah.png" alt="" aria-hidden="true">
+
+        <div class="sidebar-content">
+          <section class="clock-card" aria-label="Waktu saat ini">
+            <div class="clock-display">
+              <span class="clock-main" id="clock-main">08.34</span>
+              <span class="clock-seconds" id="clock-seconds">17</span>
+            </div>
+            <p class="date-display" id="date-display">Sabtu, 02 Mei 2026</p>
+            <p class="date-hijri" id="date-hijri"></p>
+            <div class="date-ornament" aria-hidden="true"></div>
+          </section>
+
+          <section class="schedule-card">
+            <div class="schedule-list" id="schedule-list">
+              <div class="schedule-row active">
+                <span class="prayer-name">Subuh</span>
+                <span class="prayer-time">04:36</span>
+              </div>
+              <div class="schedule-row">
+                <span class="prayer-name">Syuruq</span>
+                <span class="prayer-time">05:52</span>
+              </div>
+              <div class="schedule-row">
+                <span class="prayer-name">Dzuhur</span>
+                <span class="prayer-time">11:54</span>
+              </div>
+              <div class="schedule-row">
+                <span class="prayer-name">Ashar</span>
+                <span class="prayer-time">15:14</span>
+              </div>
+              <div class="schedule-row">
+                <span class="prayer-name">Maghrib</span>
+                <span class="prayer-time">17:48</span>
+              </div>
+              <div class="schedule-row">
+                <span class="prayer-name">Isya</span>
+                <span class="prayer-time">18:59</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="sidebar-endcap-wrap">
+        <div class="schedule-endcap" aria-hidden="true">
+          <span class="schedule-endcap-line"></span>
+          <span class="schedule-endcap-mark"></span>
+          <span class="schedule-endcap-line"></span>
+        </div>
+        <p class="sidebar-signature">layarmasjid.com</p>
+      </div>
+    </aside>
+
+    <main class="right-panel">
+      <header class="content-header">
+        <div class="content-brand" aria-label="Logo masjid">
+          <div class="content-brand-frame" id="content-brand-frame">
+            <img
+              id="content-brand-logo"
+              class="content-brand-logo"
+              src="assets/img/contoh_logo/masjid_astra.png"
+              alt="Logo Masjid Astra"
+            >
+          </div>
+        </div>
+
+        <div class="content-identity">
+          <h1 class="content-mosque-name">Masjid Al Ikhlas</h1>
+          <p class="content-address">
+            <svg class="content-address-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Jl. Contoh No. 12, Kebayoran Baru &bull; Jakarta Selatan</span>
+          </p>
+          <p class="content-extra-info" id="content-extra-info">
+            <svg class="content-extra-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span id="content-extra-text">Info / Rekening / Kontak: BSI 7123 456 789 a.n. Masjid Al Ikhlas &bull; WA: 0812-3456-7890</span>
+          </p>
+        </div>
+
+        <div class="content-header-watermark" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1.2">
+            <circle cx="60" cy="60" r="54" stroke-dasharray="3 3" opacity="0.45"/>
+            <circle cx="60" cy="60" r="50" opacity="0.65"/>
+            <rect x="25" y="25" width="70" height="70" transform="rotate(0 60 60)"/>
+            <rect x="25" y="25" width="70" height="70" transform="rotate(45 60 60)"/>
+            <circle cx="60" cy="60" r="32" opacity="0.7"/>
+            <rect x="38" y="38" width="44" height="44" transform="rotate(22.5 60 60)" opacity="0.5"/>
+            <rect x="38" y="38" width="44" height="44" transform="rotate(67.5 60 60)" opacity="0.5"/>
+            <circle cx="60" cy="60" r="16" opacity="0.8"/>
+            <circle cx="60" cy="60" r="5" fill="currentColor" opacity="0.85"/>
+            <path d="M60 4v8 M60 108v8 M4 60h8 M108 60h8" opacity="0.7"/>
+            <path d="M20 20l7 7 M93 93l7 7 M20 100l7-7 M93 27l7-7" opacity="0.7"/>
+          </svg>
+        </div>
+      </header>
+
+      <section class="content-stage" aria-label="Area slide">
+        <div class="content-stage-frame" id="content-stage-frame">
+          <div class="content-stage-slides" id="content-stage-slides" aria-live="polite"></div>
+        </div>
+        <div class="content-stage-dots" id="content-stage-dots" aria-hidden="true"></div>
+      </section>
+
+      <footer class="content-ticker" aria-label="Running text">
+        <div class="content-ticker-label">Info</div>
+        <div class="content-ticker-track">
+          <div class="content-ticker-text">
+            <span class="content-ticker-item">Running text placeholder</span>
+            <span class="content-ticker-item">Pengumuman kajian ba’da Maghrib</span>
+            <span class="content-ticker-item">Mohon rapikan sandal di area rak</span>
+            <span class="content-ticker-item">Infaq terbaik untuk operasional masjid</span>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Halaman Adzan & Sholat (Fullscreen Overlay) -->
+    <div id="adzan-screen" class="adzan-screen" aria-hidden="true">
+      <!-- Ornamen Sudut Arsitektur Islami -->
+      <span class="adzan-corner adzan-corner--top-left" aria-hidden="true"></span>
+      <span class="adzan-corner adzan-corner--top-right" aria-hidden="true"></span>
+      <span class="adzan-corner adzan-corner--bottom-left" aria-hidden="true"></span>
+      <span class="adzan-corner adzan-corner--bottom-right" aria-hidden="true"></span>
+
+      <!-- Bingkai Dalam Beraksen Emas -->
+      <div class="adzan-inner-frame" aria-hidden="true"></div>
+      <div class="adzan-bg-pattern" aria-hidden="true"></div>
+      <div class="adzan-bg-glow" aria-hidden="true"></div>
+
+      <!-- Header Bar (Jam & Tanggal di Pojok Kanan Atas) -->
+      <header class="adzan-header" id="adzan-header">
+        <div class="adzan-clock-display">
+          <span class="adzan-clock-time" id="adzan-clock-time">00:00:00</span>
+          <span class="adzan-clock-date" id="adzan-clock-date">Sabtu, 02 Mei 2026</span>
+        </div>
+      </header>
+
+      <main class="adzan-stage">
+        <!-- 1. FASE MENJELANG AZAN -->
+        <section class="adzan-phase adzan-phase--countdown-adzan" id="phase-countdown-adzan">
+          <div class="adzan-countdown-header">
+            <h1 class="adzan-countdown-title">MENJELANG ADZAN</h1>
+            <div class="adzan-prayer-pill">
+              <span class="adzan-pill-label">WAKTU</span>
+              <span class="adzan-pill-val" id="adzan-target-prayer-name">DZUHUR</span>
+            </div>
+          </div>
+
+          <div class="adzan-timer-box" id="adzan-timer-box">
+            <span class="adzan-timer-digits" id="adzan-timer-digits">01:00</span>
+            <div class="adzan-timer-accent" aria-hidden="true"></div>
+          </div>
+
+          <p class="adzan-countdown-hint">Segera mengambil air wudhu dan merapatkan diri ke shaf sholat</p>
+        </section>
+
+        <!-- 2. FASE SAAT AZAN (Desain Plakat Maklumat Islami) -->
+        <section class="adzan-phase adzan-phase--saat-adzan" id="phase-saat-adzan">
+          <div class="adzan-takbir-calligraphy" dir="rtl" lang="ar">اللهُ أَكْبَرُ اللهُ أَكْبَرُ</div>
+
+          <div class="adzan-title-wrap">
+            <h1 class="adzan-heading-main">WAKTU MASUK ADZAN</h1>
+            <div class="adzan-prayer-hero" id="adzan-current-prayer-name">DZUHUR</div>
+          </div>
+
+          <!-- Plakat Maklumat Ringkas: Adab & Ketenangan -->
+          <div class="adzan-adab-plaque">
+            <div class="adzan-adab-item">
+              <span class="adzan-adab-icon-wrap" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+              </span>
+              <span class="adzan-adab-text">Mari Menyimak &amp; Menjawab Adzan</span>
+            </div>
+
+            <div class="adzan-adab-divider" aria-hidden="true"></div>
+
+            <div class="adzan-adab-item">
+              <span class="adzan-adab-icon-wrap adzan-adab-icon-wrap--silent" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12.01" y2="18"/>
+                  <line x1="2" y1="2" x2="22" y2="22" stroke="#e05353" stroke-width="2.4"/>
+                </svg>
+              </span>
+              <span class="adzan-adab-text">Mohon Aktifkan Mode Hening (Silent) HP</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. FASE COUNTDOWN IQOMAH -->
+        <section class="adzan-phase adzan-phase--countdown-iqomah" id="phase-countdown-iqomah">
+          <div class="iqomah-heading-wrap">
+            <h1 class="iqomah-main-title">MENUJU IQOMAH</h1>
+            <div class="adzan-prayer-pill">
+              <span class="adzan-pill-label">SHOLAT</span>
+              <span class="adzan-pill-val" id="iqomah-prayer-name">DZUHUR</span>
+            </div>
+          </div>
+
+          <div class="iqomah-timer-box" id="iqomah-timer-box">
+            <span class="iqomah-timer-digits" id="iqomah-timer-digits">05:00</span>
+            <div class="iqomah-timer-accent" aria-hidden="true"></div>
+          </div>
+
+          <div class="iqomah-notice-card">
+            <p class="iqomah-quote">&ldquo;Doa antara adzan dan iqomah tidak akan tertolak.&rdquo;</p>
+            <span class="iqomah-quote-source">(HR. Abu Dawud, Tirmidzi, &amp; Ahmad)</span>
+          </div>
+        </section>
+
+        <!-- 4. FASE SAAT SHOLAT (Mode Khusyuk, Hening, & Redup) -->
+        <section class="adzan-phase adzan-phase--saat-sholat" id="phase-saat-sholat">
+          <div class="sholat-silent-banner" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sholat-silent-icon">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+              <line x1="12" y1="18" x2="12.01" y2="18"/>
+              <line x1="2" y1="2" x2="22" y2="22" stroke="#e05353" stroke-width="2.4"/>
+            </svg>
+            <span>MODE HENING &bull; HP DINONAKTIFKAN</span>
+          </div>
+
+          <div class="sholat-hadith-box">
+            <p class="sholat-hadith-arabic" dir="rtl" lang="ar">سَوُّوا صُفُوفَكُمْ ؛ فَإنَّ تَسْوِيَةَ الصَّفِّ مِنْ تَمَامِ الصَّلاَةِ</p>
+            <div class="sholat-hadith-divider" aria-hidden="true"></div>
+            <p class="sholat-hadith">&ldquo;Luruskan shaf-shaf kalian, karena meluruskan shaf termasuk kesempurnaan sholat.&rdquo;<br><span class="sholat-hadith-source">(HR. Bukhari &amp; Muslim)</span></p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Test Toolbar (Discreet Preview Controller, tekan 'A' atau klik layarmasjid.com untuk toggle) -->
+  <aside id="adzan-test-toolbar" class="adzan-test-toolbar" aria-label="Adzan Preview Controls">
+    <span style="font-size: 0.72rem; color: var(--gold-highlight); font-weight: 700; padding-left: 4px;">Uji Tahapan:</span>
+    <button type="button" class="adzan-test-btn" id="btn-test-countdown" title="1. Menjelang Azan: Countdown 01:00 (1 menit, beep di 10d terakhir)">1. Menjelang (1m)</button>
+    <button type="button" class="adzan-test-btn" id="btn-test-adzan" title="2. Saat Azan: Tampilan Halaman Azan 5 Menit">2. Saat Azan (5m)</button>
+    <button type="button" class="adzan-test-btn" id="btn-test-iqomah" title="3. Countdown Iqomah: Countdown 05:00 (Demo 15d, beep di 10d terakhir)">3. Iqomah (15d)</button>
+    <button type="button" class="adzan-test-btn" id="btn-test-sholat" title="4. Saat Sholat: Layar Khusyuk & Hening">4. Saat Sholat</button>
+    <button type="button" class="adzan-test-btn adzan-test-btn--demo" id="btn-test-demo" title="Jalankan otomatis seluruh tahapan 1 sampai 5">▶ Demo Lengkap</button>
+    <button type="button" class="adzan-test-btn adzan-test-btn--close" id="btn-test-close" title="5. Kembali ke tampilan normal awal">Tutup / Normal</button>
+  </aside>
+
+  <script src="assets/js/PrayTimes.js?v=1"></script>
+  <script src="assets/js/config.js?v=11"></script>
+  <script src="assets/js/audio.js?v=1"></script>
+  <script src="assets/js/schedule.js?v=4"></script>
+  <script src="assets/js/slides.js?v=4"></script>
+  <script src="assets/js/adzan.js?v=1"></script>
+  <script src="assets/js/preview.js?v=1"></script>
+  <script src="assets/js/app.js?v=56"></script>
+</body>
+</html>

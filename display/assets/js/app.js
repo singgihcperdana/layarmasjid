@@ -69,6 +69,33 @@ window.setMockDateTime = function (dtString) {
 // =============================================================================
 // MAIN TICK & INITIALIZATION
 // =============================================================================
+async function loadLiveConfig() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    let masjidId = urlParams.get("id");
+    if (!masjidId) {
+      const parts = window.location.pathname.split("/").filter(Boolean);
+      const dispIdx = parts.indexOf("display");
+      if (dispIdx !== -1 && parts[dispIdx + 1]) {
+        masjidId = parts[dispIdx + 1];
+      }
+    }
+    if (!masjidId) masjidId = "101";
+
+    const apiUrl = `../api/get_display.php?id=${encodeURIComponent(masjidId)}`;
+    const res = await fetch(apiUrl);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.setting) {
+        window.masjidConfig = data;
+        console.info(`[LayarMasjid] Berhasil memuat data live Masjid ID: ${masjidId}`);
+      }
+    }
+  } catch (err) {
+    console.warn("[LayarMasjid] Menggunakan konfigurasi offline/lokal (gagal fetch API):", err);
+  }
+}
+
 function tick() {
   const now = getCurrentNow();
   calculateDailyPrayers(now); // Otomatis recalculate jika berganti hari (00:00)
@@ -79,8 +106,9 @@ function tick() {
   renderLifecycleScreen(state, now);
 }
 
-function startClock() {
+async function startClock() {
   initTimeOffset();
+  await loadLiveConfig();
   applyMasjidConfig();
   const initialNow = getCurrentNow();
   calculateDailyPrayers(initialNow);

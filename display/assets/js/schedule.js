@@ -121,9 +121,21 @@ function applyMasjidConfig() {
     const infoEl = document.getElementById("content-extra-text");
     if (infoEl) infoEl.textContent = s.kontak_info;
   }
-  if (s.logo) {
-    const logoEl = document.getElementById("content-brand-logo");
-    if (logoEl) logoEl.src = s.logo;
+  const logoEl = document.getElementById("content-brand-logo");
+  const frameEl = document.getElementById("content-brand-frame");
+  if (s.logo && s.logo.trim() !== "") {
+    if (logoEl) {
+      logoEl.src = s.logo.startsWith("uploads/") ? `../${s.logo}` : s.logo;
+      logoEl.style.display = "";
+    }
+    if (frameEl) frameEl.style.display = "";
+  } else {
+    // Logo kosong: sembunyikan bingkai logo agar nama masjid melebar penuh
+    if (logoEl) {
+      logoEl.removeAttribute("src");
+      logoEl.style.display = "none";
+    }
+    if (frameEl) frameEl.style.display = "none";
   }
 
   // 2. Running Text (Ticker Marquee)
