@@ -85,8 +85,11 @@ $stmt->execute([$masjid_id]);
 $running_text = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 // Susun Format JSON Resmi Layar Masjid
+$sync_hash = (string)($profile['sync_hash'] ?? time());
+update_sync_file($masjid_id, $sync_hash);
+
 $response = [
-    'sync_hash' => (string)($profile['sync_hash'] ?? time()),
+    'sync_hash' => $sync_hash,
     'setting' => [
         'id'           => $profile['id'],
         'nama'         => $profile['nama'],

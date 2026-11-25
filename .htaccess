@@ -6,10 +6,16 @@ RewriteEngine On
 RewriteRule ^display/([a-zA-Z0-9_-]+)/?$ display/index.php?id=$1 [L,QSA]
 RewriteRule ^display/?$ display/index.php [L,QSA]
 
-# 2. Routing Aset Admin: /assets/... atau /admin/assets/... -> admin/assets/...
+# 2. Routing Aset Khusus Display (contoh_slide, contoh_logo, dll)
+RewriteRule ^(admin/)?assets/img/contoh_([a-zA-Z0-9_-]+)/(.*)$ display/assets/img/contoh_$2/$3 [L]
+
+# 3. Routing Uploads jika diakses dari path admin
+RewriteRule ^admin/uploads/(.*)$ uploads/$1 [L]
+
+# 4. Routing Aset Admin: /assets/... atau /admin/assets/... -> admin/assets/...
 RewriteRule ^(admin/)?assets/(.*)$ admin/assets/$2 [L]
 
-# 3. Routing Halaman Admin: /profile, /schedule, dll (baik dengan maupun tanpa prefix admin/)
+# 5. Routing Halaman Admin: /profile, /schedule, dll (baik dengan maupun tanpa prefix admin/)
 RewriteRule ^(admin/)?(profile|schedule|timer|slides|running_text|login|logout)/?$ admin/$2.php [L,QSA]
 
 # 4. Hilangkan ekstensi .php untuk file lain (Clean URLs)

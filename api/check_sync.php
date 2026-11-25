@@ -19,6 +19,16 @@ if (empty($masjid_id)) {
     exit;
 }
 
+$clean_id = preg_replace('/[^a-zA-Z0-9_-]/', '', $masjid_id);
+$sync_file = dirname(__DIR__) . '/uploads/sync/' . $clean_id . '.json';
+
+// 1. Jika file statis sudah ada di disk, langsung sajikan (0 Query ke Database)
+if (file_exists($sync_file)) {
+    readfile($sync_file);
+    exit;
+}
+
+// 2. Jika file belum ada di disk (kasus baru), ambil dari database lalu buat filenya
 try {
     $stmt = $pdo->prepare("SELECT UNIX_TIMESTAMP(updated_at) AS sync_hash FROM profile WHERE id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);
