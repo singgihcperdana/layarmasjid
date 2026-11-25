@@ -1,0 +1,89 @@
+/**
+ * Layar Masjid - Authentication (Login) Stylesheet
+ * File: assets/css/auth.css
+ */
+
+body {
+  background: radial-gradient(circle at top right, rgba(240, 201, 106, 0.08), transparent 30%),
+              linear-gradient(135deg, #051f18 0%, #0a3d2e 60%, #0a4d3a 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #ffffff;
+  padding: 16px;
+}
+
+.login-card {
+  background: rgba(8, 48, 36, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(240, 201, 106, 0.35);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  max-width: 420px;
+  width: 100%;
+  padding: 36px 32px;
+}
+
+.brand-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #e0b735, #b88b18);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 32px;
+  color: #051f18;
+  box-shadow: 0 8px 24px rgba(224, 183, 53, 0.35);
+}
+
+.form-control {
+  background: rgba(5, 31, 24, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.form-control:focus {
+  background: rgba(5, 31, 24, 0.95);
+  border-color: #f0c96a;
+  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(240, 201, 106, 0.25);
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #f0c96a 0%, #d4a737 100%);
+  color: #051f18;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #fce29d 0%, #e0b735 100%);
+  color: #051f18;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(240, 201, 106, 0.3);
+}
+
+.hint-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(240, 201, 106, 0.25);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 0.85rem;
+  color: #b9e7d1;
+  margin-top: 24px;
+  text-align: center;
+}

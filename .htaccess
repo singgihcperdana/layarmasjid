@@ -2,20 +2,22 @@
 DirectoryIndex index.php index.html
 RewriteEngine On
 
-# 1. Routing URL Display: /display/{id} -> /display/index.html?id={id}
+# 1. Routing URL Display: /display/{id} -> display/index.html?id={id}
 RewriteRule ^display/([a-zA-Z0-9_-]+)/?$ display/index.html?id=$1 [L,QSA]
 RewriteRule ^display/?$ display/index.html [L,QSA]
 
-# 2. Hilangkan ekstensi .php dari URL (Clean URLs)
-# Contoh: /admin/login otomatis membaca /admin/login.php
+# 2. Routing Aset Admin: /assets/... atau /admin/assets/... -> admin/assets/...
+RewriteRule ^(admin/)?assets/(.*)$ admin/assets/$2 [L]
+
+# 3. Routing Halaman Admin: /profile, /schedule, dll (baik dengan maupun tanpa prefix admin/)
+RewriteRule ^(admin/)?(profile|schedule|timer|slides|running_text|login|logout)/?$ admin/$2.php [L,QSA]
+
+# 4. Hilangkan ekstensi .php untuk file lain (Clean URLs)
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f
 RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
-# 3. Redirect jika ada yang membuka path lama /admin
-RewriteRule ^admin/?$ ./ [R=301,L]
-
-# 4. Mencegah akses langsung ke file konfigurasi rahasia
+# 5. Mencegah akses langsung ke file konfigurasi rahasia
 <FilesMatch "^(config\.php|\.env|\.git)">
     Order allow,deny
     Deny from all

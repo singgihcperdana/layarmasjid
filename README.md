@@ -15,21 +15,19 @@ Tampilan layar informasi masjid berbasis HTML, CSS, dan JavaScript tanpa framewo
 
 ```text
 layarmasjid/
-├── index.html
-├── assets/
-│   ├── css/
-│   │   ├── style.css
-│   │   ├── tokens.css
-│   │   ├── base.css
-│   │   ├── layout.css
-│   │   └── sidebar.css
-│   ├── js/
-│   │   └── app.js
-│   └── img/
-│       ├── contoh_logo/
-│       ├── contoh_slide/
-│       └── aset dekoratif lainnya
-└── README.md
+├── admin/                         # Portal Admin Pengurus DKM
+│   ├── assets/css/                # CSS modular admin (admin, auth, schedule, timer, content)
+│   ├── includes/                  # Header & Footer partials
+│   ├── index.php / login.php      # Auth & Router Admin
+│   └── profile.php / schedule.php / timer.php / slides.php / running_text.php
+├── api/                           # Backend API & Database
+├── display/                       # Layar TV Digital Signage Masjid
+│   ├── assets/css/                # CSS khusus TV (tokens, base, layout, sidebar, adzan)
+│   ├── assets/js/                 # Logika jam, jadwal sholat, audio, dan slide
+│   └── index.html                 # Tampilan utama layar TV
+├── uploads/                       # Penyimpanan logo & gambar slide per ID masjid
+├── .htaccess                      # Apache URL Rewrite (Clean URLs)
+└── database.sql                   # Struktur basis data MySQL
 ```
 
 ## Menjalankan Project

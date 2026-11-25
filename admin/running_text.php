@@ -9,36 +9,8 @@ $current_page = "running_text";
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<style>
-  .rt-card-header {
-    background: #ffffff;
-    border-bottom: 1px solid rgba(10, 77, 58, 0.1);
-    font-weight: 700;
-    color: #0a4d3a;
-    padding: 16px 20px;
-    border-top-left-radius: 14px !important;
-    border-top-right-radius: 14px !important;
-  }
-  .table-rt th {
-    background-color: #0a4d3a !important;
-    color: #ffffff !important;
-    text-align: center;
-    font-weight: 600;
-    padding: 12px 10px;
-    font-size: 0.88rem;
-    vertical-align: middle;
-    border-bottom: 2px solid #d4af37 !important;
-  }
-  .table-rt td {
-    vertical-align: middle;
-    padding: 12px 10px;
-    font-size: 0.9rem;
-  }
-  .btn-move {
-    padding: 3px 8px;
-    font-size: 0.8rem;
-  }
-</style>
+<!-- Content Management CSS -->
+<link rel="stylesheet" href="assets/css/content.css">
 
 <!-- HEADER UTAMA -->
 <div class="mb-4">

@@ -37,43 +37,8 @@ $iq_maghrib  = (int)($setting['iqomah_maghrib'] ?? 5);
 $iq_isha     = (int)($setting['iqomah_isha'] ?? 10);
 ?>
 
-<style>
-  .timer-card-title {
-    font-size: 1.02rem;
-    font-weight: 700;
-    color: #0a4d3a;
-  }
-  .input-unit-label {
-    min-width: 65px;
-    justify-content: center;
-    background-color: #f8fafc;
-    font-weight: 600;
-    color: #475569;
-  }
-  .timeline-step {
-    border-left: 3px solid #0a4d3a;
-    padding-left: 18px;
-    margin-bottom: 22px;
-    position: relative;
-  }
-  .timeline-step::before {
-    content: '';
-    position: absolute;
-    left: -8px;
-    top: 4px;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background-color: #d4af37;
-    border: 2px solid #0a4d3a;
-  }
-  .badge-phase {
-    font-size: 0.75rem;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-weight: 700;
-  }
-</style>
+<!-- Timer CSS -->
+<link rel="stylesheet" href="assets/css/timer.css">
 
 <form id="formSaveTimer">
   <div class="row">
