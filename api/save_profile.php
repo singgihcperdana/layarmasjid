@@ -36,7 +36,7 @@ try {
     }
 
     // Ambil data logo saat ini
-    $stmt = $pdo->prepare("SELECT logo FROM masjid WHERE id = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT logo FROM profile WHERE id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);
     $current_logo = $stmt->fetchColumn() ?: '';
 
@@ -80,7 +80,7 @@ try {
     }
 
     // Update profil masjid
-    $stmt = $pdo->prepare("UPDATE masjid SET nama = ?, lokasi = ?, kontak_info = ?, logo = ? WHERE id = ?");
+    $stmt = $pdo->prepare("UPDATE profile SET nama = ?, lokasi = ?, kontak_info = ?, logo = ? WHERE id = ?");
     $stmt->execute([$nama, $lokasi, $kontak_info, $logo_to_save, $masjid_id]);
 
     $_SESSION['masjid_nama'] = $nama;

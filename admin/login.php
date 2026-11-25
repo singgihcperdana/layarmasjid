@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($id_masjid) || empty($password)) {
         $error = 'Silakan masukkan ID Masjid dan Password.';
     } else {
-        $stmt = $pdo->prepare("SELECT * FROM masjid WHERE id = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM profile WHERE id = ? LIMIT 1");
         $stmt->execute([$id_masjid]);
         $masjid = $stmt->fetch();
 

@@ -24,7 +24,7 @@ $action    = $_POST['action'] ?? ($_GET['action'] ?? '');
 try {
     // 1. LIST TEKS
     if ($action === 'list') {
-        $stmt = $pdo->prepare("SELECT * FROM masjid_running_text WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
+        $stmt = $pdo->prepare("SELECT * FROM running_text WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
         $stmt->execute([$masjid_id]);
         $data = $stmt->fetchAll();
         echo json_encode(['status' => 'success', 'data' => $data]);
@@ -34,7 +34,7 @@ try {
     // 2. GET SINGLE TEKS
     if ($action === 'get') {
         $id = (int)($_GET['id'] ?? 0);
-        $stmt = $pdo->prepare("SELECT * FROM masjid_running_text WHERE id = ? AND masjid_id = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM running_text WHERE id = ? AND masjid_id = ? LIMIT 1");
         $stmt->execute([$id, $masjid_id]);
         $item = $stmt->fetch();
         if ($item) {
@@ -57,16 +57,16 @@ try {
 
         if ($id > 0) {
             // Edit teks
-            $stmt = $pdo->prepare("UPDATE masjid_running_text SET teks = ? WHERE id = ? AND masjid_id = ?");
+            $stmt = $pdo->prepare("UPDATE running_text SET teks = ? WHERE id = ? AND masjid_id = ?");
             $stmt->execute([$teks, $id, $masjid_id]);
             $msg = 'Pesan teks berhasil diperbarui';
         } else {
             // Tambah teks baru
-            $stmtMax = $pdo->prepare("SELECT COALESCE(MAX(urutan), 0) FROM masjid_running_text WHERE masjid_id = ?");
+            $stmtMax = $pdo->prepare("SELECT COALESCE(MAX(urutan), 0) FROM running_text WHERE masjid_id = ?");
             $stmtMax->execute([$masjid_id]);
             $max_urutan = (int)$stmtMax->fetchColumn();
 
-            $stmt = $pdo->prepare("INSERT INTO masjid_running_text (masjid_id, teks, urutan, is_active) VALUES (?, ?, ?, 1)");
+            $stmt = $pdo->prepare("INSERT INTO running_text (masjid_id, teks, urutan, is_active) VALUES (?, ?, ?, 1)");
             $stmt->execute([$masjid_id, $teks, $max_urutan + 1]);
             $msg = 'Pesan teks baru berhasil ditambahkan';
         }
@@ -85,7 +85,7 @@ try {
             exit;
         }
 
-        $stmt = $pdo->prepare("SELECT id FROM masjid_running_text WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
+        $stmt = $pdo->prepare("SELECT id FROM running_text WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
         $stmt->execute([$masjid_id]);
         $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
@@ -101,7 +101,7 @@ try {
             $ids[$currentIndex] = $ids[$swapIndex];
             $ids[$swapIndex] = $temp;
 
-            $stmtUpdate = $pdo->prepare("UPDATE masjid_running_text SET urutan = ? WHERE id = ? AND masjid_id = ?");
+            $stmtUpdate = $pdo->prepare("UPDATE running_text SET urutan = ? WHERE id = ? AND masjid_id = ?");
             foreach ($ids as $newUrutan => $textId) {
                 $stmtUpdate->execute([$newUrutan + 1, $textId, $masjid_id]);
             }
@@ -116,7 +116,7 @@ try {
     // 5. TOGGLE AKTIF / NONAKTIF
     if ($action === 'toggle') {
         $id = (int)($_POST['id'] ?? 0);
-        $stmt = $pdo->prepare("UPDATE masjid_running_text SET is_active = IF(is_active = 1, 0, 1) WHERE id = ? AND masjid_id = ?");
+        $stmt = $pdo->prepare("UPDATE running_text SET is_active = IF(is_active = 1, 0, 1) WHERE id = ? AND masjid_id = ?");
         $stmt->execute([$id, $masjid_id]);
         echo json_encode(['status' => 'success', 'message' => 'Status aktif teks berhasil diubah']);
         exit;
@@ -125,15 +125,15 @@ try {
     // 6. DELETE TEKS
     if ($action === 'delete') {
         $id = (int)($_POST['id'] ?? 0);
-        $stmt = $pdo->prepare("DELETE FROM masjid_running_text WHERE id = ? AND masjid_id = ?");
+        $stmt = $pdo->prepare("DELETE FROM running_text WHERE id = ? AND masjid_id = ?");
         $stmt->execute([$id, $masjid_id]);
 
         // Renumber urutan
-        $stmt = $pdo->prepare("SELECT id FROM masjid_running_text WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
+        $stmt = $pdo->prepare("SELECT id FROM running_text WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
         $stmt->execute([$masjid_id]);
         $remainingIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-        $stmtUpdate = $pdo->prepare("UPDATE masjid_running_text SET urutan = ? WHERE id = ? AND masjid_id = ?");
+        $stmtUpdate = $pdo->prepare("UPDATE running_text SET urutan = ? WHERE id = ? AND masjid_id = ?");
         foreach ($remainingIds as $idx => $rId) {
             $stmtUpdate->execute([$idx + 1, $rId, $masjid_id]);
         }

@@ -9,7 +9,7 @@ $current_page = "timer";
 require_once __DIR__ . '/includes/header.php';
 
 // Ambil Pengaturan Timer dari Database
-$stmt = $pdo->prepare("SELECT * FROM masjid_setting WHERE masjid_id = ? LIMIT 1");
+$stmt = $pdo->prepare("SELECT * FROM timer WHERE masjid_id = ? LIMIT 1");
 $stmt->execute([$current_masjid_id]);
 $setting = $stmt->fetch() ?: [
     'kecepatan_running_text' => 5,

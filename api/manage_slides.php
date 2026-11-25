@@ -24,7 +24,7 @@ $action    = $_POST['action'] ?? ($_GET['action'] ?? '');
 try {
     // 1. LIST SLIDES
     if ($action === 'list') {
-        $stmt = $pdo->prepare("SELECT * FROM masjid_slides WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
+        $stmt = $pdo->prepare("SELECT * FROM slides WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
         $stmt->execute([$masjid_id]);
         $slides = $stmt->fetchAll();
         echo json_encode(['status' => 'success', 'data' => $slides]);
@@ -34,7 +34,7 @@ try {
     // 2. GET SINGLE SLIDE
     if ($action === 'get') {
         $id = (int)($_GET['id'] ?? 0);
-        $stmt = $pdo->prepare("SELECT * FROM masjid_slides WHERE id = ? AND masjid_id = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM slides WHERE id = ? AND masjid_id = ? LIMIT 1");
         $stmt->execute([$id, $masjid_id]);
         $slide = $stmt->fetch();
         if ($slide) {
@@ -113,7 +113,7 @@ try {
             } else {
                 // Jika edit dan tidak upload baru, pertahankan konten lama
                 if ($id > 0) {
-                    $stmtOld = $pdo->prepare("SELECT konten FROM masjid_slides WHERE id = ? AND masjid_id = ?");
+                    $stmtOld = $pdo->prepare("SELECT konten FROM slides WHERE id = ? AND masjid_id = ?");
                     $stmtOld->execute([$id, $masjid_id]);
                     $konten = $stmtOld->fetchColumn() ?: '';
                 } else {
@@ -125,7 +125,7 @@ try {
 
         if ($id > 0) {
             // UPDATE SLIDE
-            $sql = "UPDATE masjid_slides SET 
+            $sql = "UPDATE slides SET 
                         tipe = ?, judul = ?, konten = ?, ayat = ?, arti = ?, surah = ?, durasi = ?, is_active = ?
                     WHERE id = ? AND masjid_id = ?";
             $stmt = $pdo->prepare($sql);
@@ -133,11 +133,11 @@ try {
             $msg = "Slide berhasil diperbarui";
         } else {
             // INSERT SLIDE BARU
-            $stmtMax = $pdo->prepare("SELECT COALESCE(MAX(urutan), 0) FROM masjid_slides WHERE masjid_id = ?");
+            $stmtMax = $pdo->prepare("SELECT COALESCE(MAX(urutan), 0) FROM slides WHERE masjid_id = ?");
             $stmtMax->execute([$masjid_id]);
             $max_urutan = (int)$stmtMax->fetchColumn();
 
-            $sql = "INSERT INTO masjid_slides 
+            $sql = "INSERT INTO slides 
                         (masjid_id, tipe, urutan, judul, konten, ayat, arti, surah, durasi, is_active)
                     VALUES 
                         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -161,7 +161,7 @@ try {
         }
 
         // Ambil semua slide urut
-        $stmt = $pdo->prepare("SELECT id FROM masjid_slides WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
+        $stmt = $pdo->prepare("SELECT id FROM slides WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
         $stmt->execute([$masjid_id]);
         $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
@@ -179,7 +179,7 @@ try {
             $ids[$swapIndex] = $temp;
 
             // Simpan urutan baru
-            $stmtUpdate = $pdo->prepare("UPDATE masjid_slides SET urutan = ? WHERE id = ? AND masjid_id = ?");
+            $stmtUpdate = $pdo->prepare("UPDATE slides SET urutan = ? WHERE id = ? AND masjid_id = ?");
             foreach ($ids as $newUrutan => $slideId) {
                 $stmtUpdate->execute([$newUrutan + 1, $slideId, $masjid_id]);
             }
@@ -194,7 +194,7 @@ try {
     // 5. TOGGLE AKTIF / NONAKTIF
     if ($action === 'toggle') {
         $id = (int)($_POST['id'] ?? 0);
-        $stmt = $pdo->prepare("UPDATE masjid_slides SET is_active = IF(is_active = 1, 0, 1) WHERE id = ? AND masjid_id = ?");
+        $stmt = $pdo->prepare("UPDATE slides SET is_active = IF(is_active = 1, 0, 1) WHERE id = ? AND masjid_id = ?");
         $stmt->execute([$id, $masjid_id]);
         echo json_encode(['status' => 'success', 'message' => 'Status aktif slide berhasil diubah']);
         exit;
@@ -205,7 +205,7 @@ try {
         $id = (int)($_POST['id'] ?? 0);
 
         // Ambil data slide untuk cek file gambar
-        $stmt = $pdo->prepare("SELECT tipe, konten FROM masjid_slides WHERE id = ? AND masjid_id = ?");
+        $stmt = $pdo->prepare("SELECT tipe, konten FROM slides WHERE id = ? AND masjid_id = ?");
         $stmt->execute([$id, $masjid_id]);
         $slide = $stmt->fetch();
 
@@ -217,15 +217,15 @@ try {
                 }
             }
 
-            $stmtDel = $pdo->prepare("DELETE FROM masjid_slides WHERE id = ? AND masjid_id = ?");
+            $stmtDel = $pdo->prepare("DELETE FROM slides WHERE id = ? AND masjid_id = ?");
             $stmtDel->execute([$id, $masjid_id]);
 
             // Renumber urutan
-            $stmt = $pdo->prepare("SELECT id FROM masjid_slides WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
+            $stmt = $pdo->prepare("SELECT id FROM slides WHERE masjid_id = ? ORDER BY urutan ASC, id ASC");
             $stmt->execute([$masjid_id]);
             $remainingIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-            $stmtUpdate = $pdo->prepare("UPDATE masjid_slides SET urutan = ? WHERE id = ? AND masjid_id = ?");
+            $stmtUpdate = $pdo->prepare("UPDATE slides SET urutan = ? WHERE id = ? AND masjid_id = ?");
             foreach ($remainingIds as $idx => $rId) {
                 $stmtUpdate->execute([$idx + 1, $rId, $masjid_id]);
             }

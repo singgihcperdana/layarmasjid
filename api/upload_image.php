@@ -61,12 +61,12 @@ if (move_uploaded_file($file['tmp_name'], $target_path)) {
     $web_path = 'uploads/' . $masjid_id . '/' . $filename;
 
     // Ambil urutan terakhir
-    $stmt = $pdo->prepare("SELECT MAX(urutan) FROM masjid_slides WHERE masjid_id = ?");
+    $stmt = $pdo->prepare("SELECT MAX(urutan) FROM slides WHERE masjid_id = ?");
     $stmt->execute([$masjid_id]);
     $max_urutan = (int)$stmt->fetchColumn();
 
     // Simpan ke database
-    $stmt = $pdo->prepare("INSERT INTO masjid_slides (masjid_id, tipe, urutan, konten, durasi, is_active) VALUES (?, 'image', ?, ?, ?, 1)");
+    $stmt = $pdo->prepare("INSERT INTO slides (masjid_id, tipe, urutan, konten, durasi, is_active) VALUES (?, 'image', ?, ?, ?, 1)");
     $stmt->execute([$masjid_id, $max_urutan + 1, $web_path, $durasi]);
 
     echo json_encode([

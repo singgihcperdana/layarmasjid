@@ -45,7 +45,7 @@ try {
     }
 
     // Ambil password saat ini dari database
-    $stmt = $pdo->prepare("SELECT password FROM masjid WHERE id = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT password FROM profile WHERE id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);
     $current_hash = $stmt->fetchColumn();
 
@@ -56,7 +56,7 @@ try {
 
     // Hash password baru & simpan
     $new_hash = password_hash($new_password, PASSWORD_BCRYPT);
-    $stmt = $pdo->prepare("UPDATE masjid SET password = ? WHERE id = ?");
+    $stmt = $pdo->prepare("UPDATE profile SET password = ? WHERE id = ?");
     $stmt->execute([$new_hash, $masjid_id]);
 
     echo json_encode(['status' => 'success', 'message' => 'Password berhasil diperbarui! Gunakan password baru untuk login berikutnya.']);

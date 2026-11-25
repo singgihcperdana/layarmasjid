@@ -8,12 +8,13 @@ $current_page = "schedule";
 
 require_once __DIR__ . '/includes/header.php';
 
-// Ambil Pengaturan Jadwal & Koordinat
-$stmt = $pdo->prepare("SELECT * FROM masjid_setting WHERE masjid_id = ? LIMIT 1");
+// Ambil Pengaturan Jadwal & Koordinat dari Tabel schedule
+$stmt = $pdo->prepare("SELECT * FROM schedule WHERE masjid_id = ? LIMIT 1");
 $stmt->execute([$current_masjid_id]);
 $setting = $stmt->fetch() ?: [
-    'tune_fajr' => 1, 'tune_sunrise' => 0, 'tune_dhuhr' => 0, 'tune_asr' => 2, 'tune_maghrib' => 6, 'tune_isha' => 1,
-    'calc_fajr_angle' => 20.0, 'calc_isha_angle' => 18.0, 'calc_asr_method' => 'Standard'
+    'latitude' => -6.140000, 'longitude' => 106.590000, 'timezone' => 7, 'hijri_offset' => 0,
+    'calc_method' => 'Kemenag', 'calc_fajr_angle' => 20.0, 'calc_isha_angle' => 18.0, 'calc_asr_method' => 'Standard',
+    'tune_fajr' => 1, 'tune_sunrise' => 0, 'tune_dhuhr' => 0, 'tune_asr' => 2, 'tune_maghrib' => 6, 'tune_isha' => 1
 ];
 
 $tune_configs = [
@@ -25,8 +26,8 @@ $tune_configs = [
     'tune_isha'    => ['label' => 'Isya\'',  'val' => (int)$setting['tune_isha']],
 ];
 
-$latitude  = (float)($masjid['latitude'] ?? -6.14);
-$longitude = (float)($masjid['longitude'] ?? 106.59);
+$latitude  = (float)($setting['latitude'] ?? -6.14);
+$longitude = (float)($setting['longitude'] ?? 106.59);
 ?>
 
 <!-- Leaflet CSS -->
