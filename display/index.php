@@ -30,11 +30,11 @@ try {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Layar Masjid</title>
-  <link rel="stylesheet" href="assets/css/tokens.css?v=<?= $sync_hash ?>">
-  <link rel="stylesheet" href="assets/css/base.css?v=<?= $sync_hash ?>">
-  <link rel="stylesheet" href="assets/css/layout.css?v=<?= $sync_hash ?>">
-  <link rel="stylesheet" href="assets/css/sidebar.css?v=<?= $sync_hash ?>">
-  <link rel="stylesheet" href="assets/css/adzan.css?v=<?= $sync_hash ?>">
+  <link rel="stylesheet" href="<?= asset_v('assets/css/tokens.css') ?>">
+  <link rel="stylesheet" href="<?= asset_v('assets/css/base.css') ?>">
+  <link rel="stylesheet" href="<?= asset_v('assets/css/layout.css') ?>">
+  <link rel="stylesheet" href="<?= asset_v('assets/css/sidebar.css') ?>">
+  <link rel="stylesheet" href="<?= asset_v('assets/css/adzan.css') ?>">
 </head>
 <body>
   <div class="screen-shell">
@@ -301,13 +301,13 @@ try {
     </div>
   </div>
 
-  <script src="assets/js/PrayTimes.js?v=<?= $sync_hash ?>"></script>
-  <script src="assets/js/config.js?v=<?= $sync_hash ?>"></script>
-  <script src="assets/js/audio.js?v=<?= $sync_hash ?>"></script>
-  <script src="assets/js/schedule.js?v=<?= $sync_hash ?>"></script>
-  <script src="assets/js/slides.js?v=<?= $sync_hash ?>"></script>
-  <script src="assets/js/adzan.js?v=<?= $sync_hash ?>"></script>
-  <script src="assets/js/preview.js?v=<?= $sync_hash ?>"></script>
-  <script src="assets/js/app.js?v=<?= $sync_hash ?>"></script>
+  <script src="<?= asset_v('assets/js/PrayTimes.js') ?>"></script>
+  <script src="<?= asset_v('assets/js/config.js') ?>"></script>
+  <script src="<?= asset_v('assets/js/audio.js') ?>"></script>
+  <script src="<?= asset_v('assets/js/schedule.js') ?>"></script>
+  <script src="<?= asset_v('assets/js/slides.js') ?>"></script>
+  <script src="<?= asset_v('assets/js/adzan.js') ?>"></script>
+  <script src="<?= asset_v('assets/js/preview.js') ?>"></script>
+  <script src="<?= asset_v('assets/js/app.js') ?>"></script>
 </body>
 </html>

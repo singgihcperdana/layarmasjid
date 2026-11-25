@@ -10,7 +10,7 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <!-- Content Management CSS -->
-<link rel="stylesheet" href="assets/css/content.css">
+<link rel="stylesheet" href="<?= asset_v('assets/css/content.css') ?>">
 
 <!-- HEADER UTAMA -->
 <div class="mb-4">

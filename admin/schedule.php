@@ -33,7 +33,7 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <!-- Schedule CSS -->
-<link rel="stylesheet" href="assets/css/schedule.css">
+<link rel="stylesheet" href="<?= asset_v('assets/css/schedule.css') ?>">
 
 <form id="formSaveSchedule">
   <div class="row">

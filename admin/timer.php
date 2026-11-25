@@ -38,7 +38,7 @@ $iq_isha     = (int)($setting['iqomah_isha'] ?? 10);
 ?>
 
 <!-- Timer CSS -->
-<link rel="stylesheet" href="assets/css/timer.css">
+<link rel="stylesheet" href="<?= asset_v('assets/css/timer.css') ?>">
 
 <form id="formSaveTimer">
   <div class="row">
