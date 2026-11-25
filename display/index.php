@@ -14,12 +14,23 @@ if (empty($masjid_id)) {
         $masjid_id = $parts[$dispIdx + 1];
     }
 }
-$masjid_id = $masjid_id ?: '101';
+
+if (empty($masjid_id)) {
+    http_response_code(400);
+    echo '<!doctype html><html lang="id"><head><meta charset="utf-8"><title>ID Masjid Diperlukan - Layar Masjid</title><style>body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#031417;color:#e5b852;font-family:system-ui,sans-serif;text-align:center;padding:20px;box-sizing:border-box;}h2{margin-bottom:8px;font-size:1.8rem;}p{color:#b0bec5;font-size:1.05rem;}code{background:rgba(229,184,82,0.15);padding:4px 8px;border-radius:4px;color:#f0c96a;}</style></head><body><div><h2>ID Masjid Tidak Ditemukan</h2><p>Silakan buka layar TV dengan format URL:<br><br><code>/display/{id_masjid}</code> atau <code>/display/?id={id_masjid}</code></p></div></body></html>';
+    exit;
+}
 
 try {
     $stmt = $pdo->prepare("SELECT UNIX_TIMESTAMP(updated_at) AS sync_hash FROM profile WHERE id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);
-    $sync_hash = $stmt->fetchColumn() ?: time();
+    $sync_hash = $stmt->fetchColumn();
+
+    if ($sync_hash === false || $sync_hash === null) {
+        http_response_code(404);
+        echo '<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Masjid Tidak Ditemukan - Layar Masjid</title><style>body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#031417;color:#e5b852;font-family:system-ui,sans-serif;text-align:center;padding:20px;box-sizing:border-box;}h2{margin-bottom:8px;font-size:1.8rem;}p{color:#b0bec5;font-size:1.05rem;}strong{color:#fff;}</style></head><body><div><h2>Masjid Tidak Ditemukan</h2><p>Data masjid dengan ID <strong>' . htmlspecialchars($masjid_id) . '</strong> tidak terdaftar di sistem.</p></div></body></html>';
+        exit;
+    }
 } catch (Exception $e) {
     $sync_hash = time();
 }

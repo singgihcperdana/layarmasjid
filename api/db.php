@@ -55,3 +55,29 @@ function asset_v($relative_path, $base_dir = null) {
     $version = ($full_path && file_exists($full_path)) ? filemtime($full_path) : '1';
     return $relative_path . '?v=' . $version;
 }
+
+/**
+ * Update file statis JSON sinkronisasi TV Display (Nol beban PHP & MySQL)
+ * Menyimpan hash perubahan ke uploads/sync/{masjid_id}.json
+ *
+ * @param string $masjid_id ID Masjid
+ * @param int|string|null $timestamp Nilai UNIX timestamp / hash
+ * @return string Nilai sync hash
+ */
+function update_sync_file($masjid_id, $timestamp = null) {
+    if (empty($masjid_id)) return '';
+    $timestamp = (string)($timestamp ?: time());
+    $dir = dirname(__DIR__) . '/uploads/sync';
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0755, true);
+    }
+    $clean_id = preg_replace('/[^a-zA-Z0-9_-]/', '', $masjid_id);
+    $file = $dir . '/' . $clean_id . '.json';
+    $data = json_encode([
+        'status'    => 'success',
+        'masjid_id' => (string)$masjid_id,
+        'sync_hash' => $timestamp
+    ]);
+    @file_put_contents($file, $data);
+    return $timestamp;
+}

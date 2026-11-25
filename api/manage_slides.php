@@ -148,6 +148,7 @@ try {
 
         // Sentuh updated_at di profile agar TV display mendeteksi perubahan
         $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+        update_sync_file($masjid_id);
 
         echo json_encode(['status' => 'success', 'message' => $msg]);
         exit;
@@ -188,6 +189,7 @@ try {
             }
 
             $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+            update_sync_file($masjid_id);
             echo json_encode(['status' => 'success', 'message' => 'Urutan slide berhasil diubah']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Slide sudah berada di posisi paling ujung']);
@@ -201,6 +203,7 @@ try {
         $stmt = $pdo->prepare("UPDATE slides SET is_active = IF(is_active = 1, 0, 1) WHERE id = ? AND masjid_id = ?");
         $stmt->execute([$id, $masjid_id]);
         $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+        update_sync_file($masjid_id);
         echo json_encode(['status' => 'success', 'message' => 'Status aktif slide berhasil diubah']);
         exit;
     }
@@ -236,6 +239,7 @@ try {
             }
 
             $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+            update_sync_file($masjid_id);
             echo json_encode(['status' => 'success', 'message' => 'Slide berhasil dihapus']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Slide tidak ditemukan']);

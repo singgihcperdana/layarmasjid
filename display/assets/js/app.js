@@ -81,15 +81,19 @@ function getMasjidId() {
       masjidId = parts[dispIdx + 1];
     }
   }
-  return masjidId || "101";
+  return masjidId || null;
+}
+
+// Helper resolusi path dasar root project
+function getBaseUrl() {
+  const path = window.location.pathname;
+  const dispIdx = path.indexOf("/display");
+  return dispIdx !== -1 ? path.substring(0, dispIdx) : "";
 }
 
 // Helper resolusi path API yang tahan terhadap variasi trailing slash & subdirektori
 function getApiUrl(endpoint) {
-  const path = window.location.pathname;
-  const dispIdx = path.indexOf("/display");
-  const base = dispIdx !== -1 ? path.substring(0, dispIdx) : "";
-  return `${base}/api/${endpoint}`;
+  return `${getBaseUrl()}/api/${endpoint}`;
 }
 
 let currentSyncHash = null;
@@ -98,6 +102,10 @@ let isSyncInProgress = false;
 async function loadLiveConfig(syncHash) {
   try {
     const masjidId = getMasjidId();
+    if (!masjidId) {
+      console.warn("[LayarMasjid] ID Masjid tidak ditemukan di URL.");
+      return;
+    }
     const vParam = syncHash ? `&v=${encodeURIComponent(syncHash)}` : `&_t=${Date.now()}`;
     const apiUrl = `${getApiUrl("get_display.php")}?id=${encodeURIComponent(masjidId)}${vParam}`;
     const res = await fetch(apiUrl);
@@ -131,8 +139,17 @@ async function checkLiveSync() {
   try {
     isSyncInProgress = true;
     const masjidId = getMasjidId();
-    const checkUrl = `${getApiUrl("check_sync.php")}?id=${encodeURIComponent(masjidId)}&_t=${Date.now()}`;
-    const res = await fetch(checkUrl);
+    if (!masjidId) return;
+
+    // 1. Polling file Static JSON (Nol beban PHP & Nol koneksi MySQL)
+    const staticUrl = `${getBaseUrl()}/uploads/sync/${encodeURIComponent(masjidId)}.json?_t=${Date.now()}`;
+    let res = await fetch(staticUrl);
+
+    // 2. Fallback jika file statis belum ada di disk (HTTP 404): panggil check_sync.php
+    if (!res.ok && res.status === 404) {
+      const fallbackUrl = `${getApiUrl("check_sync.php")}?id=${encodeURIComponent(masjidId)}&_t=${Date.now()}`;
+      res = await fetch(fallbackUrl);
+    }
 
     if (res.ok) {
       const json = await res.json();
@@ -141,7 +158,7 @@ async function checkLiveSync() {
         if (currentSyncHash === null) {
           currentSyncHash = newHash;
         } else if (currentSyncHash !== newHash) {
-          console.info(`[LayarMasjid Sync] Perubahan terdeteksi! Memperbarui layar (Hash lama: ${currentSyncHash} -> baru: ${newHash})...`);
+          console.info(`[LayarMasjid Sync] Perubahan terdeteksi via static JSON! Memperbarui layar (Hash lama: ${currentSyncHash} -> baru: ${newHash})...`);
           currentSyncHash = newHash;
           triggerPageRefresh();
         }

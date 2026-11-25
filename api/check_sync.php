@@ -28,6 +28,9 @@ try {
         $sync_hash = time();
     }
 
+    // Pastikan file static JSON juga terbuat
+    update_sync_file($masjid_id, $sync_hash);
+
     echo json_encode([
         'status'    => 'success',
         'masjid_id' => $masjid_id,

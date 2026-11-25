@@ -95,6 +95,7 @@ try {
 
     // Sentuh updated_at di profile agar TV display mendeteksi perubahan
     $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+    update_sync_file($masjid_id);
 
     echo json_encode(['status' => 'success', 'message' => 'Pengaturan timer berhasil disimpan']);
 } catch (PDOException $e) {

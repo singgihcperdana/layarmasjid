@@ -83,6 +83,8 @@ try {
     $stmt = $pdo->prepare("UPDATE profile SET nama = ?, lokasi = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
     $stmt->execute([$nama, $lokasi, $kontak_info, $logo_to_save, $masjid_id]);
 
+    update_sync_file($masjid_id);
+
     $_SESSION['masjid_nama'] = $nama;
 
     echo json_encode([
