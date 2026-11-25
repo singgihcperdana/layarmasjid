@@ -42,11 +42,12 @@ body {
 }
 
 .sidebar-header {
-  padding: 24px 20px;
+  height: 64px;
+  padding: 0 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
-  gap: 12px;
+  box-sizing: border-box;
 }
 
 .sidebar-nav {
@@ -102,15 +103,17 @@ body {
 }
 
 .top-header {
+  height: 64px;
   background: #ffffff;
   border-bottom: 1px solid #e1e7e4;
-  padding: 14px 24px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 1020;
+  box-sizing: border-box;
 }
 
 /* CARDS & BUTTONS */
@@ -149,10 +152,27 @@ body {
   background: rgba(240, 201, 106, 0.18);
   color: var(--gold-accent);
   border: 1px solid rgba(240, 201, 106, 0.5);
-  font-size: 0.78rem;
-  padding: 3px 8px;
-  border-radius: 20px;
+  font-size: 0.74rem;
+  padding: 2px 8px;
+  border-radius: 12px;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.35;
+  user-select: none;
+}
+
+.badge-masjid-id:hover {
+  background: rgba(240, 201, 106, 0.35);
+  color: #ffffff;
+  border-color: var(--gold-accent);
+  transform: translateY(-1px);
+}
+
+.badge-masjid-id:active {
+  transform: translateY(0);
 }
 
 /* MOBILE RESPONSIVE DRAWER */
@@ -173,5 +193,16 @@ body {
   }
   .sidebar-backdrop.show {
     display: block;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .top-header {
+    height: 60px;
+    padding: 0 14px;
+  }
+  .sidebar-header {
+    height: 60px;
+    padding: 0 16px;
   }
 }

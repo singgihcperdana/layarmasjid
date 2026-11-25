@@ -34,10 +34,14 @@ $current_page = $current_page ?? '';
     <!-- SIDEBAR NAVIGASI -->
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
-        <i class="bi bi-moon-stars-fill text-warning fs-3"></i>
-        <div class="overflow-hidden">
-          <div class="fw-bold text-white text-truncate" id="sidebarMasjidName"><?= htmlspecialchars($masjid['nama'] ?? 'Layar Masjid') ?></div>
-          <span class="badge-masjid-id">ID: <?= htmlspecialchars($current_masjid_id) ?></span>
+        <div class="d-flex flex-column justify-content-center w-100 min-w-0" style="height: 100%;">
+          <div class="fw-bold text-white text-truncate" id="sidebarMasjidName" style="font-size: 0.95rem; line-height: 1.25;" title="<?= htmlspecialchars($masjid['nama'] ?? 'Layar Masjid') ?>"><?= htmlspecialchars($masjid['nama'] ?? 'Layar Masjid') ?></div>
+          <div class="mt-1 d-flex align-items-center">
+            <button type="button" class="badge-masjid-id" id="btnCopyMasjidId" data-id="<?= htmlspecialchars($current_masjid_id) ?>" title="Klik untuk salin ID Masjid">
+              <span id="badgeMasjidIdText">ID: <?= htmlspecialchars($current_masjid_id) ?></span>
+              <i class="bi bi-copy ms-1" id="copyIcon" style="font-size: 0.72rem;"></i>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -65,9 +69,6 @@ $current_page = $current_page ?? '';
       </nav>
 
       <div class="sidebar-footer">
-        <a href="display/<?= htmlspecialchars($current_masjid_id) ?>" target="_blank" class="btn btn-masjid w-100 mb-2 shadow-sm">
-          <i class="bi bi-tv me-1"></i> Buka Layar TV
-        </a>
         <a href="logout" class="btn btn-sm btn-outline-light w-100 opacity-75">
           <i class="bi bi-box-arrow-right me-1"></i> Keluar
         </a>
@@ -86,10 +87,9 @@ $current_page = $current_page ?? '';
           <h5 class="mb-0 fw-bold text-success"><?= htmlspecialchars($page_title) ?></h5>
         </div>
 
-        <div class="d-flex align-items-center gap-2">
-          <span class="small text-muted d-none d-sm-inline">Pengurus DKM: <strong><?= htmlspecialchars($current_masjid_nama) ?></strong></span>
-          <a href="display/<?= htmlspecialchars($current_masjid_id) ?>" target="_blank" class="btn btn-sm btn-masjid d-none d-sm-inline-flex">
-            <i class="bi bi-box-arrow-up-right me-1"></i> Pratinjau TV
+        <div>
+          <a href="display/<?= htmlspecialchars($current_masjid_id) ?>" target="_blank" class="btn btn-sm btn-masjid shadow-sm px-3 py-1 d-inline-flex align-items-center">
+            <i class="bi bi-tv me-1"></i> Buka Layar TV
           </a>
         </div>
       </header>

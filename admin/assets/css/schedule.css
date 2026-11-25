@@ -68,7 +68,7 @@
 
 .table-monthly-header th {
   position: sticky;
-  top: 56px;
+  top: 64px;
   z-index: 1010;
   background-color: #0a4d3a !important;
   color: #ffffff !important;

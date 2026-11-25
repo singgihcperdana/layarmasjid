@@ -74,6 +74,41 @@
         }, 350);
       }, 5000);
     }
+
+    // Salin ID Masjid ke Clipboard dengan Feedback
+    const btnCopyMasjidId = document.getElementById('btnCopyMasjidId');
+    if (btnCopyMasjidId) {
+      btnCopyMasjidId.addEventListener('click', async function() {
+        const masjidId = this.dataset.id;
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(masjidId);
+          } else {
+            const textArea = document.createElement('textarea');
+            textArea.value = masjidId;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            textArea.remove();
+          }
+
+          const badgeText = document.getElementById('badgeMasjidIdText');
+          const copyIcon = document.getElementById('copyIcon');
+          if (badgeText) badgeText.textContent = `ID: ${masjidId} (Tersalin)`;
+          if (copyIcon) copyIcon.className = 'bi bi-check-lg text-white ms-1';
+          showAlert('success', `ID Masjid (${masjidId}) berhasil disalin ke clipboard!`);
+
+          setTimeout(() => {
+            if (badgeText) badgeText.textContent = `ID: ${masjidId}`;
+            if (copyIcon) copyIcon.className = 'bi bi-copy ms-1';
+          }, 1800);
+        } catch (err) {
+          showAlert('danger', 'Gagal menyalin ID Masjid.');
+        }
+      });
+    }
   </script>
 </body>
 </html>
