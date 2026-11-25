@@ -57,6 +57,47 @@ require_once __DIR__ . '/includes/header.php';
     border-radius: 6px;
     font-weight: 700;
   }
+  #infoEditor {
+    min-height: 140px;
+    max-height: 280px;
+    overflow-y: auto;
+    line-height: 1.6;
+    background-color: #ffffff;
+    border-color: #dee2e6;
+  }
+  #infoEditor:focus {
+    border-color: #0a4d3a;
+    box-shadow: 0 0 0 0.25rem rgba(10, 77, 58, 0.15);
+    outline: none;
+  }
+  #infoEditor:empty:before {
+    content: attr(placeholder);
+    color: #94a3b8;
+    pointer-events: none;
+    display: block;
+  }
+  .editor-toolbar {
+    background-color: #f8fafc;
+    border-color: #dee2e6;
+  }
+  .editor-btn {
+    width: 34px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.88rem;
+    color: #475569;
+  }
+  .editor-btn:hover,
+  .editor-btn.active {
+    background-color: #0a4d3a !important;
+    border-color: #0a4d3a !important;
+    color: #ffffff !important;
+  }
+  .editor-btn.active {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+  }
 </style>
 
 <!-- HEADER UTAMA & TOMBOL TAMBAH SLIDE -->
@@ -157,8 +198,35 @@ require_once __DIR__ . '/includes/header.php';
         </div>
         <div class="mb-3">
           <label class="form-label fw-semibold">Isi Pesan / Pengumuman:</label>
-          <textarea class="form-control" id="infoKonten" name="konten" rows="4" placeholder="Diharapkan kepada seluruh jamaah untuk hadir dan membawa peralatan..."></textarea>
-          <div class="form-text">Gunakan kalimat yang jelas dan mudah dibaca oleh jamaah dari kejauhan.</div>
+          
+          <!-- Mini Rich Text Toolbar -->
+          <div class="editor-toolbar d-flex flex-wrap align-items-center gap-1 p-2 border border-bottom-0 rounded-top">
+            <!-- Format Teks -->
+            <button type="button" class="btn btn-sm btn-outline-secondary editor-btn" data-cmd="bold" title="Tebal (Bold)"><i class="bi bi-type-bold"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-secondary editor-btn" data-cmd="italic" title="Miring (Italic)"><i class="bi bi-type-italic"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-secondary editor-btn" data-cmd="underline" title="Garis Bawah (Underline)"><i class="bi bi-type-underline"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-secondary editor-btn" data-cmd="strikeThrough" title="Coret (Strikethrough)"><i class="bi bi-type-strikethrough"></i></button>
+            
+            <span class="vr mx-1 my-auto" style="height: 18px;"></span>
+
+            <!-- Perataan / Alignment -->
+            <button type="button" class="btn btn-sm btn-outline-secondary editor-btn" data-cmd="justifyLeft" title="Rata Kiri"><i class="bi bi-text-left"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-secondary editor-btn" data-cmd="justifyCenter" title="Rata Tengah"><i class="bi bi-text-center"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-secondary editor-btn" data-cmd="justifyRight" title="Rata Kanan"><i class="bi bi-text-right"></i></button>
+
+            <span class="vr mx-1 my-auto" style="height: 18px;"></span>
+
+            <!-- List -->
+            <button type="button" class="btn btn-sm btn-outline-secondary editor-btn" data-cmd="insertUnorderedList" title="Daftar Poin (Bullet List)"><i class="bi bi-list-ul"></i></button>
+          </div>
+
+          <!-- Contenteditable Visual Editor -->
+          <div id="infoEditor" class="form-control rounded-bottom rounded-0" contenteditable="true" placeholder="Ketik pesan informasi pengumuman di sini..."></div>
+          
+          <!-- Hidden textarea for form submission -->
+          <textarea id="infoKonten" name="konten" class="d-none"></textarea>
+
+          <div class="form-text mt-1">Gunakan toolbar di atas untuk mempertegas teks (tebal, miring, garis bawah, coret), mengatur rata tulisan, atau membuat daftar poin.</div>
         </div>
       </div>
 
@@ -307,6 +375,9 @@ require_once __DIR__ . '/includes/header.php';
     document.getElementById('formSlide').reset();
     document.getElementById('slideDurasi').value = '15';
     document.getElementById('slideIsActive').checked = true;
+    document.getElementById('infoEditor').innerHTML = '';
+    document.getElementById('infoKonten').value = '';
+    document.querySelectorAll('.editor-btn').forEach(b => b.classList.remove('active'));
     imagePreview.src = '';
     imagePreview.classList.add('d-none');
     imagePlaceholder.classList.remove('d-none');
@@ -374,10 +445,11 @@ require_once __DIR__ . '/includes/header.php';
         `;
       } else if (s.tipe === 'info') {
         typeBadge = '<span class="badge-type bg-warning-subtle text-warning-emphasis border border-warning-subtle"><i class="bi bi-info-circle me-1"></i> Info</span>';
+        const cleanText = (s.konten || '').replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
         previewContent = `
           <div>
             <div class="fw-bold text-dark">${escapeHtml(s.judul || 'Pengumuman')}</div>
-            <div class="small text-muted text-truncate" style="max-width: 380px;">${escapeHtml(s.konten || '')}</div>
+            <div class="small text-muted text-truncate" style="max-width: 380px;">${escapeHtml(cleanText || '')}</div>
           </div>
         `;
       } else { // quranHadist
@@ -524,6 +596,7 @@ require_once __DIR__ . '/includes/header.php';
               }
             } else if (s.tipe === 'info') {
               document.getElementById('infoJudul').value = s.judul || '';
+              document.getElementById('infoEditor').innerHTML = s.konten || '';
               document.getElementById('infoKonten').value = s.konten || '';
             } else if (s.tipe === 'quranHadist') {
               document.getElementById('quranAyat').value = s.ayat || '';
@@ -589,8 +662,11 @@ require_once __DIR__ . '/includes/header.php';
       // Normalisasi judul & konten sesuai tipe
       const tipe = slideTipe.value;
       if (tipe === 'info') {
+        const editorHtml = document.getElementById('infoEditor').innerHTML.trim();
+        const cleanHtml = (editorHtml === '<br>' || editorHtml === '<p><br></p>') ? '' : editorHtml;
+        document.getElementById('infoKonten').value = cleanHtml;
         formData.set('judul', document.getElementById('infoJudul').value);
-        formData.set('konten', document.getElementById('infoKonten').value);
+        formData.set('konten', cleanHtml);
       } else if (tipe === 'image') {
         formData.set('judul', document.getElementById('imageJudul').value);
       }
@@ -628,6 +704,46 @@ require_once __DIR__ . '/includes/header.php';
       }[m];
     });
   }
+
+  // 9. Event Listener Mini Rich Text Editor Toolbar (Native ExecCommand + State Detection)
+  function updateToolbarState() {
+    const editor = document.getElementById('infoEditor');
+    const sel = window.getSelection();
+    if (!sel || !sel.anchorNode || (!editor.contains(sel.anchorNode) && sel.anchorNode !== editor)) {
+      return;
+    }
+
+    document.querySelectorAll('.editor-btn').forEach(btn => {
+      const cmd = btn.dataset.cmd;
+      try {
+        if (document.queryCommandState(cmd)) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      } catch (e) {}
+    });
+  }
+
+  document.querySelectorAll('.editor-btn').forEach(btn => {
+    btn.addEventListener('mousedown', function(e) {
+      e.preventDefault(); // Mencegah hilangnya seleksi teks pada contenteditable
+      const cmd = this.dataset.cmd;
+      document.execCommand(cmd, false, null);
+      document.getElementById('infoEditor').focus();
+      setTimeout(updateToolbarState, 15);
+    });
+  });
+
+  const infoEditorEl = document.getElementById('infoEditor');
+  ['keyup', 'mouseup', 'input', 'focus'].forEach(evt => {
+    infoEditorEl.addEventListener(evt, updateToolbarState);
+  });
+  document.addEventListener('selectionchange', () => {
+    if (document.activeElement === infoEditorEl) {
+      updateToolbarState();
+    }
+  });
 
   // Muat pertama kali
   window.addEventListener('DOMContentLoaded', () => {

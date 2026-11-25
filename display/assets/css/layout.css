@@ -420,11 +420,11 @@
   margin: 0 0 clamp(8px, 1.4vh, 18px);
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
   font-size: clamp(1.9rem, 2.8vw, 3.8rem);
-  font-weight: 900;
-  color: var(--gold-highlight);
+  font-weight: 800;
+  color: #ffffff;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  text-shadow: 0 0 18px rgba(224, 183, 53, 0.35);
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
   line-height: 1.2;
 }
 
@@ -455,10 +455,10 @@
 .slide-custom-content h2,
 .slide-custom-content h3 {
   margin: 0;
-  color: var(--gold-highlight);
+  color: #ffffff;
   font-weight: 800;
   line-height: 1.25;
-  text-shadow: 0 0 16px rgba(224, 183, 53, 0.3);
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
 }
 
 .slide-custom-content h1 { font-size: clamp(2.0rem, 3.2vw, 4.2rem); }
@@ -479,6 +479,32 @@
 .slide-custom-content i {
   color: var(--mint-soft);
   font-style: italic;
+}
+
+.slide-custom-body {
+  width: 100%;
+}
+
+.slide-custom-content u {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.slide-custom-content s,
+.slide-custom-content del {
+  text-decoration: line-through;
+  opacity: 0.75;
+}
+
+.slide-custom-content ul {
+  display: inline-block;
+  text-align: left;
+  margin: 0;
+  padding-left: 1.5em;
+}
+
+.slide-custom-content li {
+  margin-bottom: 0.3em;
 }
 
 .content-stage-dots {
