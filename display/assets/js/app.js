@@ -67,34 +67,109 @@ window.setMockDateTime = function (dtString) {
 };
 
 // =============================================================================
-// MAIN TICK & INITIALIZATION
 // =============================================================================
-async function loadLiveConfig() {
-  try {
-    const urlParams = new URLSearchParams(window.location.search);
-    let masjidId = urlParams.get("id");
-    if (!masjidId) {
-      const parts = window.location.pathname.split("/").filter(Boolean);
-      const dispIdx = parts.indexOf("display");
-      if (dispIdx !== -1 && parts[dispIdx + 1]) {
-        masjidId = parts[dispIdx + 1];
-      }
-    }
-    if (!masjidId) masjidId = "101";
+// MAIN TICK, LIVE SYNC & INITIALIZATION
+// =============================================================================
 
-    const apiUrl = `../api/get_display.php?id=${encodeURIComponent(masjidId)}`;
+function getMasjidId() {
+  const urlParams = new URLSearchParams(window.location.search);
+  let masjidId = urlParams.get("id");
+  if (!masjidId) {
+    const parts = window.location.pathname.split("/").filter(Boolean);
+    const dispIdx = parts.indexOf("display");
+    if (dispIdx !== -1 && parts[dispIdx + 1]) {
+      masjidId = parts[dispIdx + 1];
+    }
+  }
+  return masjidId || "101";
+}
+
+// Helper resolusi path API yang tahan terhadap variasi trailing slash & subdirektori
+function getApiUrl(endpoint) {
+  const path = window.location.pathname;
+  const dispIdx = path.indexOf("/display");
+  const base = dispIdx !== -1 ? path.substring(0, dispIdx) : "";
+  return `${base}/api/${endpoint}`;
+}
+
+let currentSyncHash = null;
+let isSyncInProgress = false;
+
+async function loadLiveConfig(syncHash) {
+  try {
+    const masjidId = getMasjidId();
+    const vParam = syncHash ? `&v=${encodeURIComponent(syncHash)}` : `&_t=${Date.now()}`;
+    const apiUrl = `${getApiUrl("get_display.php")}?id=${encodeURIComponent(masjidId)}${vParam}`;
     const res = await fetch(apiUrl);
     if (res.ok) {
       const data = await res.json();
       if (data && data.setting) {
         window.masjidConfig = data;
-        console.info(`[LayarMasjid] Berhasil memuat data live Masjid ID: ${masjidId}`);
+        if (data.sync_hash) {
+          currentSyncHash = String(data.sync_hash);
+        }
+        console.info(`[LayarMasjid] Berhasil memuat data live Masjid ID: ${masjidId} (Sync: ${currentSyncHash})`);
       }
     }
   } catch (err) {
     console.warn("[LayarMasjid] Menggunakan konfigurasi offline/lokal (gagal fetch API):", err);
   }
 }
+
+async function checkLiveSync() {
+  if (isSyncInProgress) return;
+
+  // Proteksi: Tunda jika layar sedang dalam fase siklus sholat (adzan, iqomah, atau sholat)
+  const now = getCurrentNow();
+  if (typeof getPrayerLifecycleState === "function") {
+    const state = getPrayerLifecycleState(now);
+    if (state && (state.phase === "saat_azan" || state.phase === "countdown_iqomah" || state.phase === "saat_sholat")) {
+      return;
+    }
+  }
+
+  try {
+    isSyncInProgress = true;
+    const masjidId = getMasjidId();
+    const checkUrl = `${getApiUrl("check_sync.php")}?id=${encodeURIComponent(masjidId)}&_t=${Date.now()}`;
+    const res = await fetch(checkUrl);
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json && json.sync_hash) {
+        const newHash = String(json.sync_hash);
+        if (currentSyncHash === null) {
+          currentSyncHash = newHash;
+        } else if (currentSyncHash !== newHash) {
+          console.info(`[LayarMasjid Sync] Perubahan terdeteksi! Memperbarui layar (Hash lama: ${currentSyncHash} -> baru: ${newHash})...`);
+          currentSyncHash = newHash;
+          triggerPageRefresh();
+        }
+      }
+    }
+  } catch (err) {
+    // Abaikan jika network offline
+  } finally {
+    isSyncInProgress = false;
+  }
+}
+
+// Menampilkan icon sinkronisasi di tengah halaman lalu me-refresh page
+function triggerPageRefresh() {
+  const overlay = document.getElementById("sync-refresh-overlay");
+  if (overlay) {
+    overlay.classList.add("active");
+  }
+
+  // Tampilkan icon di tengah layar sejenak (800ms) agar transisi terlihat jelas, lalu reload fresh
+  setTimeout(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("_r", Date.now());
+    window.location.href = url.toString();
+  }, 800);
+}
+
+window.triggerPageRefresh = triggerPageRefresh;
 
 function tick() {
   const now = getCurrentNow();
@@ -122,6 +197,9 @@ async function startClock() {
     tick();
     setInterval(tick, 1000);
   }, delayToNextSecond);
+
+  // Jalankan Auto-Sync Polling setiap 10 Detik
+  setInterval(checkLiveSync, 10000);
 }
 
 if (document.readyState === "loading") {

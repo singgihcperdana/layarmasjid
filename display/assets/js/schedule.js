@@ -44,9 +44,9 @@ function getPrayerDate(baseDate, timeText) {
   return next;
 }
 
-function calculateDailyPrayers(now) {
+function calculateDailyPrayers(now, forceRecalculate = false) {
   const dayKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
-  if (lastCalculatedDay === dayKey && prayers.length > 0) {
+  if (!forceRecalculate && lastCalculatedDay === dayKey && prayers.length > 0) {
     return;
   }
 
@@ -125,7 +125,9 @@ function applyMasjidConfig() {
   const frameEl = document.getElementById("content-brand-frame");
   if (s.logo && s.logo.trim() !== "") {
     if (logoEl) {
-      logoEl.src = s.logo.startsWith("uploads/") ? `../${s.logo}` : s.logo;
+      const basePath = s.logo.startsWith("uploads/") ? `../${s.logo}` : s.logo;
+      const v = window.masjidConfig?.sync_hash ? `?v=${window.masjidConfig.sync_hash}` : "";
+      logoEl.src = `${basePath}${v}`;
       logoEl.style.display = "";
     }
     if (frameEl) frameEl.style.display = "";

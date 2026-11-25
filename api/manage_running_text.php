@@ -71,6 +71,7 @@ try {
             $msg = 'Pesan teks baru berhasil ditambahkan';
         }
 
+        $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
         echo json_encode(['status' => 'success', 'message' => $msg]);
         exit;
     }
@@ -106,6 +107,7 @@ try {
                 $stmtUpdate->execute([$newUrutan + 1, $textId, $masjid_id]);
             }
 
+            $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
             echo json_encode(['status' => 'success', 'message' => 'Urutan teks berhasil diubah']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Teks sudah berada di posisi paling ujung']);
@@ -118,6 +120,7 @@ try {
         $id = (int)($_POST['id'] ?? 0);
         $stmt = $pdo->prepare("UPDATE running_text SET is_active = IF(is_active = 1, 0, 1) WHERE id = ? AND masjid_id = ?");
         $stmt->execute([$id, $masjid_id]);
+        $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
         echo json_encode(['status' => 'success', 'message' => 'Status aktif teks berhasil diubah']);
         exit;
     }
@@ -138,6 +141,7 @@ try {
             $stmtUpdate->execute([$idx + 1, $rId, $masjid_id]);
         }
 
+        $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
         echo json_encode(['status' => 'success', 'message' => 'Pesan teks berhasil dihapus']);
         exit;
     }

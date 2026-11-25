@@ -1,14 +1,40 @@
+<?php
+/**
+ * Tampilan TV Digital Signage Layar Masjid
+ * Menggunakan $sync_hash otomatis sebagai parameter anti-cache CSS & JS
+ */
+
+require_once __DIR__ . '/../api/db.php';
+
+$masjid_id = isset($_GET['id']) ? trim($_GET['id']) : '';
+if (empty($masjid_id)) {
+    $parts = explode('/', trim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/'));
+    $dispIdx = array_search('display', $parts);
+    if ($dispIdx !== false && isset($parts[$dispIdx + 1])) {
+        $masjid_id = $parts[$dispIdx + 1];
+    }
+}
+$masjid_id = $masjid_id ?: '101';
+
+try {
+    $stmt = $pdo->prepare("SELECT UNIX_TIMESTAMP(updated_at) AS sync_hash FROM profile WHERE id = ? LIMIT 1");
+    $stmt->execute([$masjid_id]);
+    $sync_hash = $stmt->fetchColumn() ?: time();
+} catch (Exception $e) {
+    $sync_hash = time();
+}
+?>
 <!doctype html>
 <html lang="id">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Layar Masjid</title>
-  <link rel="stylesheet" href="assets/css/tokens.css?v=35">
-  <link rel="stylesheet" href="assets/css/base.css?v=35">
-  <link rel="stylesheet" href="assets/css/layout.css?v=48">
-  <link rel="stylesheet" href="assets/css/sidebar.css?v=41">
-  <link rel="stylesheet" href="assets/css/adzan.css?v=50">
+  <link rel="stylesheet" href="assets/css/tokens.css?v=<?= $sync_hash ?>">
+  <link rel="stylesheet" href="assets/css/base.css?v=<?= $sync_hash ?>">
+  <link rel="stylesheet" href="assets/css/layout.css?v=<?= $sync_hash ?>">
+  <link rel="stylesheet" href="assets/css/sidebar.css?v=<?= $sync_hash ?>">
+  <link rel="stylesheet" href="assets/css/adzan.css?v=<?= $sync_hash ?>">
 </head>
 <body>
   <div class="screen-shell">
@@ -262,13 +288,26 @@
     <button type="button" class="adzan-test-btn adzan-test-btn--close" id="btn-test-close" title="5. Kembali ke tampilan normal awal">Tutup / Normal</button>
   </aside>
 
-  <script src="assets/js/PrayTimes.js?v=1"></script>
-  <script src="assets/js/config.js?v=11"></script>
-  <script src="assets/js/audio.js?v=1"></script>
-  <script src="assets/js/schedule.js?v=4"></script>
-  <script src="assets/js/slides.js?v=4"></script>
-  <script src="assets/js/adzan.js?v=1"></script>
-  <script src="assets/js/preview.js?v=1"></script>
-  <script src="assets/js/app.js?v=56"></script>
+  <!-- Sync / Refresh Overlay (Muncul di tengah layar saat data diperbarui) -->
+  <div id="sync-refresh-overlay" class="sync-refresh-overlay" aria-hidden="true">
+    <div class="sync-refresh-card">
+      <div class="sync-refresh-icon-wrap">
+        <svg class="sync-refresh-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+      </div>
+      <p class="sync-refresh-text">Memperbarui Layar...</p>
+      <span class="sync-refresh-sub">Sinkronisasi data baru</span>
+    </div>
+  </div>
+
+  <script src="assets/js/PrayTimes.js?v=<?= $sync_hash ?>"></script>
+  <script src="assets/js/config.js?v=<?= $sync_hash ?>"></script>
+  <script src="assets/js/audio.js?v=<?= $sync_hash ?>"></script>
+  <script src="assets/js/schedule.js?v=<?= $sync_hash ?>"></script>
+  <script src="assets/js/slides.js?v=<?= $sync_hash ?>"></script>
+  <script src="assets/js/adzan.js?v=<?= $sync_hash ?>"></script>
+  <script src="assets/js/preview.js?v=<?= $sync_hash ?>"></script>
+  <script src="assets/js/app.js?v=<?= $sync_hash ?>"></script>
 </body>
 </html>

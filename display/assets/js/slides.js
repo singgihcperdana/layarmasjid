@@ -45,6 +45,11 @@ function initSlidesConfig() {
 }
 
 function setupSlides() {
+  if (slideIntervalId) {
+    clearTimeout(slideIntervalId);
+    slideIntervalId = null;
+  }
+
   initSlidesConfig();
 
   const slidesRoot = document.getElementById("content-stage-slides");
@@ -112,7 +117,8 @@ function setupSlides() {
     else {
       const image = document.createElement("img");
       const srcUrl = slide.src && slide.src.startsWith("uploads/") ? `../${slide.src}` : slide.src;
-      image.src = srcUrl;
+      const v = window.masjidConfig?.sync_hash ? `?v=${window.masjidConfig.sync_hash}` : "";
+      image.src = srcUrl + v;
       image.alt = slide.alt;
       image.loading = index === 0 ? "eager" : "lazy";
       slideItem.appendChild(image);

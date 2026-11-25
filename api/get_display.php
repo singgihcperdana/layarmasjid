@@ -18,7 +18,7 @@ if (empty($masjid_id)) {
 }
 
 // 1. Ambil Data Profil Masjid
-$stmt = $pdo->prepare("SELECT * FROM profile WHERE id = ? LIMIT 1");
+$stmt = $pdo->prepare("SELECT *, UNIX_TIMESTAMP(updated_at) AS sync_hash FROM profile WHERE id = ? LIMIT 1");
 $stmt->execute([$masjid_id]);
 $profile = $stmt->fetch();
 
@@ -86,6 +86,7 @@ $running_text = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 // Susun Format JSON Resmi Layar Masjid
 $response = [
+    'sync_hash' => (string)($profile['sync_hash'] ?? time()),
     'setting' => [
         'id'           => $profile['id'],
         'nama'         => $profile['nama'],

@@ -65,6 +65,9 @@ try {
         $tune_fajr, $tune_sunrise, $tune_dhuhr, $tune_asr, $tune_maghrib, $tune_isha
     ]);
 
+    // Sentuh updated_at di profile agar TV display mendeteksi perubahan
+    $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+
     echo json_encode(['status' => 'success', 'message' => 'Pengaturan jadwal sholat & koordinat berhasil disimpan!']);
 } catch (Exception $e) {
     http_response_code(500);
