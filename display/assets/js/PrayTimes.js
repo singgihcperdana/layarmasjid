@@ -156,6 +156,9 @@
       for (var i in timeOffsets) {
         offset[i] = Number(timeOffsets[i]) || 0;
       }
+      if (typeof timeOffsets.imsak === "undefined" && typeof timeOffsets.fajr !== "undefined") {
+        offset.imsak = Number(timeOffsets.fajr) || 0;
+      }
     };
 
     // Return prayer times for a given date
@@ -368,7 +371,8 @@
 
     this.tuneTimes = function (times) {
       for (var i in times) {
-        times[i] += (offset[i] || 0) / 60.0;
+        var off = typeof offset[i] !== "undefined" ? offset[i] : (i === "imsak" ? (offset.fajr || 0) : 0);
+        times[i] += off / 60.0;
       }
       return times;
     };

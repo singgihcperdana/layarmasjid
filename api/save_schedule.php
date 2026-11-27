@@ -26,8 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 try {
     // 1. Ambil Parameter Geografis & Metode Hisab
-    $latitude     = (float)($_POST['latitude'] ?? -6.14);
-    $longitude    = (float)($_POST['longitude'] ?? 106.59);
+    if (!isset($_POST['latitude']) || $_POST['latitude'] === '' || !isset($_POST['longitude']) || $_POST['longitude'] === '') {
+        $stmtCur = $pdo->prepare("SELECT latitude, longitude FROM schedule WHERE masjid_id = ? LIMIT 1");
+        $stmtCur->execute([$masjid_id]);
+        $cur = $stmtCur->fetch();
+        $latitude  = $cur ? (float)$cur['latitude'] : -6.14;
+        $longitude = $cur ? (float)$cur['longitude'] : 106.59;
+    } else {
+        $latitude  = (float)$_POST['latitude'];
+        $longitude = (float)$_POST['longitude'];
+    }
     $timezone     = (int)($_POST['timezone'] ?? 7);
     $hijri_offset = (int)($_POST['hijri_offset'] ?? 0);
 
@@ -35,6 +43,8 @@ try {
     $calc_fajr_angle = (float)($_POST['calc_fajr_angle'] ?? 20.0);
     $calc_isha_angle = (float)($_POST['calc_isha_angle'] ?? 18.0);
     $calc_asr_method = in_array($_POST['calc_asr_method'] ?? '', ['Standard', 'Hanafi']) ? $_POST['calc_asr_method'] : 'Standard';
+    $imsak_mode      = in_array($_POST['imsak_mode'] ?? '', ['auto', 'always', 'off']) ? $_POST['imsak_mode'] : 'auto';
+    $imsak_minutes   = max(1, min(60, (int)($_POST['imsak_minutes'] ?? 10)));
 
     // 2. Ambil Koreksi Menit Ihtiyat
     $tune_fajr       = (int)($_POST['tune_fajr'] ?? 1);
@@ -46,13 +56,15 @@ try {
 
     // 3. Simpan ke Tabel schedule (1 Tabel Mandiri)
     $sql = "INSERT INTO schedule 
-            (masjid_id, latitude, longitude, timezone, hijri_offset, calc_method,
+            (masjid_id, latitude, longitude, timezone, hijri_offset, imsak_mode, imsak_minutes, calc_method,
              calc_fajr_angle, calc_isha_angle, calc_asr_method,
              tune_fajr, tune_sunrise, tune_dhuhr, tune_asr, tune_maghrib, tune_isha)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
              latitude=VALUES(latitude), longitude=VALUES(longitude),
              timezone=VALUES(timezone), hijri_offset=VALUES(hijri_offset),
+             imsak_mode=VALUES(imsak_mode),
+             imsak_minutes=VALUES(imsak_minutes),
              calc_method=VALUES(calc_method), calc_fajr_angle=VALUES(calc_fajr_angle),
              calc_isha_angle=VALUES(calc_isha_angle), calc_asr_method=VALUES(calc_asr_method),
              tune_fajr=VALUES(tune_fajr), tune_sunrise=VALUES(tune_sunrise), tune_dhuhr=VALUES(tune_dhuhr),
@@ -60,7 +72,7 @@ try {
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-        $masjid_id, $latitude, $longitude, $timezone, $hijri_offset, $calc_method,
+        $masjid_id, $latitude, $longitude, $timezone, $hijri_offset, $imsak_mode, $imsak_minutes, $calc_method,
         $calc_fajr_angle, $calc_isha_angle, $calc_asr_method,
         $tune_fajr, $tune_sunrise, $tune_dhuhr, $tune_asr, $tune_maghrib, $tune_isha
     ]);

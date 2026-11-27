@@ -34,7 +34,8 @@ $stmt->execute([$masjid_id]);
 $schedule = $stmt->fetch() ?: [
     'latitude' => -6.140000, 'longitude' => 106.590000, 'timezone' => 7, 'hijri_offset' => 0,
     'calc_method' => 'Kemenag', 'calc_fajr_angle' => 20.0, 'calc_isha_angle' => 18.0, 'calc_asr_method' => 'Standard',
-    'tune_fajr' => 1, 'tune_sunrise' => 0, 'tune_dhuhr' => 0, 'tune_asr' => 2, 'tune_maghrib' => 6, 'tune_isha' => 1
+    'tune_fajr' => 1, 'tune_sunrise' => 0, 'tune_dhuhr' => 0, 'tune_asr' => 2, 'tune_maghrib' => 6, 'tune_isha' => 1,
+    'imsak_mode' => 'auto', 'imsak_minutes' => 10
 ];
 
 // 3. Ambil Pengaturan Timer Layar TV (timer)
@@ -100,9 +101,12 @@ $response = [
         'longitude'    => (float)($schedule['longitude'] ?? 106.59),
         'timeZone'     => (int)($schedule['timezone'] ?? 7),
         'dst'          => 0,
-        'hijri_offset' => (int)($schedule['hijri_offset'] ?? 0)
+        'hijri_offset' => (int)($schedule['hijri_offset'] ?? 0),
+        'imsak_mode'    => $schedule['imsak_mode'] ?? 'auto',
+        'imsak_minutes' => (int)($schedule['imsak_minutes'] ?? 10)
     ],
     'prayTimesAdjust' => [
+        'imsak'   => ((int)($schedule['imsak_minutes'] ?? 10)) . ' min',
         'fajr'    => (float)($schedule['calc_fajr_angle'] ?? 20),
         'dhuhr'   => 0,
         'asr'     => $schedule['calc_asr_method'] ?? 'Standard',
@@ -118,6 +122,7 @@ $response = [
         'isha'    => (int)$schedule['tune_isha']
     ],
     'prayName' => [
+        'imsak'   => 'Imsak',
         'fajr'    => 'Subuh',
         'sunrise' => 'Syuruq',
         'dhuhr'   => 'Dzuhur',

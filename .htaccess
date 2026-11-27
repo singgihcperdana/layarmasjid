@@ -16,7 +16,7 @@ RewriteRule ^admin/uploads/(.*)$ uploads/$1 [L]
 RewriteRule ^(admin/)?assets/(.*)$ admin/assets/$2 [L]
 
 # 5. Routing Halaman Admin: /profile, /schedule, dll (baik dengan maupun tanpa prefix admin/)
-RewriteRule ^(admin/)?(profile|schedule|timer|slides|running_text|login|logout)/?$ admin/$2.php [L,QSA]
+RewriteRule ^(admin/)?(profile|schedule|timer|slides|running_text|password|login|logout)/?$ admin/$2.php [L,QSA]
 
 # 4. Hilangkan ekstensi .php untuk file lain (Clean URLs)
 RewriteCond %{REQUEST_FILENAME} !-d

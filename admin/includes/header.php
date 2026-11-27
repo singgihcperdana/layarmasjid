@@ -66,6 +66,10 @@ $current_page = $current_page ?? '';
           <i class="bi bi-broadcast"></i>
           <span>Teks Berjalan</span>
         </a>
+        <a class="nav-link <?= $current_page === 'password' ? 'active' : '' ?>" href="password">
+          <i class="bi bi-key"></i>
+          <span>Ganti Password</span>
+        </a>
       </nav>
 
       <div class="sidebar-footer">

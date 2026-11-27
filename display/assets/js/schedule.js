@@ -58,6 +58,9 @@ function calculateDailyPrayers(now, forceRecalculate = false) {
   const dst = setting.dst || 0;
 
   if (window.prayTimes) {
+    if (setting.imsak_minutes) {
+      window.prayTimes.adjust({ imsak: `${setting.imsak_minutes} min` });
+    }
     if (cfg.prayTimesAdjust) {
       window.prayTimes.adjust(cfg.prayTimesAdjust);
     }
@@ -67,6 +70,7 @@ function calculateDailyPrayers(now, forceRecalculate = false) {
 
     const times = window.prayTimes.getTimes(now, [lat, lng], tz, dst, "24h");
     const labels = cfg.prayName || {
+      imsak: "Imsak",
       fajr: "Subuh",
       sunrise: "Syuruq",
       dhuhr: "Dzuhur",
@@ -75,14 +79,21 @@ function calculateDailyPrayers(now, forceRecalculate = false) {
       isha: "Isya"
     };
 
-    prayers = [
+    const imsakMode = setting.imsak_mode || "auto";
+    const isImsakActive = imsakMode === "always" || (imsakMode === "auto" && isRamadanMonth(now, times.maghrib));
+
+    prayers = [];
+    if (isImsakActive && times.imsak) {
+      prayers.push({ name: labels.imsak || "Imsak", key: "imsak", time: times.imsak });
+    }
+    prayers.push(
       { name: labels.fajr || "Subuh", key: "fajr", time: times.fajr },
       { name: labels.sunrise || "Syuruq", key: "sunrise", time: times.sunrise },
       { name: labels.dhuhr || "Dzuhur", key: "dhuhr", time: times.dhuhr },
       { name: labels.asr || "Ashar", key: "asr", time: times.asr },
       { name: labels.maghrib || "Maghrib", key: "maghrib", time: times.maghrib },
       { name: labels.isha || "Isya", key: "isha", time: times.isha }
-    ];
+    );
 
     renderScheduleTable();
     lastCalculatedDay = dayKey;
@@ -186,17 +197,16 @@ function updateTickerSpeed() {
 
 window.addEventListener("resize", updateTickerSpeed);
 
-function getHijriDateText(now) {
+function getHijriDateObject(now, maghribTimeStr = null) {
   const d = new Date(now);
-
-  const maghrib = prayers.find((p) => p.name === "Maghrib");
   const cfg = window.masjidConfig || {};
   const setting = cfg.setting || {};
   let extraDay = typeof setting.hijri_offset !== "undefined" ? Number(setting.hijri_offset) : HIJRI_OFFSET_DAYS;
 
-  if (maghrib) {
-    const maghribTime = getPrayerDate(now, maghrib.time);
-    if (now >= maghribTime) {
+  const mTime = maghribTimeStr || prayers.find((p) => p.key === "maghrib" || p.name === "Maghrib")?.time;
+  if (mTime) {
+    const maghribDate = getPrayerDate(now, mTime);
+    if (now >= maghribDate) {
       extraDay += 1;
     }
   }
@@ -204,7 +214,27 @@ function getHijriDateText(now) {
   if (extraDay !== 0) {
     d.setDate(d.getDate() + extraDay);
   }
+  return d;
+}
 
+function isRamadanMonth(now, maghribTimeStr = null) {
+  const d = getHijriDateObject(now, maghribTimeStr);
+  try {
+    const hijriMonthFormatter = new Intl.DateTimeFormat("en-u-ca-islamic-umalqura-nu-latn", { month: "numeric" });
+    if (Number(hijriMonthFormatter.format(d)) === 9) {
+      return true;
+    }
+  } catch (err) {}
+  try {
+    const raw = hijriFormatter.format(d);
+    return /ramadan|ramadhan/i.test(raw);
+  } catch (err) {
+    return false;
+  }
+}
+
+function getHijriDateText(now) {
+  const d = getHijriDateObject(now);
   try {
     const raw = hijriFormatter.format(d);
     const cleaned = raw.replace(/\s*(AH|H)\b/gi, "").trim();

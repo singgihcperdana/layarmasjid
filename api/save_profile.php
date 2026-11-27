@@ -29,6 +29,8 @@ try {
     $lokasi      = trim($_POST['lokasi'] ?? '');
     $kontak_info = trim($_POST['kontak_info'] ?? '');
     $remove_logo = isset($_POST['remove_logo']) && $_POST['remove_logo'] === '1';
+    $latitude    = isset($_POST['latitude']) ? (float)$_POST['latitude'] : null;
+    $longitude   = isset($_POST['longitude']) ? (float)$_POST['longitude'] : null;
 
     if (empty($nama)) {
         echo json_encode(['status' => 'error', 'message' => 'Nama masjid tidak boleh kosong']);
@@ -80,8 +82,17 @@ try {
     }
 
     // Update profil masjid
-    $stmt = $pdo->prepare("UPDATE profile SET nama = ?, lokasi = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
-    $stmt->execute([$nama, $lokasi, $kontak_info, $logo_to_save, $masjid_id]);
+    if ($latitude !== null && $longitude !== null) {
+        $stmt = $pdo->prepare("UPDATE profile SET nama = ?, lokasi = ?, latitude = ?, longitude = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
+        $stmt->execute([$nama, $lokasi, $latitude, $longitude, $kontak_info, $logo_to_save, $masjid_id]);
+
+        // Sinkronkan ke tabel schedule agar hisab jadwal sholat selalu sinkron
+        $stmtSched = $pdo->prepare("UPDATE schedule SET latitude = ?, longitude = ? WHERE masjid_id = ?");
+        $stmtSched->execute([$latitude, $longitude, $masjid_id]);
+    } else {
+        $stmt = $pdo->prepare("UPDATE profile SET nama = ?, lokasi = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
+        $stmt->execute([$nama, $lokasi, $kontak_info, $logo_to_save, $masjid_id]);
+    }
 
     update_sync_file($masjid_id);
 
