@@ -117,9 +117,13 @@ function applyMasjidConfig() {
     const locEl = document.querySelector(".content-address span");
     if (locEl) locEl.textContent = s.lokasi;
   }
-  if (s.kontak_info) {
-    const infoEl = document.getElementById("content-extra-text");
+  const extraInfoBox = document.getElementById("content-extra-info");
+  const infoEl = document.getElementById("content-extra-text");
+  if (s.kontak_info && s.kontak_info.trim() !== "") {
     if (infoEl) infoEl.textContent = s.kontak_info;
+    if (extraInfoBox) extraInfoBox.style.display = "";
+  } else {
+    if (extraInfoBox) extraInfoBox.style.display = "none";
   }
   const logoEl = document.getElementById("content-brand-logo");
   const frameEl = document.getElementById("content-brand-frame");

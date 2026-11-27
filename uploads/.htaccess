@@ -1,0 +1,15 @@
+# Cegah eksekusi script berbahaya (PHP, CGI, dll) di folder uploads
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|phar|cgi|pl|sh)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+# Cegah siapa pun melihat daftar file folder (Directory Listing)
+Options -Indexes

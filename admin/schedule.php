@@ -42,22 +42,32 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
     <div class="col-lg-7 mb-4">
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <span><i class="bi bi-geo-alt-fill text-danger me-1"></i> Titik Koordinat & Lokasi Masjid</span>
+          <span><i class="bi bi-geo-alt-fill text-primary me-1"></i> Titik Koordinat & Lokasi Masjid</span>
           <button type="button" id="btnGetGps" class="btn btn-sm btn-outline-success fw-semibold">
             <i class="bi bi-crosshair me-1"></i> 📍 Gunakan GPS Saya
           </button>
         </div>
         <div class="card-body">
           
-          <!-- Pencarian Alamat -->
-          <div class="mb-3">
+          <!-- Pencarian Alamat dengan Suggestion Autocomplete (Google Maps style) -->
+          <div class="map-search-wrapper mb-3" id="mapSearchWrapper">
             <div class="input-group">
-              <input type="text" id="mapSearchInput" class="form-control" placeholder="Ketik nama jalan, kelurahan, atau kota...">
+              <span class="input-group-text bg-white border-end-0"><i class="bi bi-geo-alt text-muted"></i></span>
+              <input type="text" id="mapSearchInput" class="form-control border-start-0 border-end-0" placeholder="Ketik nama masjid, jalan, kelurahan, atau kota..." autocomplete="off">
+              <button class="btn btn-outline-secondary border-start-0 border-end-0 d-none" type="button" id="btnClearSearch" title="Hapus teks pencarian">
+                <i class="bi bi-x-lg"></i>
+              </button>
               <button class="btn btn-secondary" type="button" id="btnSearchMap">
                 <i class="bi bi-search me-1"></i> Cari
               </button>
             </div>
-            <div id="searchSpinner" class="form-text d-none text-primary"><i class="bi bi-arrow-repeat spin"></i> Mencari lokasi...</div>
+            
+            <!-- Dropdown Saran Lokasi -->
+            <div id="mapSuggestions" class="map-suggestions d-none"></div>
+
+            <div id="searchSpinner" class="form-text d-none text-primary mt-1">
+              <i class="bi bi-arrow-repeat spin"></i> Mencari saran lokasi...
+            </div>
           </div>
 
           <!-- Peta Leaflet -->
@@ -75,7 +85,7 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
             </div>
           </div>
           <div class="form-text mt-2" style="font-size: 0.8rem;">
-            <i class="bi bi-info-circle me-1"></i> Geser pin merah di peta tepat ke atap masjid Anda untuk mengunci koordinat.
+            <i class="bi bi-info-circle me-1"></i> Geser pin biru di peta tepat ke titik lokasi masjid Anda untuk menentukan koordinat.
           </div>
 
         </div>
@@ -85,10 +95,10 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
     <!-- KARTU 2 & 3: METODE KEMENAG & KOREKSI MENIT -->
     <div class="col-lg-5 mb-4">
       
-      <!-- KARTU 2: METODE PERHITUNGAN KEMENAG RI -->
+      <!-- KARTU 2: PARAMETER HISAB & SUDUT WAKTU SHOLAT -->
       <div class="card mb-4">
         <div class="card-header">
-          <i class="bi bi-gear-fill me-1"></i> Metode Perhitungan (Kemenag RI)
+          <i class="bi bi-gear-fill me-1"></i> Parameter Hisab &amp; Sudut Waktu Sholat
         </div>
         <div class="card-body">
           <div class="row g-3">
@@ -246,39 +256,209 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
     });
   }
 
-  // 2. Fitur Pencarian Lokasi (Nominatim OSM)
-  document.getElementById('btnSearchMap').addEventListener('click', async function() {
-    const query = document.getElementById('mapSearchInput').value.trim();
-    if (!query) return;
+  // 2. Fitur Pencarian Lokasi & Autocomplete Saran (Google Maps Style)
+  const searchInput = document.getElementById('mapSearchInput');
+  const btnSearch = document.getElementById('btnSearchMap');
+  const btnClear = document.getElementById('btnClearSearch');
+  const suggestionsBox = document.getElementById('mapSuggestions');
+  const searchSpinner = document.getElementById('searchSpinner');
 
-    const spinner = document.getElementById('searchSpinner');
-    spinner.classList.remove('d-none');
+  let debounceTimer = null;
+  let activeSuggestionIdx = -1;
+  let currentSuggestions = [];
+
+  function selectLocation(lat, lng, name) {
+    if (isNaN(lat) || isNaN(lng)) return;
+
+    map.flyTo([lat, lng], 17, { duration: 1.2 });
+    marker.setLatLng([lat, lng]);
+    document.getElementById('inputLat').value = lat.toFixed(6);
+    document.getElementById('inputLng').value = lng.toFixed(6);
+    renderMonthlySchedule();
+
+    if (name) {
+      searchInput.value = name;
+      btnClear.classList.remove('d-none');
+    }
+    closeSuggestions();
+  }
+
+  function closeSuggestions() {
+    suggestionsBox.classList.add('d-none');
+    suggestionsBox.innerHTML = '';
+    currentSuggestions = [];
+    activeSuggestionIdx = -1;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // Fetch saran lokasi dari Nominatim OSM
+  async function fetchSuggestions(query) {
+    if (!query || query.length < 3) {
+      closeSuggestions();
+      searchSpinner.classList.add('d-none');
+      return;
+    }
+
+    searchSpinner.classList.remove('d-none');
 
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+      // Prioritaskan pencarian di Indonesia (countrycodes=id)
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=id&limit=5&addressdetails=1`;
+      const res = await fetch(url, { headers: { 'Accept-Language': 'id-ID,id;q=0.9' } });
+      const data = await res.json();
+
+      if (Array.isArray(data) && data.length > 0) {
+        currentSuggestions = data;
+        renderSuggestions(data);
+      } else {
+        suggestionsBox.innerHTML = '<div class="map-suggestion-empty"><i class="bi bi-geo-alt me-1"></i> Tidak ada saran lokasi ditemukan. Coba ketik nama kota/kecamatan.</div>';
+        suggestionsBox.classList.remove('d-none');
+        currentSuggestions = [];
+      }
+    } catch (err) {
+      closeSuggestions();
+    } finally {
+      searchSpinner.classList.add('d-none');
+    }
+  }
+
+  function renderSuggestions(items) {
+    activeSuggestionIdx = -1;
+    suggestionsBox.innerHTML = items.map((item, idx) => {
+      const parts = (item.display_name || '').split(',').map(s => s.trim());
+      const mainTitle = item.name || parts[0];
+      const subTitle = parts.slice(1).join(', ');
+
+      const isMosque = /masjid|musholla|mosque|surau/i.test(mainTitle) || item.type === 'place_of_worship';
+      const iconClass = isMosque ? 'bi-building text-success' : 'bi-geo-alt-fill text-danger';
+
+      return `
+        <div class="map-suggestion-item" data-idx="${idx}">
+          <i class="bi ${iconClass} map-suggestion-icon"></i>
+          <div class="map-suggestion-content">
+            <div class="map-suggestion-title">${escapeHtml(mainTitle)}</div>
+            <div class="map-suggestion-subtitle">${escapeHtml(subTitle)}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    suggestionsBox.classList.remove('d-none');
+
+    // Event click pada item saran
+    suggestionsBox.querySelectorAll('.map-suggestion-item').forEach(el => {
+      el.addEventListener('click', function() {
+        const idx = parseInt(this.dataset.idx, 10);
+        const item = currentSuggestions[idx];
+        if (item) {
+          const mainTitle = item.name || item.display_name.split(',')[0].trim();
+          selectLocation(parseFloat(item.lat), parseFloat(item.lon), mainTitle);
+        }
+      });
+    });
+  }
+
+  // Event Input (Ketik untuk trigger autocomplete)
+  searchInput.addEventListener('input', function() {
+    const val = this.value.trim();
+    if (val.length > 0) {
+      btnClear.classList.remove('d-none');
+    } else {
+      btnClear.classList.add('d-none');
+      closeSuggestions();
+      return;
+    }
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      fetchSuggestions(val);
+    }, 350);
+  });
+
+  // Tombol Hapus Input
+  btnClear.addEventListener('click', function() {
+    searchInput.value = '';
+    btnClear.classList.add('d-none');
+    closeSuggestions();
+    searchInput.focus();
+  });
+
+  // Navigasi Keyboard (Panah Atas / Bawah, Enter, Escape)
+  searchInput.addEventListener('keydown', function(e) {
+    const items = suggestionsBox.querySelectorAll('.map-suggestion-item');
+
+    if (e.key === 'ArrowDown') {
+      if (items.length === 0) return;
+      e.preventDefault();
+      activeSuggestionIdx = (activeSuggestionIdx + 1) % items.length;
+      updateActiveSuggestion(items);
+    } else if (e.key === 'ArrowUp') {
+      if (items.length === 0) return;
+      e.preventDefault();
+      activeSuggestionIdx = (activeSuggestionIdx - 1 + items.length) % items.length;
+      updateActiveSuggestion(items);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (activeSuggestionIdx >= 0 && currentSuggestions[activeSuggestionIdx]) {
+        const item = currentSuggestions[activeSuggestionIdx];
+        const mainTitle = item.name || item.display_name.split(',')[0].trim();
+        selectLocation(parseFloat(item.lat), parseFloat(item.lon), mainTitle);
+      } else {
+        btnSearch.click();
+      }
+    } else if (e.key === 'Escape') {
+      closeSuggestions();
+    }
+  });
+
+  function updateActiveSuggestion(items) {
+    items.forEach((item, idx) => {
+      if (idx === activeSuggestionIdx) {
+        item.classList.add('active');
+        item.scrollIntoView({ block: 'nearest' });
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+
+  // Klik di luar area search & suggestions untuk menutup dropdown
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#mapSearchWrapper')) {
+      closeSuggestions();
+    }
+  });
+
+  // Tombol Cari Manual (Klik 'Cari' atau Tekan Enter saat tidak ada saran yang disorot)
+  btnSearch.addEventListener('click', async function() {
+    const query = searchInput.value.trim();
+    if (!query) return;
+
+    searchSpinner.classList.remove('d-none');
+    closeSuggestions();
+
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=id&limit=1`);
       const data = await res.json();
       if (data && data.length > 0) {
-        const lat = parseFloat(data[0].lat);
-        const lng = parseFloat(data[0].lon);
-        map.setView([lat, lng], 16);
-        marker.setLatLng([lat, lng]);
-        document.getElementById('inputLat').value = lat.toFixed(6);
-        document.getElementById('inputLng').value = lng.toFixed(6);
-        renderMonthlySchedule();
+        const item = data[0];
+        const mainTitle = item.name || item.display_name.split(',')[0].trim();
+        selectLocation(parseFloat(item.lat), parseFloat(item.lon), mainTitle);
       } else {
         alert('Lokasi tidak ditemukan. Coba masukkan nama kota atau kelurahan yang lebih spesifik.');
       }
     } catch (err) {
       alert('Gagal menghubungi layanan pencarian peta.');
     } finally {
-      spinner.classList.add('d-none');
-    }
-  });
-
-  document.getElementById('mapSearchInput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      document.getElementById('btnSearchMap').click();
+      searchSpinner.classList.add('d-none');
     }
   });
 

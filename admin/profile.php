@@ -35,7 +35,7 @@ require_once __DIR__ . '/includes/header.php';
           <div class="mb-3">
             <label class="form-label small fw-semibold">Informasi Kontak & Rekening Infaq</label>
             <textarea class="form-control" name="kontak_info" rows="2" placeholder="Contoh: BSI 7123 456 789 a.n. Masjid Al Ikhlas • WA: 0812-3456-7890"><?= htmlspecialchars($masjid['kontak_info'] ?? '') ?></textarea>
-            <div class="form-text">Tampil di pojok kanan atas layar TV. Kosongkan jika tidak ingin ditampilkan.</div>
+            <div class="form-text">Tampil di header layar TV tepat di bawah alamat masjid. Kosongkan jika tidak ingin ditampilkan.</div>
           </div>
 
           <!-- Kotak Logo Masjid (Bisa Kosong) -->
