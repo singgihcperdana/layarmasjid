@@ -115,8 +115,8 @@
 .clock-card {
   position: relative;
   z-index: 1;
-  margin-top: clamp(24px, 3.8vh, 50px);
-  margin-bottom: clamp(6px, 0.8vh, 14px);
+  margin-top: clamp(4px, 0.8vh, 12px);
+  margin-bottom: clamp(4px, 0.6vh, 10px);
 }
 
 .clock-display {
@@ -135,7 +135,7 @@
 
 .clock-main {
   font-family: "Avenir Next", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
-  font-size: clamp(5.6rem, 7.2vw + 2vh, 12.5rem);
+  font-size: clamp(4.6rem, 5.8vw + 1.6vh, 10.0rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
