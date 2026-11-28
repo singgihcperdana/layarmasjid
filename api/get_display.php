@@ -17,8 +17,8 @@ if (empty($masjid_id)) {
     exit;
 }
 
-// 1. Ambil Data Profil Masjid (Eksklusif kolom publik, tanpa password)
-$stmt = $pdo->prepare("SELECT id, nama, lokasi, kontak_info, logo, UNIX_TIMESTAMP(updated_at) AS sync_hash FROM profile WHERE id = ? LIMIT 1");
+// 1. Ambil Data Profil Masjid (Tabel masjid)
+$stmt = $pdo->prepare("SELECT id, nama, lokasi, kontak_info, logo, UNIX_TIMESTAMP(updated_at) AS sync_hash FROM masjid WHERE id = ? LIMIT 1");
 $stmt->execute([$masjid_id]);
 $profile = $stmt->fetch();
 

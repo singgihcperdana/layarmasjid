@@ -8,26 +8,45 @@ DROP TABLE IF EXISTS `running_text`;
 DROP TABLE IF EXISTS `slides`;
 DROP TABLE IF EXISTS `timer`;
 DROP TABLE IF EXISTS `schedule`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `masjid`;
 DROP TABLE IF EXISTS `profile`;
 
 -- Hapus tabel lama (jika ada)
 DROP TABLE IF EXISTS `masjid_running_text`;
 DROP TABLE IF EXISTS `masjid_slides`;
 DROP TABLE IF EXISTS `masjid_setting`;
-DROP TABLE IF EXISTS `masjid`;
 
 -- =============================================================================
--- 1. TABEL PROFILE (Identitas Masjid & Kredensial Login)
+-- 1. TABEL MASJID (Identitas Fisik, Alamat & Lokasi Koordinat Peta)
 -- =============================================================================
-CREATE TABLE IF NOT EXISTS `profile` (
+CREATE TABLE IF NOT EXISTS `masjid` (
   `id` VARCHAR(50) NOT NULL PRIMARY KEY,
   `nama` VARCHAR(150) NOT NULL,
   `lokasi` TEXT NULL,
+  `latitude` DECIMAL(10, 6) DEFAULT -6.140000,
+  `longitude` DECIMAL(10, 6) DEFAULT 106.590000,
   `kontak_info` TEXT NULL,
   `logo` VARCHAR(255) NULL,
-  `password` VARCHAR(255) NOT NULL,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================================================
+-- 2. TABEL USERS (Kredensial Login Pengurus / DKM - Multi-User per Masjid)
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `masjid_id` VARCHAR(50) NOT NULL,
+  `username` VARCHAR(50) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `nama` VARCHAR(100) NULL,
+  `role` VARCHAR(20) NOT NULL DEFAULT 'admin',
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `uk_username` (`username`),
+  INDEX `idx_masjid_id` (`masjid_id`),
+  FOREIGN KEY (`masjid_id`) REFERENCES `masjid`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================
@@ -56,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `schedule` (
   `tune_maghrib` INT DEFAULT 6,
   `tune_isha` INT DEFAULT 1,
   
-  FOREIGN KEY (`masjid_id`) REFERENCES `profile`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`masjid_id`) REFERENCES `masjid`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================
@@ -79,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `iqomah_maghrib` INT DEFAULT 5,
   `iqomah_isha` INT DEFAULT 10,
   
-  FOREIGN KEY (`masjid_id`) REFERENCES `profile`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`masjid_id`) REFERENCES `masjid`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================
@@ -98,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `slides` (
   `durasi` INT DEFAULT 15,
   `is_active` TINYINT(1) DEFAULT 1,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`masjid_id`) REFERENCES `profile`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`masjid_id`) REFERENCES `masjid`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================
@@ -111,21 +130,31 @@ CREATE TABLE IF NOT EXISTS `running_text` (
   `urutan` INT DEFAULT 1,
   `is_active` TINYINT(1) DEFAULT 1,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`masjid_id`) REFERENCES `profile`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`masjid_id`) REFERENCES `masjid`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================
--- SEED DATA AWAL: MASJID ID 101 (Password default: admin123)
+-- SEED DATA AWAL: MASJID ID 101 & USER ADMIN (Password: admin123)
 -- =============================================================================
 
-INSERT INTO `profile` (`id`, `nama`, `lokasi`, `kontak_info`, `logo`, `password`)
+INSERT INTO `masjid` (`id`, `nama`, `lokasi`, `latitude`, `longitude`, `kontak_info`, `logo`)
 VALUES (
   '101',
   'Masjid Al Ikhlas',
   'Jl. Contoh No. 12, Kebayoran Baru • Jakarta Selatan',
+  -6.140000,
+  106.590000,
   'Info / Rekening / Kontak: BSI 7123 456 789 a.n. Masjid Al Ikhlas • WA: 0812-3456-7890',
-  'assets/img/contoh_logo/masjid_astra.png',
-  '$2y$12$kWq6jERW68b28GYxl3AgC.gm0wVyL79731cAzdCk4jYnls73foLje'
+  'assets/img/contoh_logo/masjid_astra.png'
+);
+
+INSERT INTO `users` (`masjid_id`, `username`, `password`, `nama`, `role`)
+VALUES (
+  '101',
+  'admin',
+  '$2y$12$kWq6jERW68b28GYxl3AgC.gm0wVyL79731cAzdCk4jYnls73foLje',
+  'Administrator DKM',
+  'admin'
 );
 
 INSERT INTO `schedule` (`masjid_id`, `latitude`, `longitude`, `timezone`, `hijri_offset`, `calc_method`, `calc_fajr_angle`, `calc_isha_angle`, `calc_asr_method`, `tune_fajr`, `tune_sunrise`, `tune_dhuhr`, `tune_asr`, `tune_maghrib`, `tune_isha`)

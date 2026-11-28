@@ -146,8 +146,8 @@ try {
             $msg = "Slide baru berhasil ditambahkan";
         }
 
-        // Sentuh updated_at di profile agar TV display mendeteksi perubahan
-        $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+        // Sentuh updated_at di masjid agar TV display mendeteksi perubahan
+        $pdo->prepare("UPDATE masjid SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
         update_sync_file($masjid_id);
 
         echo json_encode(['status' => 'success', 'message' => $msg]);
@@ -188,7 +188,7 @@ try {
                 $stmtUpdate->execute([$newUrutan + 1, $slideId, $masjid_id]);
             }
 
-            $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+            $pdo->prepare("UPDATE masjid SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
             update_sync_file($masjid_id);
             echo json_encode(['status' => 'success', 'message' => 'Urutan slide berhasil diubah']);
         } else {
@@ -202,7 +202,7 @@ try {
         $id = (int)($_POST['id'] ?? 0);
         $stmt = $pdo->prepare("UPDATE slides SET is_active = IF(is_active = 1, 0, 1) WHERE id = ? AND masjid_id = ?");
         $stmt->execute([$id, $masjid_id]);
-        $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+        $pdo->prepare("UPDATE masjid SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
         update_sync_file($masjid_id);
         echo json_encode(['status' => 'success', 'message' => 'Status aktif slide berhasil diubah']);
         exit;
@@ -238,7 +238,7 @@ try {
                 $stmtUpdate->execute([$idx + 1, $rId, $masjid_id]);
             }
 
-            $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+            $pdo->prepare("UPDATE masjid SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
             update_sync_file($masjid_id);
             echo json_encode(['status' => 'success', 'message' => 'Slide berhasil dihapus']);
         } else {

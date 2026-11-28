@@ -22,7 +22,7 @@ if (empty($masjid_id)) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT UNIX_TIMESTAMP(updated_at) AS sync_hash FROM profile WHERE id = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT UNIX_TIMESTAMP(updated_at) AS sync_hash FROM masjid WHERE id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);
     $sync_hash = $stmt->fetchColumn();
 

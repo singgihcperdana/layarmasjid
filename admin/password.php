@@ -11,9 +11,9 @@ require_once __DIR__ . '/includes/header.php';
 
 <div class="row">
   
-  <!-- Kolom 1: Form Ganti Password -->
+  <!-- Form Ganti Password -->
   <div class="col-lg-6 mb-4">
-    <div class="card shadow-sm h-100">
+    <div class="card shadow-sm">
       <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="bi bi-key-fill text-success me-1"></i> Ganti Password Akun DKM</span>
         <span class="badge bg-success-subtle text-success border border-success-subtle">ID: <?= htmlspecialchars($current_masjid_id) ?></span>
@@ -59,47 +59,6 @@ require_once __DIR__ . '/includes/header.php';
             <i class="bi bi-shield-check me-1"></i> Perbarui Password
           </button>
         </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Kolom 2: Panduan & Tips Keamanan -->
-  <div class="col-lg-6 mb-4">
-    <div class="card shadow-sm border bg-light h-100">
-      <div class="card-header bg-white">
-        <i class="bi bi-shield-lock-fill text-primary me-1"></i> Panduan Keamanan Akun DKM
-      </div>
-      <div class="card-body">
-        <div class="d-flex align-items-start gap-3 mb-3">
-          <div class="p-2 rounded-circle bg-white border shadow-sm text-success">
-            <i class="bi bi-shield-shaded fs-5"></i>
-          </div>
-          <div>
-            <h6 class="fw-bold mb-1" style="font-size: 0.95rem;">Gunakan Password yang Aman</h6>
-            <p class="small text-muted mb-0">Hindari password yang mudah ditebak seperti tanggal lahir atau urutan angka sederhana (misal: 123456).</p>
-          </div>
-        </div>
-
-        <div class="d-flex align-items-start gap-3 mb-3">
-          <div class="p-2 rounded-circle bg-white border shadow-sm text-warning">
-            <i class="bi bi-people-fill fs-5"></i>
-          </div>
-          <div>
-            <h6 class="fw-bold mb-1" style="font-size: 0.95rem;">Jaga Kerahasiaan Kredensial</h6>
-            <p class="small text-muted mb-0">Hanya berikan akses akun DKM kepada pengurus masjid yang bertugas mengelola jadwal sholat dan konten TV.</p>
-          </div>
-        </div>
-
-        <div class="d-flex align-items-start gap-3">
-          <div class="p-2 rounded-circle bg-white border shadow-sm text-info">
-            <i class="bi bi-arrow-repeat fs-5"></i>
-          </div>
-          <div>
-            <h6 class="fw-bold mb-1" style="font-size: 0.95rem;">Ganti Secara Berkala</h6>
-            <p class="small text-muted mb-0">Disarankan mengganti password secara berkala, terutama jika terjadi pergantian kepengurusan DKM masjid.</p>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>

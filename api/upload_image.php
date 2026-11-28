@@ -69,8 +69,8 @@ if (move_uploaded_file($file['tmp_name'], $target_path)) {
     $stmt = $pdo->prepare("INSERT INTO slides (masjid_id, tipe, urutan, konten, durasi, is_active) VALUES (?, 'image', ?, ?, ?, 1)");
     $stmt->execute([$masjid_id, $max_urutan + 1, $web_path, $durasi]);
 
-    // Update updated_at profile dan static sync file
-    $pdo->prepare("UPDATE profile SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
+    // Update updated_at masjid dan static sync file
+    $pdo->prepare("UPDATE masjid SET updated_at = NOW() WHERE id = ?")->execute([$masjid_id]);
     update_sync_file($masjid_id);
 
     echo json_encode([

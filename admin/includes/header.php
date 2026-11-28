@@ -6,7 +6,7 @@ require_once __DIR__ . '/../auth_check.php';
 require_once __DIR__ . '/../../api/db.php';
 
 // Ambil info masjid untuk header
-$stmt = $pdo->prepare("SELECT * FROM profile WHERE id = ? LIMIT 1");
+$stmt = $pdo->prepare("SELECT * FROM masjid WHERE id = ? LIMIT 1");
 $stmt->execute([$current_masjid_id]);
 $masjid = $stmt->fetch();
 

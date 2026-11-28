@@ -38,7 +38,7 @@ try {
     }
 
     // Ambil data logo saat ini
-    $stmt = $pdo->prepare("SELECT logo FROM profile WHERE id = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT logo FROM masjid WHERE id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);
     $current_logo = $stmt->fetchColumn() ?: '';
 
@@ -83,14 +83,14 @@ try {
 
     // Update profil masjid
     if ($latitude !== null && $longitude !== null) {
-        $stmt = $pdo->prepare("UPDATE profile SET nama = ?, lokasi = ?, latitude = ?, longitude = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE masjid SET nama = ?, lokasi = ?, latitude = ?, longitude = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
         $stmt->execute([$nama, $lokasi, $latitude, $longitude, $kontak_info, $logo_to_save, $masjid_id]);
 
         // Sinkronkan ke tabel schedule agar hisab jadwal sholat selalu sinkron
         $stmtSched = $pdo->prepare("UPDATE schedule SET latitude = ?, longitude = ? WHERE masjid_id = ?");
         $stmtSched->execute([$latitude, $longitude, $masjid_id]);
     } else {
-        $stmt = $pdo->prepare("UPDATE profile SET nama = ?, lokasi = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE masjid SET nama = ?, lokasi = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
         $stmt->execute([$nama, $lokasi, $kontak_info, $logo_to_save, $masjid_id]);
     }
 

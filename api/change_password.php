@@ -44,9 +44,16 @@ try {
         exit;
     }
 
-    // Ambil password saat ini dari database
-    $stmt = $pdo->prepare("SELECT password FROM profile WHERE id = ? LIMIT 1");
-    $stmt->execute([$masjid_id]);
+    $user_id = $_SESSION['user_id'] ?? null;
+
+    // Ambil password user saat ini dari database
+    if ($user_id) {
+        $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ? AND masjid_id = ? LIMIT 1");
+        $stmt->execute([$user_id, $masjid_id]);
+    } else {
+        $stmt = $pdo->prepare("SELECT password FROM users WHERE masjid_id = ? LIMIT 1");
+        $stmt->execute([$masjid_id]);
+    }
     $current_hash = $stmt->fetchColumn();
 
     if (!$current_hash || !password_verify($old_password, $current_hash)) {
@@ -54,10 +61,15 @@ try {
         exit;
     }
 
-    // Hash password baru & simpan
+    // Hash password baru & simpan ke tabel users
     $new_hash = password_hash($new_password, PASSWORD_BCRYPT);
-    $stmt = $pdo->prepare("UPDATE profile SET password = ? WHERE id = ?");
-    $stmt->execute([$new_hash, $masjid_id]);
+    if ($user_id) {
+        $stmt = $pdo->prepare("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ? AND masjid_id = ?");
+        $stmt->execute([$new_hash, $user_id, $masjid_id]);
+    } else {
+        $stmt = $pdo->prepare("UPDATE users SET password = ?, updated_at = NOW() WHERE masjid_id = ?");
+        $stmt->execute([$new_hash, $masjid_id]);
+    }
 
     echo json_encode(['status' => 'success', 'message' => 'Password berhasil diperbarui! Gunakan password baru untuk login berikutnya.']);
 } catch (Exception $e) {

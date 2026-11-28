@@ -30,7 +30,7 @@ if (file_exists($sync_file)) {
 
 // 2. Jika file belum ada di disk (kasus baru), ambil dari database lalu buat filenya
 try {
-    $stmt = $pdo->prepare("SELECT UNIX_TIMESTAMP(updated_at) AS sync_hash FROM profile WHERE id = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT UNIX_TIMESTAMP(updated_at) AS sync_hash FROM masjid WHERE id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);
     $sync_hash = $stmt->fetchColumn();
 
