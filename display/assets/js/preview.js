@@ -66,6 +66,18 @@ window.testModeJumat = function(durationSec) {
   tick();
 };
 
+window.testMenjelangJumat = function(durationSec = 15) {
+  simulationState = {
+    phase: "menjelang_azan",
+    isJumat: true,
+    prayerName: "Dzuhur",
+    remainingSec: durationSec,
+    autoNext: true,
+    demoMode: true
+  };
+  tick();
+};
+
 window.testDemoLengkap = function(prayerName = "Dzuhur") {
   // Demo otomatis lengkap seluruh tahapan:
   // 15 detik Menjelang Adzan (beep di 10 detik terakhir) ->
@@ -102,6 +114,7 @@ function setupAdzanTestControls() {
   const btnAdzan = document.getElementById("btn-test-adzan");
   const btnIqomah = document.getElementById("btn-test-iqomah");
   const btnSholat = document.getElementById("btn-test-sholat");
+  const btnMenjelangJumat = document.getElementById("btn-test-menjelang-jumat");
   const btnJumat = document.getElementById("btn-test-jumat");
   const btnDemo = document.getElementById("btn-test-demo");
   const btnClose = document.getElementById("btn-test-close");
@@ -144,6 +157,12 @@ function setupAdzanTestControls() {
   if (btnSholat) {
     btnSholat.addEventListener("click", () => {
       window.testSaatSholat("Dzuhur");
+    });
+  }
+
+  if (btnMenjelangJumat) {
+    btnMenjelangJumat.addEventListener("click", () => {
+      window.testMenjelangJumat(15);
     });
   }
 

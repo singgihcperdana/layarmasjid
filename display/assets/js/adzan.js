@@ -69,13 +69,24 @@ function getPrayerLifecycleState(now) {
     if (s.phase === "menjelang_azan") {
       if (s.remainingSec <= 0) {
         if (s.autoNext) {
-          simulationState = {
-            phase: "saat_azan",
-            prayerName: s.prayerName,
-            remainingSec: s.demoMode ? 5 : timers.lamaAdzan * 60,
-            autoNext: s.autoNext,
-            demoMode: s.demoMode
-          };
+          if (s.isJumat) {
+            simulationState = {
+              phase: "saat_sholat",
+              isJumat: true,
+              prayerName: s.prayerName,
+              remainingSec: s.demoMode ? 10 : timers.lamaJumat * 60,
+              autoNext: false,
+              demoMode: s.demoMode
+            };
+          } else {
+            simulationState = {
+              phase: "saat_azan",
+              prayerName: s.prayerName,
+              remainingSec: s.demoMode ? 5 : timers.lamaAdzan * 60,
+              autoNext: s.autoNext,
+              demoMode: s.demoMode
+            };
+          }
         } else {
           simulationState = null;
           return null;
@@ -83,6 +94,7 @@ function getPrayerLifecycleState(now) {
       }
       return {
         phase: "menjelang_azan",
+        isJumat: !!s.isJumat,
         prayerName: s.prayerName,
         diffSeconds: Math.max(0, s.remainingSec)
       };
@@ -175,6 +187,7 @@ function getPrayerLifecycleState(now) {
       if (deltaSec >= -waitSec && deltaSec < 0) {
         return {
           phase: "menjelang_azan",
+          isJumat: isFridayDhuhr && jumatSec > 0,
           prayerName: prayer.name,
           diffSeconds: Math.abs(deltaSec)
         };
@@ -289,11 +302,23 @@ function renderLifecycleScreen(state, now) {
 
   // 1. FASE MENJELANG AZAN (Countdown MM:SS, beep di detik-detik terakhir)
   if (state.phase === "menjelang_azan") {
+    const titleEl = document.getElementById("adzan-countdown-title");
+    const pillEl = document.getElementById("adzan-prayer-pill");
     const targetName = document.getElementById("adzan-target-prayer-name");
+    const hintEl = document.getElementById("adzan-countdown-hint");
     const timerDigits = document.getElementById("adzan-timer-digits");
     const timerBox = document.getElementById("adzan-timer-box");
 
-    if (targetName) targetName.textContent = state.prayerName.toUpperCase();
+    if (state.isJumat) {
+      if (titleEl) titleEl.textContent = "MENJELANG KHUTBAH JUM'AT";
+      if (pillEl) pillEl.style.display = "none";
+      if (hintEl) hintEl.textContent = "Segera mengambil air wudhu dan bersiap mendengarkan khutbah Jum'at";
+    } else {
+      if (titleEl) titleEl.textContent = "MENJELANG ADZAN";
+      if (pillEl) pillEl.style.display = "";
+      if (targetName) targetName.textContent = state.prayerName.toUpperCase();
+      if (hintEl) hintEl.textContent = "Segera mengambil air wudhu dan merapatkan diri ke shaf sholat";
+    }
 
     const m = Math.floor(state.diffSeconds / 60);
     const s = state.diffSeconds % 60;

@@ -197,8 +197,8 @@ try {
         <!-- 1. FASE MENJELANG AZAN -->
         <section class="adzan-phase adzan-phase--countdown-adzan" id="phase-countdown-adzan">
           <div class="adzan-countdown-header">
-            <h1 class="adzan-countdown-title">MENJELANG ADZAN</h1>
-            <div class="adzan-prayer-pill">
+            <h1 class="adzan-countdown-title" id="adzan-countdown-title">MENJELANG ADZAN</h1>
+            <div class="adzan-prayer-pill" id="adzan-prayer-pill">
               <span class="adzan-pill-label">WAKTU</span>
               <span class="adzan-pill-val" id="adzan-target-prayer-name">DZUHUR</span>
             </div>
@@ -209,7 +209,7 @@ try {
             <div class="adzan-timer-accent" aria-hidden="true"></div>
           </div>
 
-          <p class="adzan-countdown-hint">Segera mengambil air wudhu dan merapatkan diri ke shaf sholat</p>
+          <p class="adzan-countdown-hint" id="adzan-countdown-hint">Segera mengambil air wudhu dan merapatkan diri ke shaf sholat</p>
         </section>
 
         <!-- 2. FASE SAAT AZAN (Desain Plakat Maklumat Islami) -->
@@ -297,6 +297,7 @@ try {
     <button type="button" class="adzan-test-btn" id="btn-test-adzan" title="2. Saat Azan: Tampilan Halaman Azan 5 Menit">2. Saat Azan (5m)</button>
     <button type="button" class="adzan-test-btn" id="btn-test-iqomah" title="3. Countdown Iqomah: Countdown 05:00 (Demo 15d, beep di 10d terakhir)">3. Iqomah (15d)</button>
     <button type="button" class="adzan-test-btn" id="btn-test-sholat" title="4. Saat Sholat: Layar Khusyuk & Hening (Hari Biasa)">4. Saat Sholat</button>
+    <button type="button" class="adzan-test-btn" id="btn-test-menjelang-jumat" title="Uji Countdown Menjelang Khutbah Jum'at (15 detik)">Menjelang Jum'at</button>
     <button type="button" class="adzan-test-btn" id="btn-test-jumat" title="Uji Mode Khusus Sholat Jum'at (Khutbah & Sholat, pesan hening)">Mode Jum'at</button>
     <button type="button" class="adzan-test-btn adzan-test-btn--demo" id="btn-test-demo" title="Jalankan otomatis seluruh tahapan 1 sampai 5">▶ Demo Lengkap</button>
     <button type="button" class="adzan-test-btn adzan-test-btn--close" id="btn-test-close" title="5. Kembali ke tampilan normal awal">Tutup / Normal</button>
