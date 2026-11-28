@@ -349,14 +349,30 @@ if (!empty($regency_id)) {
     if (currentKotaFeature && typeof turf !== 'undefined' && turf.booleanPointInPolygon) {
       try {
         const pt = turf.point([lng, lat]);
-        const isInside = turf.booleanPointInPolygon(pt, currentKotaFeature);
-        if (!isInside) {
-          return {
-            valid: false,
-            message: `Titik koordinat berada di luar batas wilayah ${REGENCY_NAME}.`
-          };
+        // 1. Cek langsung apakah berada di dalam poligon resmi wilayah
+        if (turf.booleanPointInPolygon(pt, currentKotaFeature)) {
+          return { valid: true };
         }
-        return { valid: true };
+
+        // 2. Toleransi perbatasan: Jika masjid berada tepat di tepi perbatasan jalan/sungai,
+        // berikan toleransi penyangga 500 meter agar tidak tertolak akibat deviasi garis peta
+        if (typeof turf.buffer === 'function') {
+          if (!currentKotaFeature._buffered) {
+            try {
+              currentKotaFeature._buffered = turf.buffer(currentKotaFeature, 0.5, { units: 'kilometers' });
+            } catch (bufErr) {
+              console.warn('turf.buffer error:', bufErr);
+            }
+          }
+          if (currentKotaFeature._buffered && turf.booleanPointInPolygon(pt, currentKotaFeature._buffered)) {
+            return { valid: true };
+          }
+        }
+
+        return {
+          valid: false,
+          message: `Titik koordinat berada di luar batas wilayah ${REGENCY_NAME}.`
+        };
       } catch (err) {
         console.warn('turf.booleanPointInPolygon error:', err);
       }
@@ -373,32 +389,17 @@ if (!empty($regency_id)) {
   }
 
   // Fungsi Fetch & Filter GeoJSON Wilayah Kabupaten/Kota
-  async function loadAndApplyGeoJsonBoundary(provName, regName) {
-    if (!regName) return;
-
-    // Bersihkan nama target untuk pencocokan case-insensitive
-    const cleanTarget = regName.toLowerCase()
-      .replace(/^(kabupaten|kab\.|kota)\s+/i, '')
-      .trim();
-    const cleanRegCode = (REGENCY_ID || '').replace(/[^0-9]/g, '');
-
-    // Sumber GeoJSON: Coba file lokal (cepat) dan fallback ke Raw GitHub ardian28
-    const sources = [
-      'assets/geojson/kabupaten.json',
-      'https://raw.githubusercontent.com/ardian28/GeoJson-Indonesia-38-Provinsi/main/Kabupaten/38%20Provinsi%20Indonesia%20-%20Kabupaten.json'
-    ];
+  async function loadAndApplyGeoJsonBoundary() {
+    if (!REGENCY_ID) return;
 
     let geoJsonData = null;
-    for (const url of sources) {
-      try {
-        const res = await fetch(url);
-        if (res.ok) {
-          geoJsonData = await res.json();
-          break;
-        }
-      } catch (e) {
-        // Coba sumber berikutnya
+    try {
+      const res = await fetch('assets/geojson/kabupaten.json');
+      if (res.ok) {
+        geoJsonData = await res.json();
       }
+    } catch (e) {
+      console.warn('Gagal memuat GeoJSON lokal:', e);
     }
 
     if (!geoJsonData || !geoJsonData.features || !geoJsonData.features.length) {
@@ -406,33 +407,19 @@ if (!empty($regency_id)) {
       return;
     }
 
-    // 1. Prioritas Utama: Cocokkan berdasarkan kode KDPKAB (misal: "33.03" vs "3303")
-    let kotaFeature = geoJsonData.features.find(f => {
+    // Cocokkan langsung berdasarkan regencies_id yang sudah diinjeksi ke GeoJSON (100% presisi & instan)
+    const kotaFeature = geoJsonData.features.find(f => {
       const p = f.properties || {};
-      if (p.KDPKAB) {
-        const code = String(p.KDPKAB).replace(/[^0-9]/g, '');
-        if (code === cleanRegCode) return true;
-      }
-      return false;
+      return p.regencies_id === REGENCY_ID || p.id === REGENCY_ID;
     });
 
-    // 2. Fallback: Cocokkan berdasarkan nama wilayah WADMKK / NAMOBJ
     if (!kotaFeature) {
-      kotaFeature = geoJsonData.features.find(f => {
-        const p = f.properties || {};
-        const rawWadm = (p.WADMKK || p.NAMOBJ || p.nama || '').toLowerCase();
-        const cleanWadm = rawWadm.replace(/^(kabupaten|kab\.|kota)\s+/i, '').trim();
-        return cleanWadm === cleanTarget || rawWadm.includes(cleanTarget);
-      });
-    }
-
-    if (!kotaFeature) {
-      console.warn(`Poligon untuk "${regName}" (ID: ${cleanRegCode}) tidak ditemukan dalam GeoJSON.`);
+      console.warn(`Poligon untuk regencies_id: ${REGENCY_ID} (${REGENCY_NAME}) tidak ditemukan dalam GeoJSON.`);
       return;
     }
 
     currentKotaFeature = kotaFeature;
-    console.log(`[GeoJSON Bound] Berhasil memuat poligon untuk: ${regName}`, kotaFeature.properties);
+    console.log(`[GeoJSON Bound] Berhasil memuat poligon untuk: ${REGENCY_NAME}`, kotaFeature.properties);
 
     try {
       // 1. Hitung Bounding Box & Kunci Kamera Peta
@@ -539,7 +526,7 @@ if (!empty($regency_id)) {
     });
 
     // Panggil pembatas poligon GeoJSON & Masking inverse
-    loadAndApplyGeoJsonBoundary(PROVINCE_NAME, REGENCY_NAME);
+    loadAndApplyGeoJsonBoundary();
   }
 
   // Autocomplete Pencarian Lokasi (Nominatim OSM)
