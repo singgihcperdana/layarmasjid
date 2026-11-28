@@ -79,9 +79,8 @@ if (!empty($regency_id)) {
     <!-- Kolom 1: Profil Identitas Masjid -->
     <div class="col-lg-6 mb-4">
       <div class="card h-100">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <span><i class="bi bi-building me-1"></i> Profil Identitas Masjid</span>
-          <span class="badge bg-success-subtle text-success border border-success-subtle">ID: <?= htmlspecialchars($current_masjid_id) ?></span>
+        <div class="card-header">
+          <i class="bi bi-building me-1"></i> Profil Identitas Masjid
         </div>
         <div class="card-body">
           <div class="mb-3">
