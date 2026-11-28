@@ -29,8 +29,8 @@ try {
     $new_password     = $_POST['new_password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
 
-    if (empty($old_password) || empty($new_password) || empty($confirm_password)) {
-        echo json_encode(['status' => 'error', 'message' => 'Semua kolom password wajib diisi.']);
+    if (empty($new_password) || empty($confirm_password)) {
+        echo json_encode(['status' => 'error', 'message' => 'Password baru dan konfirmasi password wajib diisi.']);
         exit;
     }
 
@@ -56,9 +56,16 @@ try {
     }
     $current_hash = $stmt->fetchColumn();
 
-    if (!$current_hash || !password_verify($old_password, $current_hash)) {
-        echo json_encode(['status' => 'error', 'message' => 'Password lama salah. Silakan periksa kembali.']);
-        exit;
+    // Jika user sudah memiliki password sebelumnya, wajib validasi password lama
+    if (!empty($current_hash)) {
+        if (empty($old_password)) {
+            echo json_encode(['status' => 'error', 'message' => 'Password saat ini wajib diisi.']);
+            exit;
+        }
+        if (!password_verify($old_password, $current_hash)) {
+            echo json_encode(['status' => 'error', 'message' => 'Password lama salah. Silakan periksa kembali.']);
+            exit;
+        }
     }
 
     // Hash password baru & simpan ke tabel users

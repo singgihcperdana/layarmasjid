@@ -17,26 +17,26 @@ if (isset($_SESSION['masjid_id'])) {
 $error = $_GET['error'] ?? '';
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-    $login_input = trim($_POST['username'] ?? $_POST['id_masjid'] ?? '');
-    $password    = $_POST['password'] ?? '';
+    $email    = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    if (empty($login_input) || empty($password)) {
-        $error = 'Silakan masukkan Username / ID Masjid dan Password.';
+    if (empty($email) || empty($password)) {
+        $error = 'Silakan masukkan Email dan Password.';
     } else {
-        // Cari user berdasarkan username atau masjid_id
+        // Cari user berdasarkan email
         $stmt = $pdo->prepare("
             SELECT u.*, m.nama AS masjid_nama 
             FROM users u 
             JOIN masjid m ON u.masjid_id = m.id 
-            WHERE u.username = ? OR u.masjid_id = ? 
+            WHERE u.email = ? 
             LIMIT 1
         ");
-        $stmt->execute([$login_input, $login_input]);
+        $stmt->execute([$email]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id']     = (int)$user['id'];
-            $_SESSION['username']    = $user['username'];
+            $_SESSION['email']       = $user['email'];
             $_SESSION['user_nama']   = $user['nama'];
             $_SESSION['user_role']   = $user['role'];
             $_SESSION['masjid_id']   = $user['masjid_id'];
@@ -44,7 +44,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             header("Location: profile");
             exit;
         } else {
-            $error = 'Username atau Password salah. Silakan coba lagi.';
+            $error = 'Email atau Password salah. Silakan coba lagi.';
         }
     }
 }
@@ -96,10 +96,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
     <form method="POST" action="">
       <div class="mb-3">
-        <label for="username" class="form-label text-light small fw-semibold">Username atau ID Masjid</label>
+        <label for="email" class="form-label text-light small fw-semibold">Email Akun</label>
         <div class="input-group">
-          <span class="input-group-text bg-transparent text-white-50 border-secondary"><i class="bi bi-person-fill"></i></span>
-          <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan username atau ID masjid" value="<?= htmlspecialchars($_POST['username'] ?? $_POST['id_masjid'] ?? '') ?>" required autofocus>
+          <span class="input-group-text bg-transparent text-white-50 border-secondary"><i class="bi bi-envelope-fill"></i></span>
+          <input type="email" class="form-control" id="email" name="email" placeholder="nama@email.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required autofocus autocomplete="email">
         </div>
       </div>
 
@@ -107,7 +107,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         <label for="password" class="form-label text-light small fw-semibold">Password</label>
         <div class="input-group">
           <span class="input-group-text bg-transparent text-white-50 border-secondary"><i class="bi bi-key-fill"></i></span>
-          <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password" required>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password" required autocomplete="current-password">
         </div>
       </div>
 
@@ -118,7 +118,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
     <div class="hint-box">
       <div>Akun Uji Coba:</div>
-      <strong>Username:</strong> <code>admin</code> (atau ID: <code>101</code>) &bull; <strong>Password:</strong> <code>admin123</code>
+      <strong>Email:</strong> <code>admin@layarmasjid.com</code> &bull; <strong>Password:</strong> <code>admin123</code>
     </div>
   </div>
 

@@ -10,6 +10,17 @@ $stmt = $pdo->prepare("SELECT * FROM masjid WHERE id = ? LIMIT 1");
 $stmt->execute([$current_masjid_id]);
 $masjid = $stmt->fetch();
 
+// Ambil info email user untuk footer sidebar
+$user_email = $_SESSION['email'] ?? null;
+if (empty($user_email) && isset($current_masjid_id)) {
+    $stmtEmail = $pdo->prepare("SELECT email FROM users WHERE masjid_id = ? LIMIT 1");
+    $stmtEmail->execute([$current_masjid_id]);
+    $user_email = $stmtEmail->fetchColumn();
+    if ($user_email) {
+        $_SESSION['email'] = $user_email;
+    }
+}
+
 $page_title = $page_title ?? 'Panel Pengurus';
 $current_page = $current_page ?? '';
 ?>
@@ -66,13 +77,19 @@ $current_page = $current_page ?? '';
           <i class="bi bi-broadcast"></i>
           <span>Teks Berjalan</span>
         </a>
-        <a class="nav-link <?= $current_page === 'password' ? 'active' : '' ?>" href="password">
+        <a class="nav-link <?= in_array($current_page, ['password', 'account']) ? 'active' : '' ?>" href="password">
           <i class="bi bi-key"></i>
           <span>Ganti Password</span>
         </a>
       </nav>
 
       <div class="sidebar-footer">
+        <?php if (!empty($user_email)): ?>
+          <div class="d-flex align-items-center gap-2 mb-2 px-1 text-white-50 overflow-hidden" style="font-size: 0.8rem;" title="<?= htmlspecialchars($user_email) ?>">
+            <i class="bi bi-person-circle fs-6 text-warning flex-shrink-0"></i>
+            <span class="text-truncate text-light opacity-75"><?= htmlspecialchars($user_email) ?></span>
+          </div>
+        <?php endif; ?>
         <a href="logout" class="btn btn-sm btn-outline-light w-100 opacity-75">
           <i class="bi bi-box-arrow-right me-1"></i> Keluar
         </a>

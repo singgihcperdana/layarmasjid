@@ -8,8 +8,64 @@ $current_page = "profile";
 
 require_once __DIR__ . '/includes/header.php';
 
-$latitude  = (float)($masjid['latitude'] ?? -6.140000);
-$longitude = (float)($masjid['longitude'] ?? 106.590000);
+$latitude    = (float)($masjid['latitude'] ?? -6.140000);
+$longitude   = (float)($masjid['longitude'] ?? 106.590000);
+$province_id = $masjid['province_id'] ?? '';
+$regency_id  = $masjid['regency_id'] ?? '';
+$is_region_locked = !empty($province_id) && !empty($regency_id);
+
+// Ambil daftar 38 Provinsi (urut abjad A-Z)
+$stmtProv = $pdo->query("SELECT id, name FROM provinces ORDER BY name ASC");
+$provinces = $stmtProv->fetchAll(PDO::FETCH_ASSOC);
+
+// Cari nama provinsi aktif
+$province_name = '';
+foreach ($provinces as $p) {
+    if ($p['id'] === $province_id) {
+        $province_name = $p['name'];
+        break;
+    }
+}
+
+// Ambil daftar Kabupaten/Kota jika provinsi sudah terpilih
+$regencies = [];
+if (!empty($province_id)) {
+    $stmtReg = $pdo->prepare("SELECT id, name, latitude, longitude FROM regencies WHERE province_id = ? ORDER BY name ASC");
+    $stmtReg->execute([$province_id]);
+    $regencies = $stmtReg->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Ambil info kabupaten terpilih untuk batas radius wilayah
+$selected_regency = null;
+$max_radius_km = 35;
+if (!empty($regency_id)) {
+    foreach ($regencies as $r) {
+        if ($r['id'] === $regency_id) {
+            $selected_regency = $r;
+            break;
+        }
+    }
+    if (!$selected_regency) {
+        $stmtRegCur = $pdo->prepare("SELECT id, name, latitude, longitude FROM regencies WHERE id = ? LIMIT 1");
+        $stmtRegCur->execute([$regency_id]);
+        $selected_regency = $stmtRegCur->fetch();
+    }
+
+    if ($selected_regency) {
+        $regName    = $selected_regency['name'];
+        $isCity     = (stripos($regName, 'Kota') === 0);
+        $provNum    = (int)$province_id;
+        $isJavaBali = in_array($provNum, [31, 32, 33, 34, 35, 36, 51]);
+
+        if ($isCity) {
+            $max_radius_km = 15;
+        } elseif ($isJavaBali) {
+            $max_radius_km = 35;
+        } else {
+            $max_radius_km = 55;
+        }
+    }
+}
 ?>
 
 <!-- Leaflet CSS -->
@@ -31,6 +87,60 @@ $longitude = (float)($masjid['longitude'] ?? 106.590000);
           <div class="mb-3">
             <label class="form-label small fw-semibold">Nama Masjid <span class="text-danger">*</span></label>
             <input type="text" class="form-control" name="nama" value="<?= htmlspecialchars($masjid['nama']) ?>" placeholder="Contoh: Masjid Al Ikhlas" required>
+          </div>
+
+          <!-- Pilihan Wilayah: Provinsi & Kabupaten/Kota (Terkunci Permanen) -->
+          <div class="p-3 mb-3 rounded-3 border bg-light">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <label class="form-label small fw-semibold mb-0 text-dark">
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i> Wilayah Administrasi Masjid
+              </label>
+              <?php if ($is_region_locked): ?>
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1" style="font-size: 0.72rem;">
+                  <i class="bi bi-lock-fill me-1"></i> Terkunci Permanen
+                </span>
+              <?php endif; ?>
+            </div>
+            
+            <div class="row g-2">
+              <div class="col-sm-6">
+                <label class="form-label small text-muted mb-1" style="font-size: 0.78rem;">Provinsi</label>
+                <select class="form-select form-select-sm" id="selectProvince" <?= $is_region_locked ? 'disabled' : 'name="province_id" required' ?>>
+                  <option value="">-- Pilih Provinsi --</option>
+                  <?php foreach ($provinces as $prov): ?>
+                    <option value="<?= $prov['id'] ?>" <?= ($province_id === $prov['id']) ? 'selected' : '' ?>>
+                      <?= htmlspecialchars($prov['name']) ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+                <?php if ($is_region_locked): ?>
+                  <input type="hidden" name="province_id" value="<?= htmlspecialchars($province_id) ?>">
+                <?php endif; ?>
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label small text-muted mb-1" style="font-size: 0.78rem;">Kabupaten / Kota</label>
+                <select class="form-select form-select-sm" id="selectRegency" <?= $is_region_locked ? 'disabled' : 'name="regency_id" required' ?>>
+                  <option value="">-- Pilih Kab / Kota --</option>
+                  <?php foreach ($regencies as $reg): ?>
+                    <option value="<?= $reg['id'] ?>" 
+                            data-lat="<?= $reg['latitude'] ?>" 
+                            data-lng="<?= $reg['longitude'] ?>" 
+                            <?= ($regency_id === $reg['id']) ? 'selected' : '' ?>>
+                      <?= htmlspecialchars($reg['name']) ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+                <?php if ($is_region_locked): ?>
+                  <input type="hidden" name="regency_id" value="<?= htmlspecialchars($regency_id) ?>">
+                <?php endif; ?>
+              </div>
+            </div>
+
+            <?php if ($is_region_locked): ?>
+              <div class="form-text mt-2 text-muted" style="font-size: 0.75rem;">
+                <i class="bi bi-lock-fill me-1"></i> Wilayah Provinsi &amp; Kabupaten/Kota tidak dapat diubah setelah didaftarkan.
+              </div>
+            <?php endif; ?>
           </div>
 
           <div class="mb-3">
@@ -83,7 +193,7 @@ $longitude = (float)($masjid['longitude'] ?? 106.590000);
         <div class="card-header d-flex justify-content-between align-items-center">
           <span><i class="bi bi-geo-alt-fill text-primary me-1"></i> Titik Koordinat &amp; Lokasi Masjid</span>
           <button type="button" id="btnGetGps" class="btn btn-sm btn-outline-success fw-semibold">
-            <i class="bi bi-crosshair me-1"></i> 📍 Gunakan GPS Saya
+            <i class="bi bi-crosshair me-1"></i> Gunakan GPS Saya
           </button>
         </div>
         <div class="card-body">
@@ -110,7 +220,12 @@ $longitude = (float)($masjid['longitude'] ?? 106.590000);
           </div>
 
           <!-- Peta Leaflet -->
-          <div id="map" class="mb-3 shadow-sm"></div>
+          <div id="map" class="mb-2 shadow-sm"></div>
+          <?php if ($selected_regency): ?>
+            <div class="form-text mb-3 text-muted" style="font-size: 0.78rem;">
+              <i class="bi bi-shield-check text-success me-1"></i> Titik koordinat dibatasi dalam wilayah <strong><?= htmlspecialchars($selected_regency['name']) ?></strong> (maks. radius <?= $max_radius_km ?> km dari pusat daerah).
+            </div>
+          <?php endif; ?>
 
           <!-- Input Latitude & Longitude -->
           <div class="row g-2">
@@ -143,6 +258,8 @@ $longitude = (float)($masjid['longitude'] ?? 106.590000);
 
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Turf.js untuk Geofencing & Masking Inverse Polygon -->
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
 <script>
   // Preview Logo saat file dipilih
@@ -181,11 +298,184 @@ $longitude = (float)($masjid['longitude'] ?? 106.590000);
     });
   }
 
-  // Inisialisasi Peta Leaflet
+  // Inisialisasi Peta Leaflet & Batasan Radius Wilayah
+  const PROVINCE_NAME      = <?= json_encode($province_name) ?>;
+  const PROVINCE_ID        = <?= json_encode($province_id) ?>;
+  const REGENCY_ID          = <?= json_encode($regency_id) ?>;
+  const REGENCY_CENTER_LAT = <?= (!empty($selected_regency['latitude'])) ? (float)$selected_regency['latitude'] : 'null' ?>;
+  const REGENCY_CENTER_LNG = <?= (!empty($selected_regency['longitude'])) ? (float)$selected_regency['longitude'] : 'null' ?>;
+  const REGENCY_NAME       = <?= json_encode($selected_regency['name'] ?? '') ?>;
+  const MAX_RADIUS_KM      = <?= (int)$max_radius_km ?>; // Batas radius toleransi maksimal dari pusat kabupaten
+
+  let currentKotaFeature = null;
+
+  // Hitung jarak Haversine (km)
+  function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  // Validasi radius fallback
+  function isCoordWithinRegency(lat, lng) {
+    if (REGENCY_CENTER_LAT !== null && REGENCY_CENTER_LNG !== null) {
+      const dist = calculateDistanceKm(lat, lng, REGENCY_CENTER_LAT, REGENCY_CENTER_LNG);
+      if (dist > MAX_RADIUS_KM) {
+        return {
+          valid: false,
+          distance: Math.round(dist)
+        };
+      }
+    }
+    return { valid: true, distance: 0 };
+  }
+
+  // Validasi Utama: Turf.js Point-In-Polygon dengan fallback ke Radius
+  function isCoordAllowed(lat, lng) {
+    if (currentKotaFeature && typeof turf !== 'undefined' && turf.booleanPointInPolygon) {
+      try {
+        const pt = turf.point([lng, lat]);
+        const isInside = turf.booleanPointInPolygon(pt, currentKotaFeature);
+        if (!isInside) {
+          return {
+            valid: false,
+            message: `Titik koordinat berada di luar batas wilayah ${REGENCY_NAME}.`
+          };
+        }
+        return { valid: true };
+      } catch (err) {
+        console.warn('turf.booleanPointInPolygon error:', err);
+      }
+    }
+
+    const radiusCheck = isCoordWithinRegency(lat, lng);
+    if (!radiusCheck.valid) {
+      return {
+        valid: false,
+        message: `Titik koordinat terlalu jauh (${radiusCheck.distance} km) dari wilayah ${REGENCY_NAME}.`
+      };
+    }
+    return { valid: true };
+  }
+
+  // Fungsi Fetch & Filter GeoJSON Wilayah Kabupaten/Kota
+  async function loadAndApplyGeoJsonBoundary(provName, regName) {
+    if (!regName) return;
+
+    // Bersihkan nama target untuk pencocokan case-insensitive
+    const cleanTarget = regName.toLowerCase()
+      .replace(/^(kabupaten|kab\.|kota)\s+/i, '')
+      .trim();
+    const cleanRegCode = (REGENCY_ID || '').replace(/[^0-9]/g, '');
+
+    // Sumber GeoJSON: Coba file lokal (cepat) dan fallback ke Raw GitHub ardian28
+    const sources = [
+      'assets/geojson/kabupaten.json',
+      'https://raw.githubusercontent.com/ardian28/GeoJson-Indonesia-38-Provinsi/main/Kabupaten/38%20Provinsi%20Indonesia%20-%20Kabupaten.json'
+    ];
+
+    let geoJsonData = null;
+    for (const url of sources) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          geoJsonData = await res.json();
+          break;
+        }
+      } catch (e) {
+        // Coba sumber berikutnya
+      }
+    }
+
+    if (!geoJsonData || !geoJsonData.features || !geoJsonData.features.length) {
+      console.warn('GeoJSON batas wilayah tidak berhasil dimuat, menggunakan proteksi radius.');
+      return;
+    }
+
+    // 1. Prioritas Utama: Cocokkan berdasarkan kode KDPKAB (misal: "33.03" vs "3303")
+    let kotaFeature = geoJsonData.features.find(f => {
+      const p = f.properties || {};
+      if (p.KDPKAB) {
+        const code = String(p.KDPKAB).replace(/[^0-9]/g, '');
+        if (code === cleanRegCode) return true;
+      }
+      return false;
+    });
+
+    // 2. Fallback: Cocokkan berdasarkan nama wilayah WADMKK / NAMOBJ
+    if (!kotaFeature) {
+      kotaFeature = geoJsonData.features.find(f => {
+        const p = f.properties || {};
+        const rawWadm = (p.WADMKK || p.NAMOBJ || p.nama || '').toLowerCase();
+        const cleanWadm = rawWadm.replace(/^(kabupaten|kab\.|kota)\s+/i, '').trim();
+        return cleanWadm === cleanTarget || rawWadm.includes(cleanTarget);
+      });
+    }
+
+    if (!kotaFeature) {
+      console.warn(`Poligon untuk "${regName}" (ID: ${cleanRegCode}) tidak ditemukan dalam GeoJSON.`);
+      return;
+    }
+
+    currentKotaFeature = kotaFeature;
+    console.log(`[GeoJSON Bound] Berhasil memuat poligon untuk: ${regName}`, kotaFeature.properties);
+
+    try {
+      // 1. Hitung Bounding Box & Kunci Kamera Peta
+      const geoLayer = L.geoJSON(kotaFeature);
+      const bounds = geoLayer.getBounds();
+      map.setMaxBounds(bounds.pad(0.08));
+      map.options.maxBoundsViscosity = 1.0;
+      map.setMinZoom(Math.max(9, map.getBoundsZoom(bounds)));
+
+      // 2. Efek Fokus Visual: Inverse Masking Gelap di Luar Wilayah (Turf.js)
+      if (typeof turf !== 'undefined' && turf.mask) {
+        try {
+          const mask = turf.mask(kotaFeature);
+          L.geoJSON(mask, {
+            style: {
+              fillColor: '#000000',
+              fillOpacity: 0.65, // Gelap 65% di luar wilayah kota/kabupaten
+              stroke: false,
+              interactive: false
+            }
+          }).addTo(map);
+        } catch (err) {
+          console.warn('turf.mask error:', err);
+        }
+      }
+
+      // 3. Garis Batas (Border) Tegas di Tepi Kota
+      L.geoJSON(kotaFeature, {
+        style: {
+          color: '#198754',
+          weight: 2.5,
+          opacity: 0.95,
+          fillColor: '#198754',
+          fillOpacity: 0.05,
+          dashArray: '5, 5'
+        },
+        interactive: false
+      }).addTo(map);
+
+    } catch (err) {
+      console.warn('Gagal menerapkan layer boundary GeoJSON:', err);
+    }
+  }
+
   let map, marker;
+  let lastValidPos = { lat: -6.14, lng: 106.59 };
+
   function initMap() {
     let lat = parseFloat(document.getElementById('inputLat').value) || -6.14;
     let lng = parseFloat(document.getElementById('inputLng').value) || 106.59;
+    lastValidPos = { lat: lat, lng: lng };
 
     map = L.map('map').setView([lat, lng], 15);
 
@@ -194,19 +484,54 @@ $longitude = (float)($masjid['longitude'] ?? 106.590000);
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
+    // Tampilkan lingkaran batas wilayah toleransi jika data daerah tersedia
+    if (REGENCY_CENTER_LAT !== null && REGENCY_CENTER_LNG !== null) {
+      L.circle([REGENCY_CENTER_LAT, REGENCY_CENTER_LNG], {
+        radius: MAX_RADIUS_KM * 1000,
+        color: '#198754',
+        weight: 1.5,
+        fillColor: '#198754',
+        fillOpacity: 0.04,
+        dashArray: '6, 8'
+      }).addTo(map);
+    }
+
     marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+    marker.on('dragstart', function() {
+      const cur = marker.getLatLng();
+      lastValidPos = { lat: cur.lat, lng: cur.lng };
+    });
 
     marker.on('dragend', function (e) {
       const position = marker.getLatLng();
+      const check = isCoordAllowed(position.lat, position.lng);
+      if (!check.valid) {
+        alert(check.message || `Peringatan: Titik koordinat berada di luar wilayah ${REGENCY_NAME}. Lokasi masjid harus berada di dalam batas wilayah terdaftar.`);
+        marker.setLatLng([lastValidPos.lat, lastValidPos.lng]);
+        document.getElementById('inputLat').value = lastValidPos.lat.toFixed(6);
+        document.getElementById('inputLng').value = lastValidPos.lng.toFixed(6);
+        return;
+      }
+      lastValidPos = { lat: position.lat, lng: position.lng };
       document.getElementById('inputLat').value = position.lat.toFixed(6);
       document.getElementById('inputLng').value = position.lng.toFixed(6);
     });
 
     map.on('click', function(e) {
+      const check = isCoordAllowed(e.latlng.lat, e.latlng.lng);
+      if (!check.valid) {
+        alert(check.message || `Peringatan: Titik klik berada di luar wilayah ${REGENCY_NAME}. Lokasi masjid harus berada di dalam batas wilayah terdaftar.`);
+        return;
+      }
+      lastValidPos = { lat: e.latlng.lat, lng: e.latlng.lng };
       marker.setLatLng(e.latlng);
       document.getElementById('inputLat').value = e.latlng.lat.toFixed(6);
       document.getElementById('inputLng').value = e.latlng.lng.toFixed(6);
     });
+
+    // Panggil pembatas poligon GeoJSON & Masking inverse
+    loadAndApplyGeoJsonBoundary(PROVINCE_NAME, REGENCY_NAME);
   }
 
   // Autocomplete Pencarian Lokasi (Nominatim OSM)
@@ -223,6 +548,14 @@ $longitude = (float)($masjid['longitude'] ?? 106.590000);
   function selectLocation(lat, lng, name) {
     if (isNaN(lat) || isNaN(lng)) return;
 
+    const check = isCoordAllowed(lat, lng);
+    if (!check.valid) {
+      alert(check.message || `Peringatan: Lokasi "${name || 'terpilih'}" berada di luar wilayah ${REGENCY_NAME}. Silakan pilih lokasi di dalam wilayah yang terdaftar.`);
+      closeSuggestions();
+      return;
+    }
+
+    lastValidPos = { lat: lat, lng: lng };
     map.flyTo([lat, lng], 17, { duration: 1.2 });
     marker.setLatLng([lat, lng]);
     document.getElementById('inputLat').value = lat.toFixed(6);
@@ -240,6 +573,51 @@ $longitude = (float)($masjid['longitude'] ?? 106.590000);
     suggestionsBox.innerHTML = '';
     currentSuggestions = [];
     activeSuggestionIdx = -1;
+  }
+
+  // Cascading Dropdown Provinsi -> Kabupaten/Kota
+  const selectProv = document.getElementById('selectProvince');
+  const selectReg = document.getElementById('selectRegency');
+
+  if (selectProv && selectReg) {
+    selectProv.addEventListener('change', async function() {
+      const provId = this.value;
+      selectReg.innerHTML = '<option value="">-- Memuat Kab / Kota... --</option>';
+      selectReg.disabled = true;
+
+      if (!provId) {
+        selectReg.innerHTML = '<option value="">-- Pilih Provinsi Dahulu --</option>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`api/get_regions.php?type=regencies&province_id=${encodeURIComponent(provId)}`);
+        const json = await res.json();
+        if (json.status === 'success' && Array.isArray(json.data)) {
+          let opts = '<option value="">-- Pilih Kab / Kota --</option>';
+          json.data.forEach(item => {
+            opts += `<option value="${item.id}" data-lat="${item.latitude || ''}" data-lng="${item.longitude || ''}">${escapeHtml(item.name)}</option>`;
+          });
+          selectReg.innerHTML = opts;
+          selectReg.disabled = false;
+        } else {
+          selectReg.innerHTML = '<option value="">Gagal memuat data</option>';
+        }
+      } catch (err) {
+        selectReg.innerHTML = '<option value="">Gagal memuat data</option>';
+      }
+    });
+
+    selectReg.addEventListener('change', function() {
+      const selectedOpt = this.options[this.selectedIndex];
+      if (selectedOpt && selectedOpt.dataset.lat && selectedOpt.dataset.lng) {
+        const lat = parseFloat(selectedOpt.dataset.lat);
+        const lng = parseFloat(selectedOpt.dataset.lng);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          selectLocation(lat, lng, selectedOpt.textContent.trim());
+        }
+      }
+    });
   }
 
   function escapeHtml(str) {
@@ -421,6 +799,16 @@ $longitude = (float)($masjid['longitude'] ?? 106.590000);
       function(pos) {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
+
+        const check = isCoordAllowed(lat, lng);
+        if (!check.valid) {
+          alert(check.message || `Peringatan: Lokasi GPS terdeteksi berada di luar wilayah ${REGENCY_NAME}. Pastikan perangkat Anda berada di sekitar area masjid yang terdaftar.`);
+          btn.innerHTML = oldHtml;
+          btn.disabled = false;
+          return;
+        }
+
+        lastValidPos = { lat: lat, lng: lng };
         map.setView([lat, lng], 17);
         marker.setLatLng([lat, lng]);
         document.getElementById('inputLat').value = lat.toFixed(6);
@@ -435,6 +823,26 @@ $longitude = (float)($masjid['longitude'] ?? 106.590000);
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
+  });
+
+  // Validasi Input Manual Latitude & Longitude
+  ['inputLat', 'inputLng'].forEach(id => {
+    document.getElementById(id).addEventListener('change', function() {
+      const lat = parseFloat(document.getElementById('inputLat').value);
+      const lng = parseFloat(document.getElementById('inputLng').value);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const check = isCoordAllowed(lat, lng);
+        if (!check.valid) {
+          alert(check.message || `Peringatan: Koordinat yang dimasukkan berada di luar wilayah ${REGENCY_NAME}.`);
+          document.getElementById('inputLat').value = lastValidPos.lat.toFixed(6);
+          document.getElementById('inputLng').value = lastValidPos.lng.toFixed(6);
+          return;
+        }
+        lastValidPos = { lat: lat, lng: lng };
+        marker.setLatLng([lat, lng]);
+        map.setView([lat, lng], 16);
+      }
+    });
   });
 
   // 1. Simpan Profil Masjid & Koordinat

@@ -163,72 +163,21 @@ try {
         }
     }
 
-    // 6. Jika user sama sekali baru -> Pendaftaran Otomatis!
+    // 6. Jika user sama sekali baru -> Arahkan ke Onboarding untuk Pilih Provinsi & Kabupaten
     if (!$user) {
-        // Tentukan ID masjid baru (ambil nomor ID masjid terbesar + 1)
-        $stmtMax = $pdo->query("SELECT MAX(CAST(id AS UNSIGNED)) AS max_id FROM masjid");
-        $max_id = (int)($stmtMax->fetchColumn() ?: 100);
-        $new_masjid_id = (string)(max(101, $max_id + 1));
-
-        // Buat data masjid baru
-        $stmtNewMasjid = $pdo->prepare("
-            INSERT INTO masjid (id, nama, lokasi, latitude, longitude, created_at, updated_at) 
-            VALUES (?, ?, ?, ?, ?, NOW(), NOW())
-        ");
-        $masjid_nama_awal = 'Masjid ' . $nama;
-        $stmtNewMasjid->execute([$new_masjid_id, $masjid_nama_awal, '', -6.140000, 106.590000]);
-
-        // Buat default schedule untuk masjid baru
-        $pdo->prepare("
-            INSERT INTO schedule (masjid_id, latitude, longitude, timezone, hijri_offset, calc_method, calc_fajr_angle, calc_isha_angle, calc_asr_method, tune_fajr, tune_sunrise, tune_dhuhr, tune_asr, tune_maghrib, tune_isha)
-            VALUES (?, -6.140000, 106.590000, 7, 0, 'Kemenag', 20.0, 18.0, 'Standard', 1, 0, 0, 2, 6, 1)
-        ")->execute([$new_masjid_id]);
-
-        // Buat default timer untuk masjid baru
-        $pdo->prepare("
-            INSERT INTO timer (masjid_id, timer_wait_adzan, timer_adzan, timer_sholat, countdown_beep, kecepatan_running_text, iqomah_fajr, iqomah_dhuhr, iqomah_asr, iqomah_maghrib, iqomah_isha)
-            VALUES (?, 1, 5, 10, 10, 5, 10, 10, 10, 5, 10)
-        ")->execute([$new_masjid_id]);
-
-        // Buat username unik dari bagian depan email
-        $base_username = preg_replace('/[^a-zA-Z0-9_]/', '', explode('@', $email)[0]);
-        if (empty($base_username)) $base_username = 'dkm';
-        $username = $base_username;
-        $counter = 1;
-        while (true) {
-            $stmtCheck = $pdo->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
-            $stmtCheck->execute([$username]);
-            if (!$stmtCheck->fetch()) {
-                break;
-            }
-            $username = $base_username . $counter;
-            $counter++;
-        }
-
-        // Simpan user baru
-        $stmtInsertUser = $pdo->prepare("
-            INSERT INTO users (masjid_id, username, email, google_id, nama, avatar, role, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, 'admin', NOW(), NOW())
-        ");
-        $stmtInsertUser->execute([$new_masjid_id, $username, $email, $google_id, $nama, $avatar]);
-        $new_user_id = $pdo->lastInsertId();
-
-        // Update static sync file untuk masjid baru
-        update_sync_file($new_masjid_id);
-
-        $user = [
-            'id'          => $new_user_id,
-            'username'    => $username,
-            'nama'        => $nama,
-            'role'        => 'admin',
-            'masjid_id'   => $new_masjid_id,
-            'masjid_nama' => $masjid_nama_awal
+        $_SESSION['pending_google_user'] = [
+            'email'     => $email,
+            'google_id' => $google_id,
+            'nama'      => $nama,
+            'avatar'    => $avatar
         ];
+        header("Location: ../onboarding");
+        exit;
     }
 
     // 7. Simpan sesi login & redirect ke halaman profile
     $_SESSION['user_id']     = (int)$user['id'];
-    $_SESSION['username']    = $user['username'];
+    $_SESSION['email']       = $user['email'];
     $_SESSION['user_nama']   = $user['nama'];
     $_SESSION['user_role']   = $user['role'];
     $_SESSION['masjid_id']   = $user['masjid_id'];

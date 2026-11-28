@@ -84,3 +84,31 @@ function update_sync_file($masjid_id, $timestamp = null) {
     @file_put_contents($file, $data);
     return $timestamp;
 }
+
+/**
+ * Generate ID Masjid Baru dengan format PPNNNN (6 digit: 2 digit Provinsi + 4 digit Angka Acak)
+ * Contoh: 328194 (Jawa Barat), 314052 (DKI Jakarta)
+ *
+ * @param string $province_id Kode Provinsi 2 digit (default: '32' Jawa Barat)
+ * @return string ID 6 digit
+ */
+function generate_masjid_id($province_id = '32') {
+    global $pdo;
+    $prov = str_pad(preg_replace('/[^0-9]/', '', (string)$province_id), 2, '0', STR_PAD_LEFT);
+    if (strlen($prov) > 2) $prov = substr($prov, 0, 2);
+    if (empty($prov) || $prov === '00') $prov = '32';
+
+    $stmtCheck = $pdo->prepare("SELECT COUNT(*) FROM masjid WHERE id = ?");
+
+    // Generate 4 digit angka acak (1000 - 9999) dan pastikan unik di database
+    $attempts = 0;
+    do {
+        $rand_num = random_int(1000, 9999);
+        $candidate_id = $prov . (string)$rand_num;
+        $stmtCheck->execute([$candidate_id]);
+        $exists = (int)$stmtCheck->fetchColumn() > 0;
+        $attempts++;
+    } while ($exists && $attempts < 100);
+
+    return $candidate_id;
+}

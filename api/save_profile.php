@@ -27,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 try {
     $nama        = trim($_POST['nama'] ?? '');
     $lokasi      = trim($_POST['lokasi'] ?? '');
+    $province_id = trim($_POST['province_id'] ?? '');
+    $regency_id  = trim($_POST['regency_id'] ?? '');
     $kontak_info = trim($_POST['kontak_info'] ?? '');
     $remove_logo = isset($_POST['remove_logo']) && $_POST['remove_logo'] === '1';
     $latitude    = isset($_POST['latitude']) ? (float)$_POST['latitude'] : null;
@@ -37,10 +39,64 @@ try {
         exit;
     }
 
-    // Ambil data logo saat ini
-    $stmt = $pdo->prepare("SELECT logo FROM masjid WHERE id = ? LIMIT 1");
+    // Ambil data masjid saat ini untuk pengecekan logo & proteksi wilayah terkunci
+    $stmt = $pdo->prepare("SELECT logo, province_id, regency_id FROM masjid WHERE id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);
-    $current_logo = $stmt->fetchColumn() ?: '';
+    $curData = $stmt->fetch();
+    $current_logo = $curData ? ($curData['logo'] ?? '') : '';
+
+    // KUNCI PERMANEN: Jika wilayah sudah terisi, pertahankan data database (tidak boleh ditimpa)
+    if ($curData && !empty($curData['province_id']) && !empty($curData['regency_id'])) {
+        $province_id = $curData['province_id'];
+        $regency_id  = $curData['regency_id'];
+    }
+
+    // VALIDASI PEMBATAS RADIUS WILAYAH (RADIUS GUARD)
+    // Pastikan koordinat masjid tidak digeser keluar dari batas wajar kabupaten terdaftar (maks. 75 km)
+    if ($latitude !== null && $longitude !== null && !empty($regency_id)) {
+        $stmtRegCheck = $pdo->prepare("SELECT name, latitude, longitude FROM regencies WHERE id = ? LIMIT 1");
+        $stmtRegCheck->execute([$regency_id]);
+        $regRow = $stmtRegCheck->fetch();
+
+        if ($regRow && $regRow['latitude'] !== null && $regRow['longitude'] !== null) {
+            $regLat = (float)$regRow['latitude'];
+            $regLng = (float)$regRow['longitude'];
+
+            $earth_radius = 6371; // km
+            $dLat = deg2rad($latitude - $regLat);
+            $dLon = deg2rad($longitude - $regLng);
+            $a = sin($dLat / 2) * sin($dLat / 2) +
+                 cos(deg2rad($regLat)) * cos(deg2rad($latitude)) *
+                 sin($dLon / 2) * sin($dLon / 2);
+            $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+            $dist_km = $earth_radius * $c;
+
+            // Kalibrasi radius proporsional:
+            // 1. Kota: 15 km (wilayah kota sangat kompak)
+            // 2. Kabupaten di Jawa/Bali: 35 km (mencakup pelosok kabupaten tanpa tembus ke kabupaten tetangga)
+            // 3. Kabupaten luar Jawa: 55 km
+            $regName    = $regRow['name'];
+            $isCity     = (stripos($regName, 'Kota') === 0);
+            $provNum    = (int)$province_id;
+            $isJavaBali = in_array($provNum, [31, 32, 33, 34, 35, 36, 51]);
+
+            if ($isCity) {
+                $max_radius_km = 15;
+            } elseif ($isJavaBali) {
+                $max_radius_km = 35;
+            } else {
+                $max_radius_km = 55;
+            }
+
+            if ($dist_km > $max_radius_km) {
+                echo json_encode([
+                    'status'  => 'error',
+                    'message' => 'Titik koordinat terlalu jauh (' . round($dist_km) . ' km) dari pusat wilayah ' . $regRow['name'] . ' (maks. ' . $max_radius_km . ' km). Titik masjid harus berada di dalam batas wilayah yang terdaftar.'
+                ]);
+                exit;
+            }
+        }
+    }
 
     $logo_to_save = $current_logo;
 
@@ -83,15 +139,15 @@ try {
 
     // Update profil masjid
     if ($latitude !== null && $longitude !== null) {
-        $stmt = $pdo->prepare("UPDATE masjid SET nama = ?, lokasi = ?, latitude = ?, longitude = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
-        $stmt->execute([$nama, $lokasi, $latitude, $longitude, $kontak_info, $logo_to_save, $masjid_id]);
+        $stmt = $pdo->prepare("UPDATE masjid SET nama = ?, lokasi = ?, province_id = ?, regency_id = ?, latitude = ?, longitude = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
+        $stmt->execute([$nama, $lokasi, $province_id ?: null, $regency_id ?: null, $latitude, $longitude, $kontak_info, $logo_to_save, $masjid_id]);
 
         // Sinkronkan ke tabel schedule agar hisab jadwal sholat selalu sinkron
         $stmtSched = $pdo->prepare("UPDATE schedule SET latitude = ?, longitude = ? WHERE masjid_id = ?");
         $stmtSched->execute([$latitude, $longitude, $masjid_id]);
     } else {
-        $stmt = $pdo->prepare("UPDATE masjid SET nama = ?, lokasi = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
-        $stmt->execute([$nama, $lokasi, $kontak_info, $logo_to_save, $masjid_id]);
+        $stmt = $pdo->prepare("UPDATE masjid SET nama = ?, lokasi = ?, province_id = ?, regency_id = ?, kontak_info = ?, logo = ?, updated_at = NOW() WHERE id = ?");
+        $stmt->execute([$nama, $lokasi, $province_id ?: null, $regency_id ?: null, $kontak_info, $logo_to_save, $masjid_id]);
     }
 
     update_sync_file($masjid_id);

@@ -15,11 +15,14 @@ RewriteRule ^admin/uploads/(.*)$ uploads/$1 [L]
 # Routing Auth (Google Login/Callback) jika diakses dari path admin
 RewriteRule ^(admin/)?auth/(.*)$ auth/$2 [L]
 
+# Routing API jika diakses dari path admin
+RewriteRule ^(admin/)?api/(.*)$ api/$2 [L]
+
 # 4. Routing Aset Admin: /assets/... atau /admin/assets/... -> admin/assets/...
 RewriteRule ^(admin/)?assets/(.*)$ admin/assets/$2 [L]
 
 # 5. Routing Halaman Admin: /profile, /schedule, dll (baik dengan maupun tanpa prefix admin/)
-RewriteRule ^(admin/)?(profile|schedule|timer|slides|running_text|password|login|logout)/?$ admin/$2.php [L,QSA]
+RewriteRule ^(admin/)?(profile|schedule|timer|slides|running_text|account|password|login|logout|onboarding)/?$ admin/$2.php [L,QSA]
 
 # 4. Hilangkan ekstensi .php untuk file lain (Clean URLs)
 RewriteCond %{REQUEST_FILENAME} !-d
