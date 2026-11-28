@@ -39,6 +39,27 @@ body {
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
   z-index: 1030;
   transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 180 180'%3E%3Cg fill='none' stroke='%23f0c96a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M45 0v24l-16 16 16 16v24M135 0v24l16 16-16 16v24M0 45h24l16-16 16 16h24M180 45h-24l-16-16-16 16h-24M45 90v24l-16 16 16 16v24M135 90v24l16 16-16 16v24M0 135h24l16-16 16 16h24M180 135h-24l-16-16-16 16h-24'/%3E%3Cpath d='M90 0v24l-18 18 18 18v30l-18 18 18 18v24M0 90h24l18-18 18 18h30l18-18 18 18h24'/%3E%3Cpath d='M90 26l10 10-10 10-10-10zM90 116l10 10-10 10-10-10zM26 90c0-9.941 8.059-18 18-18s18 8.059 18 18-8.059 18-18 18-18-8.059-18-18zM118 90c0-9.941 8.059-18 18-18s18 8.059 18 18-8.059 18-18 18-18-8.059-18-18z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  background-position: center top;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sidebar-header,
+.sidebar-nav,
+.sidebar-footer {
+  position: relative;
+  z-index: 1;
 }
 
 .sidebar-header {

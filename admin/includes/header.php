@@ -49,7 +49,7 @@ $current_page = $current_page ?? '';
           <div class="fw-bold text-white text-truncate" id="sidebarMasjidName" style="font-size: 0.95rem; line-height: 1.25;" title="<?= htmlspecialchars($masjid['nama'] ?? 'Layar Masjid') ?>"><?= htmlspecialchars($masjid['nama'] ?? 'Layar Masjid') ?></div>
           <div class="mt-1 d-flex align-items-center">
             <button type="button" class="badge-masjid-id" id="btnCopyMasjidId" data-id="<?= htmlspecialchars($current_masjid_id) ?>" title="Klik untuk salin ID Masjid">
-              <span id="badgeMasjidIdText">ID: <?= htmlspecialchars($current_masjid_id) ?></span>
+              <span id="badgeMasjidIdText">ID Masjid: <?= htmlspecialchars($current_masjid_id) ?></span>
               <i class="bi bi-copy ms-1" id="copyIcon" style="font-size: 0.72rem;"></i>
             </button>
           </div>

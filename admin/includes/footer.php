@@ -96,12 +96,12 @@
 
           const badgeText = document.getElementById('badgeMasjidIdText');
           const copyIcon = document.getElementById('copyIcon');
-          if (badgeText) badgeText.textContent = `ID: ${masjidId} (Tersalin)`;
+          if (badgeText) badgeText.textContent = `ID Masjid: ${masjidId} (Tersalin)`;
           if (copyIcon) copyIcon.className = 'bi bi-check-lg text-white ms-1';
           showAlert('success', `ID Masjid (${masjidId}) berhasil disalin ke clipboard!`);
 
           setTimeout(() => {
-            if (badgeText) badgeText.textContent = `ID: ${masjidId}`;
+            if (badgeText) badgeText.textContent = `ID Masjid: ${masjidId}`;
             if (copyIcon) copyIcon.className = 'bi bi-copy ms-1';
           }, 1800);
         } catch (err) {
