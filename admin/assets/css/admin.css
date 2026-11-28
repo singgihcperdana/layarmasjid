@@ -43,18 +43,6 @@ body {
   position: relative;
 }
 
-.sidebar::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 180 180'%3E%3Cg fill='none' stroke='%23f0c96a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M45 0v24l-16 16 16 16v24M135 0v24l16 16-16 16v24M0 45h24l16-16 16 16h24M180 45h-24l-16-16-16 16h-24M45 90v24l-16 16 16 16v24M135 90v24l16 16-16 16v24M0 135h24l16-16 16 16h24M180 135h-24l-16-16-16 16h-24'/%3E%3Cpath d='M90 0v24l-18 18 18 18v30l-18 18 18 18v24M0 90h24l18-18 18 18h30l18-18 18 18h24'/%3E%3Cpath d='M90 26l10 10-10 10-10-10zM90 116l10 10-10 10-10-10zM26 90c0-9.941 8.059-18 18-18s18 8.059 18 18-8.059 18-18 18-18-8.059-18-18zM118 90c0-9.941 8.059-18 18-18s18 8.059 18 18-8.059 18-18 18-18-8.059-18-18z'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 140px 140px;
-  background-position: center top;
-  opacity: 0.06;
-  pointer-events: none;
-  z-index: 0;
-}
-
 .sidebar-header,
 .sidebar-nav,
 .sidebar-footer {
@@ -63,7 +51,7 @@ body {
 }
 
 .sidebar-header {
-  height: 64px;
+  height: 72px;
   padding: 0 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
@@ -71,10 +59,23 @@ body {
   box-sizing: border-box;
 }
 
+.sidebar-masjid-name {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
 .sidebar-nav {
   padding: 16px 12px;
   flex-grow: 1;
   overflow-y: auto;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23f0c96a' stroke-width='0.85' stroke-opacity='0.08' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M68 50 L58.78 53.64 L62.73 62.73 L53.64 58.78 L50 68 L46.36 58.78 L37.27 62.73 L41.22 53.64 L32 50 L41.22 46.36 L37.27 37.27 L46.36 41.22 L50 32 L53.64 41.22 L62.73 37.27 L58.78 46.36 Z'/%3E%3Cpath d='M18 0 L8.78 3.64 L12.73 12.73 L3.64 8.78 L0 18 L-3.64 8.78 L-12.73 12.73 L-8.78 3.64 L-18 0 L-8.78 -3.64 L-12.73 -12.73 L-3.64 -8.78 L0 -18 L3.64 -8.78 L12.73 -12.73 L8.78 -3.64 Z'/%3E%3Cpath d='M118 0 L108.78 3.64 L112.73 12.73 L103.64 8.78 L100 18 L96.36 8.78 L87.27 12.73 L91.22 3.64 L82 0 L91.22 -3.64 L87.27 -12.73 L96.36 -8.78 L100 -18 L103.64 -8.78 L112.73 -12.73 L108.78 -3.64 Z'/%3E%3Cpath d='M18 100 L8.78 103.64 L12.73 112.73 L3.64 108.78 L0 118 L-3.64 108.78 L-12.73 112.73 L-8.78 103.64 L-18 100 L-8.78 96.36 L-12.73 87.27 L-3.64 91.22 L0 82 L3.64 91.22 L12.73 87.27 L8.78 96.36 Z'/%3E%3Cpath d='M118 100 L108.78 103.64 L112.73 112.73 L103.64 108.78 L100 118 L96.36 108.78 L87.27 112.73 L91.22 103.64 L82 100 L91.22 96.36 L87.27 87.27 L96.36 91.22 L100 82 L103.64 91.22 L112.73 87.27 L108.78 96.36 Z'/%3E%3Cpath d='M50 -32 L43 -14 L43 14 L50 32 L57 14 L57 -14 Z'/%3E%3Cpath d='M50 68 L43 86 L43 114 L50 132 L57 114 L57 86 Z'/%3E%3Cpath d='M-32 50 L-14 43 L14 43 L32 50 L14 57 L-14 57 Z'/%3E%3Cpath d='M68 50 L86 43 L114 43 L132 50 L114 57 L86 57 Z'/%3E%3Cpath d='M37.37 12.63 L25 15.1 L15.1 25 L12.63 37.37 L25 34.9 L34.9 25 Z'/%3E%3Cpath d='M87.37 37.37 L84.9 25 L75 15.1 L62.63 12.63 L65.1 25 L75 34.9 Z'/%3E%3Cpath d='M37.37 87.37 L34.9 75 L25 65.1 L12.63 62.63 L15.1 75 L25 84.9 Z'/%3E%3Cpath d='M87.37 62.63 L75 65.1 L65.1 75 L62.63 87.37 L75 84.9 L84.9 75 Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+  background-repeat: repeat;
+  background-position: center top;
 }
 
 .sidebar-nav .nav-link {
@@ -124,7 +125,7 @@ body {
 }
 
 .top-header {
-  height: 64px;
+  height: 72px;
   background: #ffffff;
   border-bottom: 1px solid #e1e7e4;
   padding: 0 24px;
@@ -173,12 +174,13 @@ body {
   background: rgba(240, 201, 106, 0.18);
   color: var(--gold-accent);
   border: 1px solid rgba(240, 201, 106, 0.5);
-  font-size: 0.74rem;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
   line-height: 1.35;
@@ -219,11 +221,11 @@ body {
 
 @media (max-width: 575.98px) {
   .top-header {
-    height: 60px;
+    height: 64px;
     padding: 0 14px;
   }
   .sidebar-header {
-    height: 60px;
+    height: 64px;
     padding: 0 16px;
   }
 }

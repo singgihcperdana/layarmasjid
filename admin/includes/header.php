@@ -46,11 +46,11 @@ $current_page = $current_page ?? '';
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
         <div class="d-flex flex-column justify-content-center w-100 min-w-0" style="height: 100%;">
-          <div class="fw-bold text-white text-truncate" id="sidebarMasjidName" style="font-size: 0.95rem; line-height: 1.25;" title="<?= htmlspecialchars($masjid['nama'] ?? 'Layar Masjid') ?>"><?= htmlspecialchars($masjid['nama'] ?? 'Layar Masjid') ?></div>
+          <div class="sidebar-masjid-name text-truncate" id="sidebarMasjidName" title="<?= htmlspecialchars($masjid['nama'] ?? 'Layar Masjid') ?>"><?= htmlspecialchars($masjid['nama'] ?? 'Layar Masjid') ?></div>
           <div class="mt-1 d-flex align-items-center">
             <button type="button" class="badge-masjid-id" id="btnCopyMasjidId" data-id="<?= htmlspecialchars($current_masjid_id) ?>" title="Klik untuk salin ID Masjid">
               <span id="badgeMasjidIdText">ID Masjid: <?= htmlspecialchars($current_masjid_id) ?></span>
-              <i class="bi bi-copy ms-1" id="copyIcon" style="font-size: 0.72rem;"></i>
+              <i class="bi bi-copy ms-1" id="copyIcon" style="font-size: 0.78rem;"></i>
             </button>
           </div>
         </div>
