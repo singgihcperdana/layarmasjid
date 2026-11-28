@@ -59,7 +59,7 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
 
   <div class="row">
     
-    <!-- KOLOM KIRI: PARAMETER HISAB & PENGATURAN IMSAK -->
+    <!-- KOLOM KIRI: PARAMETER HISAB & KOREKSI MENIT (IHTIYAT) -->
     <div class="col-lg-6 mb-4">
       
       <!-- KARTU 1: PARAMETER HISAB & SUDUT WAKTU SHOLAT -->
@@ -96,40 +96,8 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
         </div>
       </div>
 
-      <!-- KARTU 2: PENGATURAN WAKTU IMSAK -->
+      <!-- KARTU 2: KOREKSI MENIT IHTIYAT -->
       <div class="card shadow-sm">
-        <div class="card-header">
-          <i class="bi bi-moon-stars-fill text-warning me-1"></i> Pengaturan Waktu Imsak
-        </div>
-        <div class="card-body">
-          <div class="mb-3">
-            <label class="form-label small fw-semibold">Mode Tampilan Waktu Imsak</label>
-            <select class="form-select form-select-sm" id="imsakMode" name="imsak_mode">
-              <option value="auto" <?= (($setting['imsak_mode'] ?? 'auto') === 'auto') ? 'selected' : '' ?>>Otomatis — Hanya muncul saat bulan Ramadan (Disarankan)</option>
-              <option value="always" <?= (($setting['imsak_mode'] ?? '') === 'always') ? 'selected' : '' ?>>Selalu Tampil — Sepanjang tahun</option>
-              <option value="off" <?= (($setting['imsak_mode'] ?? '') === 'off') ? 'selected' : '' ?>>Nonaktif — Sembunyikan waktu Imsak</option>
-            </select>
-          </div>
-          <div id="boxImsakMinutes" style="<?= (($setting['imsak_mode'] ?? 'auto') === 'off') ? 'display: none;' : '' ?>">
-            <label class="form-label small fw-semibold">Jeda Waktu Imsak Sebelum Subuh</label>
-            <div class="input-group input-group-sm" style="max-width: 200px;">
-              <input type="number" class="form-control text-center fw-bold" name="imsak_minutes" id="imsakMinutes" min="1" max="60" value="<?= (int)($setting['imsak_minutes'] ?? 10) ?>" required>
-              <span class="input-group-text">Menit</span>
-            </div>
-            <div class="form-text" style="font-size: 0.78rem;">
-              <i class="bi bi-info-circle me-1"></i> Standar Kemenag RI adalah 10 menit sebelum Subuh. Anda dapat men-tune jeda ini sesuai kebutuhan masjid.
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- KOLOM KANAN: KOREKSI MENIT (IHTIYAT), MODE JUM'AT & TOMBOL SIMPAN -->
-    <div class="col-lg-6 mb-4">
-      
-      <!-- KARTU 3: KOREKSI MENIT IHTIYAT -->
-      <div class="card mb-4 shadow-sm">
         <div class="card-header">
           <i class="bi bi-sliders2 me-1"></i> Koreksi Menit Waktu Sholat (+ / - Ihtiyat)
         </div>
@@ -152,6 +120,38 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
               </div>
             </div>
             <?php endforeach; ?>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KOLOM KANAN: PENGATURAN IMSAK, MODE JUM'AT & TOMBOL SIMPAN -->
+    <div class="col-lg-6 mb-4">
+      
+      <!-- KARTU 3: PENGATURAN WAKTU IMSAK -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+          <i class="bi bi-moon-stars-fill text-warning me-1"></i> Pengaturan Waktu Imsak
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Mode Tampilan Waktu Imsak</label>
+            <select class="form-select form-select-sm" id="imsakMode" name="imsak_mode">
+              <option value="auto" <?= (($setting['imsak_mode'] ?? 'auto') === 'auto') ? 'selected' : '' ?>>Otomatis — Hanya muncul saat bulan Ramadan (Disarankan)</option>
+              <option value="always" <?= (($setting['imsak_mode'] ?? '') === 'always') ? 'selected' : '' ?>>Selalu Tampil — Sepanjang tahun</option>
+              <option value="off" <?= (($setting['imsak_mode'] ?? '') === 'off') ? 'selected' : '' ?>>Nonaktif — Sembunyikan waktu Imsak</option>
+            </select>
+          </div>
+          <div id="boxImsakMinutes" style="<?= (($setting['imsak_mode'] ?? 'auto') === 'off') ? 'display: none;' : '' ?>">
+            <label class="form-label small fw-semibold">Jeda Waktu Imsak Sebelum Subuh</label>
+            <div class="input-group input-group-sm" style="max-width: 200px;">
+              <input type="number" class="form-control text-center fw-bold" name="imsak_minutes" id="imsakMinutes" min="1" max="60" value="<?= (int)($setting['imsak_minutes'] ?? 10) ?>" required>
+              <span class="input-group-text">Menit</span>
+            </div>
+            <div class="form-text" style="font-size: 0.78rem;">
+              <i class="bi bi-info-circle me-1"></i> Standar Kemenag RI adalah 10 menit sebelum Subuh. Anda dapat men-tune jeda ini sesuai kebutuhan masjid.
+            </div>
           </div>
         </div>
       </div>
