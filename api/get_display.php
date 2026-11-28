@@ -35,14 +35,15 @@ $schedule = $stmt->fetch() ?: [
     'latitude' => -6.140000, 'longitude' => 106.590000, 'timezone' => 7, 'hijri_offset' => 0,
     'calc_method' => 'Kemenag', 'calc_fajr_angle' => 20.0, 'calc_isha_angle' => 18.0, 'calc_asr_method' => 'Standard',
     'tune_fajr' => 1, 'tune_sunrise' => 0, 'tune_dhuhr' => 0, 'tune_asr' => 2, 'tune_maghrib' => 6, 'tune_isha' => 1,
-    'imsak_mode' => 'auto', 'imsak_minutes' => 10
+    'imsak_mode' => 'auto', 'imsak_minutes' => 10,
+    'jumat_mode' => 'auto', 'jumat_duration' => 45
 ];
 
 // 3. Ambil Pengaturan Timer Layar TV (timer)
 $stmt = $pdo->prepare("SELECT * FROM timer WHERE masjid_id = ? LIMIT 1");
 $stmt->execute([$masjid_id]);
 $timer = $stmt->fetch() ?: [
-    'timer_wait_adzan' => 1, 'timer_adzan' => 5, 'timer_sholat' => 10,
+    'timer_wait_adzan' => 1, 'timer_adzan' => 5, 'timer_sholat' => 10, 'timer_jumat' => 45,
     'countdown_beep' => 10, 'kecepatan_running_text' => 5,
     'iqomah_fajr' => 10, 'iqomah_dhuhr' => 10, 'iqomah_asr' => 10, 'iqomah_maghrib' => 5, 'iqomah_isha' => 10
 ];
@@ -103,7 +104,9 @@ $response = [
         'dst'          => 0,
         'hijri_offset' => (int)($schedule['hijri_offset'] ?? 0),
         'imsak_mode'    => $schedule['imsak_mode'] ?? 'auto',
-        'imsak_minutes' => (int)($schedule['imsak_minutes'] ?? 10)
+        'imsak_minutes' => (int)($schedule['imsak_minutes'] ?? 10),
+        'jumat_mode'    => $schedule['jumat_mode'] ?? 'auto',
+        'jumat_duration'=> (int)($schedule['jumat_duration'] ?? 45)
     ],
     'prayTimesAdjust' => [
         'imsak'   => ((int)($schedule['imsak_minutes'] ?? 10)) . ' min',
@@ -159,6 +162,7 @@ $response = [
         'countdown_beep'        => (int)($timer['countdown_beep'] ?? 10),
         'adzan'                 => (int)$timer['timer_adzan'],
         'sholat'                => (int)$timer['timer_sholat'],
+        'jumat'                 => (($schedule['jumat_mode'] ?? 'auto') === 'off') ? 0 : (int)($schedule['jumat_duration'] ?? ($timer['timer_jumat'] ?? 45)),
         'kecepatan_running_text'=> (int)$timer['kecepatan_running_text']
     ],
     'iqomahTimer' => [

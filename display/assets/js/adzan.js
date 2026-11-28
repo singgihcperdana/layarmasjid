@@ -24,7 +24,8 @@ function getTimerConfig() {
     countDownAdzanBeep: typeof t.countdown_beep !== "undefined" ? Number(t.countdown_beep) : countDownAdzanBeep,
     countDownIqomahBeep: typeof t.countdown_beep !== "undefined" ? Number(t.countdown_beep) : countDownIqomahBeep,
     lamaAdzan: typeof t.adzan !== "undefined" ? Number(t.adzan) : lamaAdzan,
-    lamaSholat: typeof t.sholat !== "undefined" ? Number(t.sholat) : lamaSholat
+    lamaSholat: typeof t.sholat !== "undefined" ? Number(t.sholat) : lamaSholat,
+    lamaJumat: typeof t.jumat !== "undefined" ? Number(t.jumat) : 45
   };
 }
 
@@ -133,7 +134,7 @@ function getPrayerLifecycleState(now) {
       };
     }
 
-    // Tahap 4: Saat Sholat
+    // Tahap 4: Saat Sholat (termasuk Mode Jum'at)
     if (s.phase === "saat_sholat") {
       if (s.remainingSec <= 0) {
         simulationState = null;
@@ -141,6 +142,7 @@ function getPrayerLifecycleState(now) {
       }
       return {
         phase: "saat_sholat",
+        isJumat: !!s.isJumat,
         prayerName: s.prayerName,
         diffSeconds: s.remainingSec
       };
@@ -149,8 +151,10 @@ function getPrayerLifecycleState(now) {
 
   // Waktu Live Aktual
   const fardhPrayers = prayers.filter((p) => ADZAN_PRAYERS.includes(p.name));
+  const isFriday = now.getDay() === 5;
 
   for (const prayer of fardhPrayers) {
+    const isFridayDhuhr = isFriday && prayer.name === "Dzuhur";
     const baseToday = getPrayerDate(now, prayer.time);
     const candidateTimes = [
       baseToday,
@@ -158,10 +162,11 @@ function getPrayerLifecycleState(now) {
       new Date(baseToday.getTime() - 86400000)  // kemarin
     ];
 
-    const waitSec = timers.waitAdzan * 60;
-    const adzanSec = timers.lamaAdzan * 60;
+    const waitSec   = timers.waitAdzan * 60;
+    const adzanSec  = timers.lamaAdzan * 60;
     const iqomahSec = getPrayerIqomahMinutes(prayer.name) * 60;
     const sholatSec = timers.lamaSholat * 60;
+    const jumatSec  = timers.lamaJumat * 60;
 
     for (const pTime of candidateTimes) {
       const deltaSec = Math.floor((now.getTime() - pTime.getTime()) / 1000);
@@ -175,7 +180,20 @@ function getPrayerLifecycleState(now) {
         };
       }
 
-      // 2. Saat Azan: 0 s.d. adzanSec
+      // Khusus Hari Jum'at pada waktu Dzuhur: Langsung masuk ke Mode Jum'at (Layar Hening Khutbah & Sholat)
+      if (isFridayDhuhr && jumatSec > 0) {
+        if (deltaSec >= 0 && deltaSec < jumatSec) {
+          return {
+            phase: "saat_sholat",
+            isJumat: true,
+            prayerName: prayer.name,
+            diffSeconds: jumatSec - deltaSec
+          };
+        }
+        continue;
+      }
+
+      // 2. Saat Azan (Hari Biasa): 0 s.d. adzanSec
       if (deltaSec >= 0 && deltaSec < adzanSec) {
         return {
           phase: "saat_azan",
@@ -184,7 +202,7 @@ function getPrayerLifecycleState(now) {
         };
       }
 
-      // 3. Countdown Iqomah: adzanSec s.d. (adzanSec + iqomahSec)
+      // 3. Countdown Iqomah (Hari Biasa): adzanSec s.d. (adzanSec + iqomahSec)
       const endIqomah = adzanSec + iqomahSec;
       if (deltaSec >= adzanSec && deltaSec < endIqomah) {
         const remainingIqomah = endIqomah - deltaSec;
@@ -195,11 +213,12 @@ function getPrayerLifecycleState(now) {
         };
       }
 
-      // 4. Saat Sholat: endIqomah s.d. (endIqomah + sholatSec)
+      // 4. Saat Sholat (Hari Biasa): endIqomah s.d. (endIqomah + sholatSec)
       const endSholat = endIqomah + sholatSec;
       if (deltaSec >= endIqomah && deltaSec < endSholat) {
         return {
           phase: "saat_sholat",
+          isJumat: false,
           prayerName: prayer.name,
           diffSeconds: endSholat - deltaSec
         };
@@ -345,6 +364,34 @@ function renderLifecycleScreen(state, now) {
         lastSoundKey = soundKey;
         playChimeIqomah();
       }
+    }
+  }
+
+  // 4. FASE SAAT SHOLAT / MODE JUM'AT (Mode Khusyuk & Hening)
+  else if (state.phase === "saat_sholat") {
+    const bannerText = document.getElementById("sholat-banner-text");
+    const hadithArabic = document.getElementById("sholat-hadith-arabic");
+    const hadithText = document.getElementById("sholat-hadith-text");
+
+    if (state.isJumat) {
+      if (bannerText) bannerText.textContent = "DENGARKAN KHUTBAH • HP DINONAKTIFKAN";
+      if (hadithArabic) hadithArabic.textContent = "إِذَا قُلْتَ لِصَاحِبِكَ يَوْمَ الْجُمُعَةِ: «أَنْصِتْ»، وَالإِمَامُ يَخْطُبُ، فَقَدْ لَغَوْتَ";
+      if (hadithText) {
+        hadithText.innerHTML = `&ldquo;Jika engkau berkata kepada sahabatmu pada hari Jum'at: 'Diamlah!', saat imam sedang berkhutbah, maka sungguh engkau telah berbuat sia-sia.&rdquo;<br><span class="sholat-hadith-source">(HR. Bukhari &amp; Muslim)</span>`;
+      }
+    } else {
+      if (bannerText) bannerText.textContent = "MODE HENING • HP DINONAKTIFKAN";
+      if (hadithArabic) hadithArabic.textContent = "سَوُّوا صُفُوفَكُمْ ؛ فَإنَّ تَسْوِيَةَ الصَّفِّ مِنْ تَمَامِ الصَّلاَةِ";
+      if (hadithText) {
+        hadithText.innerHTML = `&ldquo;Luruskan shaf-shaf kalian, karena meluruskan shaf termasuk kesempurnaan sholat.&rdquo;<br><span class="sholat-hadith-source">(HR. Bukhari &amp; Muslim)</span>`;
+      }
+    }
+
+    // Bunyikan nada masuk sholat/Jum'at di awal
+    const soundKey = state.isJumat ? "jumat-entry" : "sholat-entry";
+    if (lastSoundKey !== soundKey) {
+      lastSoundKey = soundKey;
+      playChimeIqomah();
     }
   }
 }

@@ -41,9 +41,11 @@ $iqomah_isha    = isset($_POST['iqomah_isha']) ? max(0, (int)$_POST['iqomah_isha
 
 try {
     // Cek apakah setting sudah ada
-    $stmt = $pdo->prepare("SELECT masjid_id FROM timer WHERE masjid_id = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT * FROM timer WHERE masjid_id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);
     $exists = $stmt->fetch();
+
+    $timer_jumat = isset($_POST['timer_jumat']) ? max(1, (int)$_POST['timer_jumat']) : (int)($exists['timer_jumat'] ?? 45);
 
     if ($exists) {
         $sql = "UPDATE timer SET 
@@ -51,6 +53,7 @@ try {
                     timer_wait_adzan = ?,
                     timer_adzan = ?,
                     timer_sholat = ?,
+                    timer_jumat = ?,
                     countdown_beep = ?,
                     iqomah_fajr = ?,
                     iqomah_dhuhr = ?,
@@ -64,6 +67,7 @@ try {
             $timer_wait_adzan,
             $timer_adzan,
             $timer_sholat,
+            $timer_jumat,
             $countdown_beep,
             $iqomah_fajr,
             $iqomah_dhuhr,
@@ -74,9 +78,9 @@ try {
         ]);
     } else {
         $sql = "INSERT INTO timer 
-                    (masjid_id, kecepatan_running_text, timer_wait_adzan, timer_adzan, timer_sholat, countdown_beep, iqomah_fajr, iqomah_dhuhr, iqomah_asr, iqomah_maghrib, iqomah_isha)
+                    (masjid_id, kecepatan_running_text, timer_wait_adzan, timer_adzan, timer_sholat, timer_jumat, countdown_beep, iqomah_fajr, iqomah_dhuhr, iqomah_asr, iqomah_maghrib, iqomah_isha)
                 VALUES 
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmtInsert = $pdo->prepare($sql);
         $stmtInsert->execute([
             $masjid_id,
@@ -84,6 +88,7 @@ try {
             $timer_wait_adzan,
             $timer_adzan,
             $timer_sholat,
+            $timer_jumat,
             $countdown_beep,
             $iqomah_fajr,
             $iqomah_dhuhr,

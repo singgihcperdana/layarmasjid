@@ -15,7 +15,8 @@ $setting = $stmt->fetch() ?: [
     'latitude' => -6.140000, 'longitude' => 106.590000, 'timezone' => 7, 'hijri_offset' => 0,
     'calc_method' => 'Kemenag', 'calc_fajr_angle' => 20.0, 'calc_isha_angle' => 18.0, 'calc_asr_method' => 'Standard',
     'tune_fajr' => 1, 'tune_sunrise' => 0, 'tune_dhuhr' => 0, 'tune_asr' => 2, 'tune_maghrib' => 6, 'tune_isha' => 1,
-    'imsak_mode' => 'auto', 'imsak_minutes' => 10
+    'imsak_mode' => 'auto', 'imsak_minutes' => 10,
+    'jumat_mode' => 'auto', 'jumat_duration' => 45
 ];
 
 $tune_configs = [
@@ -124,7 +125,7 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
 
     </div>
 
-    <!-- KOLOM KANAN: KOREKSI MENIT (IHTIYAT) & TOMBOL SIMPAN -->
+    <!-- KOLOM KANAN: KOREKSI MENIT (IHTIYAT), MODE JUM'AT & TOMBOL SIMPAN -->
     <div class="col-lg-6 mb-4">
       
       <!-- KARTU 3: KOREKSI MENIT IHTIYAT -->
@@ -151,6 +152,32 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
               </div>
             </div>
             <?php endforeach; ?>
+          </div>
+        </div>
+      </div>
+
+      <!-- KARTU 4: PENGATURAN MODE SHOLAT JUM'AT -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+          <i class="bi bi-calendar2-check-fill text-success me-1"></i> Pengaturan Mode Sholat Jum'at
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Status Mode Jum'at</label>
+            <select class="form-select form-select-sm" id="jumatMode" name="jumat_mode">
+              <option value="auto" <?= (($setting['jumat_mode'] ?? 'auto') === 'auto') ? 'selected' : '' ?>>Otomatis — Aktif saat Dzuhur di Hari Jum'at (Disarankan)</option>
+              <option value="off" <?= (($setting['jumat_mode'] ?? '') === 'off') ? 'selected' : '' ?>>Nonaktif — Perlakukan seperti Dzuhur biasa</option>
+            </select>
+          </div>
+          <div id="boxJumatDuration" style="<?= (($setting['jumat_mode'] ?? 'auto') === 'off') ? 'display: none;' : '' ?>">
+            <label class="form-label small fw-semibold">Durasi Mode Layar Jum'at (Khutbah &amp; Sholat)</label>
+            <div class="input-group input-group-sm" style="max-width: 200px;">
+              <input type="number" class="form-control text-center fw-bold" name="jumat_duration" id="jumatDuration" min="1" max="180" value="<?= (int)($setting['jumat_duration'] ?? 45) ?>" required>
+              <span class="input-group-text">Menit</span>
+            </div>
+            <div class="form-text" style="font-size: 0.78rem;">
+              <i class="bi bi-info-circle me-1"></i> Pada hari Jum'at saat masuk waktu Dzuhur, TV langsung beralih ke layar hening dengan pesan <em>"Dengarkan Khutbah &amp; HP Dinonaktifkan"</em> serta hadits anjuran mendengarkan khutbah (tanpa hitung mundur iqomah).
+            </div>
           </div>
         </div>
       </div>
@@ -374,6 +401,15 @@ $longitude = (float)($setting['longitude'] ?? 106.59);
   if (imsakModeSelect && boxImsakMinutes) {
     imsakModeSelect.addEventListener('change', function() {
       boxImsakMinutes.style.display = (this.value === 'off') ? 'none' : 'block';
+    });
+  }
+
+  // Toggle Tampilan Input Durasi Jum'at
+  const jumatModeSelect = document.getElementById('jumatMode');
+  const boxJumatDuration = document.getElementById('boxJumatDuration');
+  if (jumatModeSelect && boxJumatDuration) {
+    jumatModeSelect.addEventListener('change', function() {
+      boxJumatDuration.style.display = (this.value === 'off') ? 'none' : 'block';
     });
   }
 

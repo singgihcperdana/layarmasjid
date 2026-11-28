@@ -277,13 +277,13 @@ try {
               <line x1="12" y1="18" x2="12.01" y2="18"/>
               <line x1="2" y1="2" x2="22" y2="22" stroke="#e05353" stroke-width="2.4"/>
             </svg>
-            <span>MODE HENING &bull; HP DINONAKTIFKAN</span>
+            <span id="sholat-banner-text">MODE HENING &bull; HP DINONAKTIFKAN</span>
           </div>
 
           <div class="sholat-hadith-box">
-            <p class="sholat-hadith-arabic" dir="rtl" lang="ar">سَوُّوا صُفُوفَكُمْ ؛ فَإنَّ تَسْوِيَةَ الصَّفِّ مِنْ تَمَامِ الصَّلاَةِ</p>
+            <p class="sholat-hadith-arabic" id="sholat-hadith-arabic" dir="rtl" lang="ar">سَوُّوا صُفُوفَكُمْ ؛ فَإنَّ تَسْوِيَةَ الصَّفِّ مِنْ تَمَامِ الصَّلاَةِ</p>
             <div class="sholat-hadith-divider" aria-hidden="true"></div>
-            <p class="sholat-hadith">&ldquo;Luruskan shaf-shaf kalian, karena meluruskan shaf termasuk kesempurnaan sholat.&rdquo;<br><span class="sholat-hadith-source">(HR. Bukhari &amp; Muslim)</span></p>
+            <p class="sholat-hadith" id="sholat-hadith-text">&ldquo;Luruskan shaf-shaf kalian, karena meluruskan shaf termasuk kesempurnaan sholat.&rdquo;<br><span class="sholat-hadith-source">(HR. Bukhari &amp; Muslim)</span></p>
           </div>
         </section>
       </main>
@@ -296,7 +296,8 @@ try {
     <button type="button" class="adzan-test-btn" id="btn-test-countdown" title="1. Menjelang Azan: Countdown 01:00 (1 menit, beep di 10d terakhir)">1. Menjelang (1m)</button>
     <button type="button" class="adzan-test-btn" id="btn-test-adzan" title="2. Saat Azan: Tampilan Halaman Azan 5 Menit">2. Saat Azan (5m)</button>
     <button type="button" class="adzan-test-btn" id="btn-test-iqomah" title="3. Countdown Iqomah: Countdown 05:00 (Demo 15d, beep di 10d terakhir)">3. Iqomah (15d)</button>
-    <button type="button" class="adzan-test-btn" id="btn-test-sholat" title="4. Saat Sholat: Layar Khusyuk & Hening">4. Saat Sholat</button>
+    <button type="button" class="adzan-test-btn" id="btn-test-sholat" title="4. Saat Sholat: Layar Khusyuk & Hening (Hari Biasa)">4. Saat Sholat</button>
+    <button type="button" class="adzan-test-btn" id="btn-test-jumat" title="Uji Mode Khusus Sholat Jum'at (Khutbah & Sholat, pesan hening)">Mode Jum'at</button>
     <button type="button" class="adzan-test-btn adzan-test-btn--demo" id="btn-test-demo" title="Jalankan otomatis seluruh tahapan 1 sampai 5">▶ Demo Lengkap</button>
     <button type="button" class="adzan-test-btn adzan-test-btn--close" id="btn-test-close" title="5. Kembali ke tampilan normal awal">Tutup / Normal</button>
   </aside>

@@ -43,8 +43,23 @@ window.testSaatSholat = function(prayerName = "Dzuhur") {
   const timers = getTimerConfig();
   simulationState = {
     phase: "saat_sholat",
+    isJumat: false,
     prayerName: prayerName,
     remainingSec: timers.lamaSholat * 60,
+    autoNext: false,
+    demoMode: false
+  };
+  tick();
+};
+
+window.testModeJumat = function(durationSec) {
+  const timers = getTimerConfig();
+  const sec = typeof durationSec === "number" ? durationSec : timers.lamaJumat * 60;
+  simulationState = {
+    phase: "saat_sholat",
+    isJumat: true,
+    prayerName: "Dzuhur",
+    remainingSec: sec,
     autoNext: false,
     demoMode: false
   };
@@ -87,6 +102,7 @@ function setupAdzanTestControls() {
   const btnAdzan = document.getElementById("btn-test-adzan");
   const btnIqomah = document.getElementById("btn-test-iqomah");
   const btnSholat = document.getElementById("btn-test-sholat");
+  const btnJumat = document.getElementById("btn-test-jumat");
   const btnDemo = document.getElementById("btn-test-demo");
   const btnClose = document.getElementById("btn-test-close");
 
@@ -128,6 +144,12 @@ function setupAdzanTestControls() {
   if (btnSholat) {
     btnSholat.addEventListener("click", () => {
       window.testSaatSholat("Dzuhur");
+    });
+  }
+
+  if (btnJumat) {
+    btnJumat.addEventListener("click", () => {
+      window.testModeJumat();
     });
   }
 

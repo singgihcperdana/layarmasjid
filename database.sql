@@ -80,6 +80,10 @@ CREATE TABLE IF NOT EXISTS `schedule` (
   `tune_maghrib` INT DEFAULT 6,
   `tune_isha` INT DEFAULT 1,
   
+  -- Mode Sholat Jum'at (Layar Hening Khutbah & Sholat saat Dzuhur di Hari Jum'at)
+  `jumat_mode` VARCHAR(10) NOT NULL DEFAULT 'auto',
+  `jumat_duration` INT NOT NULL DEFAULT 45,
+  
   FOREIGN KEY (`masjid_id`) REFERENCES `masjid`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -93,6 +97,7 @@ CREATE TABLE IF NOT EXISTS `timer` (
   `timer_wait_adzan` INT DEFAULT 1,       -- Menjelang adzan (menit)
   `timer_adzan` INT DEFAULT 5,            -- Lama adzan (menit)
   `timer_sholat` INT DEFAULT 10,          -- Layar gelap saat sholat berjamaah (menit)
+  `timer_jumat` INT DEFAULT 45,           -- Layar hening khutbah & sholat Jum'at (menit)
   `countdown_beep` INT DEFAULT 10,        -- Hitung mundur bunyi beep sebelum adzan/iqomah (detik)
   `kecepatan_running_text` INT DEFAULT 5, -- Kecepatan teks berjalan (level 1-10)
   
@@ -176,10 +181,10 @@ VALUES (
   1, 0, 0, 2, 6, 1
 );
 
-INSERT INTO `timer` (`masjid_id`, `timer_wait_adzan`, `timer_adzan`, `timer_sholat`, `countdown_beep`, `kecepatan_running_text`, `iqomah_fajr`, `iqomah_dhuhr`, `iqomah_asr`, `iqomah_maghrib`, `iqomah_isha`)
+INSERT INTO `timer` (`masjid_id`, `timer_wait_adzan`, `timer_adzan`, `timer_sholat`, `timer_jumat`, `countdown_beep`, `kecepatan_running_text`, `iqomah_fajr`, `iqomah_dhuhr`, `iqomah_asr`, `iqomah_maghrib`, `iqomah_isha`)
 VALUES (
   '101',
-  1, 5, 10, 10, 5,
+  1, 5, 10, 45, 10, 5,
   10, 10, 10, 5, 10
 );
 

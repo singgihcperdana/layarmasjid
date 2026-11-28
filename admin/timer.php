@@ -109,7 +109,7 @@ $iq_isha     = (int)($setting['iqomah_isha'] ?? 10);
           <!-- Fase 3: Lamanya Sholat -->
           <div class="timeline-step mb-0" style="border-left-color: #d4af37;">
             <div class="d-flex justify-content-between align-items-center mb-1">
-              <span class="fw-bold text-dark">Lamanya Sholat</span>
+              <span class="fw-bold text-dark">Lamanya Sholat (Layar Hening)</span>
               <span class="badge-phase bg-dark text-white">Layar Hening / Gelap</span>
             </div>
             <div class="text-muted small mb-2">Layar TV beralih menjadi mode gelap/standby saat sholat berjamaah agar tidak menyilaukan dan jamaah khusyuk.</div>

@@ -45,6 +45,8 @@ try {
     $calc_asr_method = in_array($_POST['calc_asr_method'] ?? '', ['Standard', 'Hanafi']) ? $_POST['calc_asr_method'] : 'Standard';
     $imsak_mode      = in_array($_POST['imsak_mode'] ?? '', ['auto', 'always', 'off']) ? $_POST['imsak_mode'] : 'auto';
     $imsak_minutes   = max(1, min(60, (int)($_POST['imsak_minutes'] ?? 10)));
+    $jumat_mode      = in_array($_POST['jumat_mode'] ?? '', ['auto', 'off']) ? $_POST['jumat_mode'] : 'auto';
+    $jumat_duration  = max(1, min(180, (int)($_POST['jumat_duration'] ?? 45)));
 
     // 2. Ambil Koreksi Menit Ihtiyat
     $tune_fajr       = (int)($_POST['tune_fajr'] ?? 1);
@@ -56,15 +58,17 @@ try {
 
     // 3. Simpan ke Tabel schedule (1 Tabel Mandiri)
     $sql = "INSERT INTO schedule 
-            (masjid_id, latitude, longitude, timezone, hijri_offset, imsak_mode, imsak_minutes, calc_method,
+            (masjid_id, latitude, longitude, timezone, hijri_offset, imsak_mode, imsak_minutes, jumat_mode, jumat_duration, calc_method,
              calc_fajr_angle, calc_isha_angle, calc_asr_method,
              tune_fajr, tune_sunrise, tune_dhuhr, tune_asr, tune_maghrib, tune_isha)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
              latitude=VALUES(latitude), longitude=VALUES(longitude),
              timezone=VALUES(timezone), hijri_offset=VALUES(hijri_offset),
              imsak_mode=VALUES(imsak_mode),
              imsak_minutes=VALUES(imsak_minutes),
+             jumat_mode=VALUES(jumat_mode),
+             jumat_duration=VALUES(jumat_duration),
              calc_method=VALUES(calc_method), calc_fajr_angle=VALUES(calc_fajr_angle),
              calc_isha_angle=VALUES(calc_isha_angle), calc_asr_method=VALUES(calc_asr_method),
              tune_fajr=VALUES(tune_fajr), tune_sunrise=VALUES(tune_sunrise), tune_dhuhr=VALUES(tune_dhuhr),
@@ -72,7 +76,7 @@ try {
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-        $masjid_id, $latitude, $longitude, $timezone, $hijri_offset, $imsak_mode, $imsak_minutes, $calc_method,
+        $masjid_id, $latitude, $longitude, $timezone, $hijri_offset, $imsak_mode, $imsak_minutes, $jumat_mode, $jumat_duration, $calc_method,
         $calc_fajr_angle, $calc_isha_angle, $calc_asr_method,
         $tune_fajr, $tune_sunrise, $tune_dhuhr, $tune_asr, $tune_maghrib, $tune_isha
     ]);
