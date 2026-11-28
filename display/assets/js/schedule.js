@@ -120,11 +120,11 @@ function applyMasjidConfig() {
   const s = cfg.setting || {};
 
   // 1. Identitas Masjid di Header
-  if (s.nama) {
+  if (typeof s.nama !== "undefined" && s.nama !== null) {
     const nameEl = document.querySelector(".content-mosque-name");
     if (nameEl) nameEl.textContent = s.nama;
   }
-  if (s.lokasi) {
+  if (typeof s.lokasi !== "undefined" && s.lokasi !== null) {
     const locEl = document.querySelector(".content-address span");
     if (locEl) locEl.textContent = s.lokasi;
   }

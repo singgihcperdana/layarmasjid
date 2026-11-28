@@ -39,6 +39,26 @@ try {
         exit;
     }
 
+    if (mb_strlen($nama, 'UTF-8') > 35) {
+        echo json_encode(['status' => 'error', 'message' => 'Panjang nama masjid maksimal 35 karakter']);
+        exit;
+    }
+
+    if (empty($lokasi)) {
+        echo json_encode(['status' => 'error', 'message' => 'Alamat lengkap masjid tidak boleh kosong']);
+        exit;
+    }
+
+    if (mb_strlen($lokasi, 'UTF-8') > 80) {
+        echo json_encode(['status' => 'error', 'message' => 'Panjang alamat masjid maksimal 80 karakter']);
+        exit;
+    }
+
+    if (!empty($kontak_info) && mb_strlen($kontak_info, 'UTF-8') > 80) {
+        echo json_encode(['status' => 'error', 'message' => 'Panjang informasi kontak & rekening maksimal 80 karakter']);
+        exit;
+    }
+
     // Ambil data masjid saat ini untuk pengecekan logo & proteksi wilayah terkunci
     $stmt = $pdo->prepare("SELECT logo, province_id, regency_id FROM masjid WHERE id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);

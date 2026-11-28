@@ -85,8 +85,11 @@ if (!empty($regency_id)) {
         </div>
         <div class="card-body">
           <div class="mb-3">
-            <label class="form-label small fw-semibold">Nama Masjid <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="nama" value="<?= htmlspecialchars($masjid['nama']) ?>" placeholder="Contoh: Masjid Al Ikhlas" required>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label small fw-semibold mb-0">Nama Masjid <span class="text-danger">*</span></label>
+              <small id="charCountNama" class="text-muted fw-semibold" style="font-size: 0.75rem;">0 / 35</small>
+            </div>
+            <input type="text" class="form-control" id="inputNama" name="nama" value="<?= htmlspecialchars($masjid['nama']) ?>" placeholder="Contoh: Masjid Al Ikhlas" maxlength="35" required>
           </div>
 
           <!-- Pilihan Wilayah: Provinsi & Kabupaten/Kota (Terkunci Permanen) -->
@@ -144,15 +147,21 @@ if (!empty($regency_id)) {
           </div>
 
           <div class="mb-3">
-            <label class="form-label small fw-semibold">Alamat Lengkap Masjid <span class="text-danger">*</span></label>
-            <textarea class="form-control" name="lokasi" rows="2" placeholder="Contoh: Jl. Contoh No. 12, Kebayoran Baru • Jakarta Selatan" required><?= htmlspecialchars($masjid['lokasi'] ?? '') ?></textarea>
-            <div class="form-text">Teks ini tampil di bagian atas layar TV di bawah nama masjid.</div>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label small fw-semibold mb-0">Alamat Lengkap Masjid <span class="text-danger">*</span></label>
+              <small id="charCountLokasi" class="text-muted fw-semibold" style="font-size: 0.75rem;">0 / 80</small>
+            </div>
+            <textarea class="form-control" id="inputLokasi" name="lokasi" rows="2" placeholder="Contoh: Jl. Contoh No. 12, Kebayoran Baru • Jakarta Selatan" maxlength="80" required><?= htmlspecialchars($masjid['lokasi'] ?? '') ?></textarea>
+            <div class="form-text">Teks ini tampil di bagian atas layar TV di bawah nama masjid (maksimal 80 karakter).</div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label small fw-semibold">Informasi Kontak & Rekening Infaq</label>
-            <textarea class="form-control" name="kontak_info" rows="2" placeholder="Contoh: BSI 7123 456 789 a.n. Masjid Al Ikhlas • WA: 0812-3456-7890"><?= htmlspecialchars($masjid['kontak_info'] ?? '') ?></textarea>
-            <div class="form-text">Tampil di header layar TV tepat di bawah alamat masjid. Kosongkan jika tidak ingin ditampilkan.</div>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label small fw-semibold mb-0">Informasi Kontak & Rekening Infaq</label>
+              <small id="charCountKontak" class="text-muted fw-semibold" style="font-size: 0.75rem;">0 / 80</small>
+            </div>
+            <textarea class="form-control" id="inputKontak" name="kontak_info" rows="2" placeholder="Contoh: BSI 7123 456 789 a.n. Masjid Al Ikhlas • WA: 0812-3456-7890" maxlength="80"><?= htmlspecialchars($masjid['kontak_info'] ?? '') ?></textarea>
+            <div class="form-text">Tampil di header layar TV tepat di bawah alamat masjid (maksimal 80 karakter). Kosongkan jika tidak ingin ditampilkan.</div>
           </div>
 
           <!-- Kotak Logo Masjid (Bisa Kosong) -->
@@ -845,10 +854,57 @@ if (!empty($regency_id)) {
     });
   });
 
+  // Counter Karakter Realtime
+  function setupCharCounter(inputId, counterId, max) {
+    const input = document.getElementById(inputId);
+    const counter = document.getElementById(counterId);
+    if (!input || !counter) return;
+
+    function update() {
+      const len = input.value.length;
+      counter.textContent = `${len} / ${max}`;
+      if (len >= max) {
+        counter.classList.remove('text-muted', 'text-warning');
+        counter.classList.add('text-danger');
+      } else if (len >= max - 5) {
+        counter.classList.remove('text-muted', 'text-danger');
+        counter.classList.add('text-warning');
+      } else {
+        counter.classList.remove('text-danger', 'text-warning');
+        counter.classList.add('text-muted');
+      }
+    }
+
+    input.addEventListener('input', update);
+    update();
+  }
+
+  setupCharCounter('inputNama', 'charCountNama', 35);
+  setupCharCounter('inputLokasi', 'charCountLokasi', 80);
+  setupCharCounter('inputKontak', 'charCountKontak', 80);
+
   // 1. Simpan Profil Masjid & Koordinat
   document.getElementById('formSaveProfile').addEventListener('submit', async function(e) {
     e.preventDefault();
     const formData = new FormData(this);
+
+    const nama = (formData.get('nama') || '').trim();
+    const lokasi = (formData.get('lokasi') || '').trim();
+    const kontak = (formData.get('kontak_info') || '').trim();
+
+    if (nama.length > 35) {
+      showAlert('danger', 'Nama masjid maksimal 35 karakter.');
+      return;
+    }
+    if (lokasi.length > 80) {
+      showAlert('danger', 'Alamat lengkap masjid maksimal 80 karakter.');
+      return;
+    }
+    if (kontak.length > 80) {
+      showAlert('danger', 'Informasi kontak & rekening maksimal 80 karakter.');
+      return;
+    }
+
     try {
       const res = await fetch('api/save_profile.php', { method: 'POST', body: formData });
       const json = await res.json();

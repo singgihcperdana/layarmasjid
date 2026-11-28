@@ -12,16 +12,6 @@ require_once __DIR__ . '/includes/header.php';
 <!-- Content Management CSS -->
 <link rel="stylesheet" href="<?= asset_v('assets/css/content.css') ?>">
 
-<!-- HEADER UTAMA -->
-<div class="mb-4">
-  <h4 class="fw-bold mb-1" style="color: #0a4d3a;">
-    <i class="bi bi-broadcast me-2"></i> Teks Berjalan (Running Text)
-  </h4>
-  <div class="text-muted small">
-    Kelola pesan pengumuman, himbauan tata tertib sholat, dan info rekening infaq yang berjalan di bagian bawah layar TV.
-  </div>
-</div>
-
 <!-- ========================================================================= -->
 <!-- KARTU 1: FORM TAMBAH / EDIT TEKS -->
 <!-- ========================================================================= -->
@@ -38,9 +28,12 @@ require_once __DIR__ . '/includes/header.php';
 
       <div class="mb-3">
         <label class="form-label fw-bold text-secondary">Isi Pesan Teks:</label>
-        <textarea class="form-control" id="inputText" name="teks" rows="3" placeholder="Ketik pesan himbauan atau pengumuman masjid di sini..." required></textarea>
-        <div class="form-text">
-          <i class="bi bi-info-circle me-1"></i> Teks yang aktif akan otomatis digabung bergantian dengan tanda pemisah bintang (✦) di layar TV.
+        <textarea class="form-control" id="inputText" name="teks" rows="3" placeholder="Ketik pesan himbauan atau pengumuman masjid di sini..." maxlength="255" required></textarea>
+        <div class="d-flex justify-content-between align-items-center mt-1">
+          <div class="form-text mt-0">
+            <i class="bi bi-info-circle me-1"></i> Teks yang aktif akan otomatis digabung bergantian dengan tanda pemisah bintang (✦) di layar TV.
+          </div>
+          <small id="textCharCount" class="text-muted fw-semibold ms-2" style="white-space: nowrap;">0 / 255 karakter</small>
         </div>
       </div>
 
@@ -98,10 +91,25 @@ require_once __DIR__ . '/includes/header.php';
   const formRunningText = document.getElementById('formRunningText');
   const textId          = document.getElementById('textId');
   const inputText       = document.getElementById('inputText');
+  const textCharCount   = document.getElementById('textCharCount');
   const formTitle       = document.getElementById('formTitle');
   const editBadge       = document.getElementById('editBadge');
   const btnCancelEdit   = document.getElementById('btnCancelEdit');
   const btnSubmitText   = document.getElementById('btnSubmitText');
+
+  function updateCharCount() {
+    const len = inputText.value.length;
+    textCharCount.textContent = `${len} / 255 karakter`;
+    if (len >= 250) {
+      textCharCount.classList.remove('text-muted');
+      textCharCount.classList.add('text-danger');
+    } else {
+      textCharCount.classList.remove('text-danger');
+      textCharCount.classList.add('text-muted');
+    }
+  }
+
+  inputText.addEventListener('input', updateCharCount);
 
   // 1. Muat Daftar Teks dari API
   async function loadTexts() {
@@ -258,6 +266,7 @@ require_once __DIR__ . '/includes/header.php';
             const t = json.data;
             textId.value = t.id;
             inputText.value = t.teks;
+            updateCharCount();
 
             formTitle.innerHTML = `<i class="bi bi-pencil-square text-primary me-1"></i> Edit Pesan Teks #${t.urutan}`;
             editBadge.classList.remove('d-none');
@@ -307,6 +316,7 @@ require_once __DIR__ . '/includes/header.php';
   function resetForm() {
     textId.value = '0';
     formRunningText.reset();
+    updateCharCount();
     formTitle.innerHTML = '<i class="bi bi-plus-square-fill text-success me-1"></i> Tambah Pesan Teks Berjalan';
     editBadge.classList.add('d-none');
     btnCancelEdit.classList.add('d-none');
@@ -318,6 +328,10 @@ require_once __DIR__ . '/includes/header.php';
   // 5. Submit Form Tambah / Edit Teks
   formRunningText.addEventListener('submit', async function(e) {
     e.preventDefault();
+    if (inputText.value.trim().length > 255) {
+      showAlert('danger', 'Panjang pesan teks maksimal 255 karakter');
+      return;
+    }
     const btn = btnSubmitText;
     const oldHtml = btn.innerHTML;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...';

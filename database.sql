@@ -599,13 +599,13 @@ INSERT INTO `regencies` (`id`, `province_id`, `name`, `latitude`, `longitude`) V
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS `masjid` (
   `id` VARCHAR(50) NOT NULL PRIMARY KEY,
-  `nama` VARCHAR(150) NOT NULL,
-  `lokasi` TEXT NULL,
+  `nama` VARCHAR(35) NOT NULL,
+  `lokasi` VARCHAR(80) NOT NULL,
   `province_id` CHAR(2) NULL,
   `regency_id` CHAR(4) NULL,
   `latitude` DECIMAL(10, 6) DEFAULT -6.140000,
   `longitude` DECIMAL(10, 6) DEFAULT 106.590000,
-  `kontak_info` TEXT NULL,
+  `kontak_info` VARCHAR(80) NULL,
   `logo` VARCHAR(255) NULL,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -715,7 +715,7 @@ CREATE TABLE IF NOT EXISTS `slides` (
 CREATE TABLE IF NOT EXISTS `running_text` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `masjid_id` VARCHAR(50) NOT NULL,
-  `teks` TEXT NOT NULL,
+  `teks` VARCHAR(255) NOT NULL,
   `urutan` INT DEFAULT 1,
   `is_active` TINYINT(1) DEFAULT 1,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,

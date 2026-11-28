@@ -55,6 +55,11 @@ try {
             exit;
         }
 
+        if (mb_strlen($teks, 'UTF-8') > 255) {
+            echo json_encode(['status' => 'error', 'message' => 'Panjang pesan teks maksimal 255 karakter']);
+            exit;
+        }
+
         if ($id > 0) {
             // Edit teks
             $stmt = $pdo->prepare("UPDATE running_text SET teks = ? WHERE id = ? AND masjid_id = ?");

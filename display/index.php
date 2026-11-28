@@ -22,19 +22,26 @@ if (empty($masjid_id)) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT UNIX_TIMESTAMP(updated_at) AS sync_hash FROM masjid WHERE id = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT id, nama, lokasi, kontak_info, logo, UNIX_TIMESTAMP(updated_at) AS sync_hash FROM masjid WHERE id = ? LIMIT 1");
     $stmt->execute([$masjid_id]);
-    $sync_hash = $stmt->fetchColumn();
+    $masjid = $stmt->fetch();
 
-    if ($sync_hash === false || $sync_hash === null) {
+    if (!$masjid || $masjid['sync_hash'] === false || $masjid['sync_hash'] === null) {
         http_response_code(404);
         echo '<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Masjid Tidak Ditemukan - Layar Masjid</title><style>body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#031417;color:#e5b852;font-family:system-ui,sans-serif;text-align:center;padding:20px;box-sizing:border-box;}h2{margin-bottom:8px;font-size:1.8rem;}p{color:#b0bec5;font-size:1.05rem;}strong{color:#fff;}</style></head><body><div><h2>Masjid Tidak Ditemukan</h2><p>Data masjid dengan ID <strong>' . htmlspecialchars($masjid_id) . '</strong> tidak terdaftar di sistem.</p></div></body></html>';
         exit;
     }
 
+    $sync_hash = $masjid['sync_hash'];
     update_sync_file($masjid_id, $sync_hash);
 } catch (Exception $e) {
     $sync_hash = time();
+    $masjid = [
+        'nama' => 'Masjid',
+        'lokasi' => '',
+        'kontak_info' => '',
+        'logo' => ''
+    ];
 }
 ?>
 <!doctype html>
@@ -42,7 +49,7 @@ try {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Layar Masjid</title>
+  <title><?= htmlspecialchars($masjid['nama'] ?? 'Layar Masjid') ?> - Layar Masjid</title>
   <link rel="stylesheet" href="<?= asset_v('assets/css/tokens.css') ?>">
   <link rel="stylesheet" href="<?= asset_v('assets/css/base.css') ?>">
   <link rel="stylesheet" href="<?= asset_v('assets/css/layout.css') ?>">
@@ -113,25 +120,26 @@ try {
     <main class="right-panel">
       <header class="content-header">
         <div class="content-brand" aria-label="Logo masjid">
-          <div class="content-brand-frame" id="content-brand-frame">
+          <div class="content-brand-frame" id="content-brand-frame" <?= empty($masjid['logo']) ? 'style="display: none;"' : '' ?>>
             <img
               id="content-brand-logo"
               class="content-brand-logo"
-              src="assets/img/contoh_logo/masjid_astra.png"
-              alt="Logo Masjid Astra"
+              src="<?= !empty($masjid['logo']) ? (str_starts_with($masjid['logo'], 'uploads/') ? '../' . htmlspecialchars($masjid['logo']) : htmlspecialchars($masjid['logo'])) . '?v=' . htmlspecialchars($sync_hash) : '' ?>"
+              alt="Logo <?= htmlspecialchars($masjid['nama'] ?? '') ?>"
+              <?= empty($masjid['logo']) ? 'style="display: none;"' : '' ?>
             >
           </div>
         </div>
 
         <div class="content-identity">
-          <h1 class="content-mosque-name">Masjid Al Ikhlas</h1>
+          <h1 class="content-mosque-name"><?= htmlspecialchars($masjid['nama'] ?? 'Masjid') ?></h1>
           <p class="content-address">
             <svg class="content-address-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>Jl. Contoh No. 12, Kebayoran Baru &bull; Jakarta Selatan</span>
+            <span><?= htmlspecialchars($masjid['lokasi'] ?? '') ?></span>
           </p>
-          <p class="content-extra-info" id="content-extra-info">
+          <p class="content-extra-info" id="content-extra-info" <?= empty($masjid['kontak_info']) ? 'style="display: none;"' : '' ?>>
             <svg class="content-extra-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            <span id="content-extra-text">Info / Rekening / Kontak: BSI 7123 456 789 a.n. Masjid Al Ikhlas &bull; WA: 0812-3456-7890</span>
+            <span id="content-extra-text"><?= htmlspecialchars($masjid['kontak_info'] ?? '') ?></span>
           </p>
         </div>
 
