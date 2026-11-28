@@ -7,11 +7,14 @@
 // Set zona waktu default PHP ke WIB (Asia/Jakarta)
 date_default_timezone_set('Asia/Jakarta');
 
-// Konfigurasi Database (Sesuaikan saat deploy ke Rumahweb)
-$db_host = 'localhost';
-$db_name = 'layarmasjid';
-$db_user = 'root';
-$db_pass = '';
+// Muat konfigurasi .env
+require_once __DIR__ . '/env.php';
+
+// Konfigurasi Database (Bisa diatur melalui .env atau default di sini)
+$db_host = env('DB_HOST', 'localhost');
+$db_name = env('DB_NAME', 'layarmasjid');
+$db_user = env('DB_USER', 'root');
+$db_pass = env('DB_PASS', '');
 
 try {
     $pdo = new PDO("mysql:host={$db_host};dbname={$db_name};charset=utf8mb4", $db_user, $db_pass, [

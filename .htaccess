@@ -12,6 +12,9 @@ RewriteRule ^(admin/)?assets/img/contoh_([a-zA-Z0-9_-]+)/(.*)$ display/assets/im
 # 3. Routing Uploads jika diakses dari path admin
 RewriteRule ^admin/uploads/(.*)$ uploads/$1 [L]
 
+# Routing Auth (Google Login/Callback) jika diakses dari path admin
+RewriteRule ^(admin/)?auth/(.*)$ auth/$2 [L]
+
 # 4. Routing Aset Admin: /assets/... atau /admin/assets/... -> admin/assets/...
 RewriteRule ^(admin/)?assets/(.*)$ admin/assets/$2 [L]
 

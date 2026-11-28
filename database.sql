@@ -39,12 +39,17 @@ CREATE TABLE IF NOT EXISTS `users` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `masjid_id` VARCHAR(50) NOT NULL,
   `username` VARCHAR(50) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(150) NULL,
+  `google_id` VARCHAR(100) NULL,
+  `password` VARCHAR(255) NULL,
   `nama` VARCHAR(100) NULL,
+  `avatar` VARCHAR(255) NULL,
   `role` VARCHAR(20) NOT NULL DEFAULT 'admin',
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY `uk_username` (`username`),
+  UNIQUE KEY `uk_email` (`email`),
+  UNIQUE KEY `uk_google_id` (`google_id`),
   INDEX `idx_masjid_id` (`masjid_id`),
   FOREIGN KEY (`masjid_id`) REFERENCES `masjid`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
